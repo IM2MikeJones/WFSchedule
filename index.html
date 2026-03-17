@@ -1,0 +1,2495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WFSchedule</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <style>
+    /* ========== Design tokens & layout ========== */
+    :root {
+      --md-sys-color-primary: #6750a4;
+      --md-sys-color-on-primary: #ffffff;
+      --md-sys-color-primary-container: #eaddfc;
+      --md-sys-color-surface: #fffbfe;
+      --md-sys-color-on-surface: #1c1b1f;
+      --md-sys-color-surface-variant: #e7e0ec;
+      --md-sys-color-on-surface-variant: #49454f;
+      --md-sys-color-outline: #79747e;
+      --md-sys-color-outline-variant: #cac4d0;
+      --md-sys-color-background: #fffbfe;
+      --md-sys-color-error: #b3261e;
+      --md-sys-color-on-error: #ffffff;
+      --md-sys-elevation-1: 0px 1px 2px rgba(0,0,0,0.3), 0px 1px 3px 1px rgba(0,0,0,0.15);
+      --md-sys-shape-corner-large: 16px;
+      --md-sys-shape-corner-small: 8px;
+      --md-sys-state-hover-opacity: 0.08;
+      /* Profile-style primary for buttons (blue) */
+      --profile-primary: #1976d2;
+    }
+
+    /* App-wide light/dark: theme vars on body (schedule table + rest of app) */
+    body {
+      --bg: #ffffff;
+      --bg-secondary: #f5f5f6;
+      --text: #131722;
+      --text-muted: #787b86;
+      --header-text: #131722;
+      --border: #e0e3eb;
+      --table-row-border: #e0e3eb;
+      --symbol-btn: #e0e3eb;
+      --symbol-btn-hover: #d1d4dc;
+      --symbol-btn-selected: #2962ff;
+      --symbol-btn-selected-text: #fff;
+      --row-hover: rgba(41, 98, 255, 0.06);
+      --row-hover-border: #2962ff;
+    }
+    body[data-theme="dark"] {
+      --bg: #131722;
+      --bg-secondary: #1e222d;
+      --text: #d1d4dc;
+      --text-muted: #787b86;
+      --header-text: #ffffff;
+      --border: #2a2e39;
+      --table-row-border: #363a45;
+      --symbol-btn: #2a2e39;
+      --symbol-btn-hover: #363a45;
+      --row-hover: rgba(41, 98, 255, 0.12);
+      --row-hover-border: #2962ff;
+      /* M3 / app-wide dark */
+      --md-sys-color-surface: #1e222d;
+      --md-sys-color-on-surface: #d1d4dc;
+      --md-sys-color-surface-variant: #2a2e39;
+      --md-sys-color-on-surface-variant: #787b86;
+      --md-sys-color-outline: #363a45;
+      --md-sys-color-outline-variant: #363a45;
+      --md-sys-color-background: #131722;
+      --profile-primary: #64b5f6;
+      background: #131722;
+    }
+    body[data-theme="dark"] .app {
+      background: #131722;
+    }
+    /* First card: same surface as other cards in dark mode (nav, add-row bar only; keep table rows as before) */
+    body[data-theme="dark"] .card:first-of-type .nav,
+    body[data-theme="dark"] .card:first-of-type .add-row-bar {
+      background: var(--md-sys-color-surface);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body { overflow-y: auto; }
+    body {
+      font-family: Inter, system-ui, sans-serif;
+      background: #fafbff;
+      color: var(--md-sys-color-on-surface);
+    }
+
+    .app {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      width: 100%;
+      overflow: visible;
+      padding: 18px;
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--md-sys-color-surface);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: var(--md-sys-shape-corner-large);
+      padding: 16px;
+      box-shadow: var(--md-sys-elevation-1);
+    }
+
+    h1, h2, h3 { margin: 0 0 12px; line-height: 1.2; color: var(--md-sys-color-on-surface); }
+    h1 { font-size: 22px; }
+    /* M3 Outlined text field (blue theme) */
+    .m3-outlined-field {
+      margin-bottom: 16px;
+    }
+    .m3-outlined-field label {
+      display: block;
+      font-size: 12px;
+      color: var(--profile-primary);
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+    .card-title-input {
+      display: block;
+      width: 100%;
+      padding: 9px 12px;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.5;
+      color: var(--md-sys-color-on-surface);
+      background: transparent;
+      border: 1px solid var(--md-sys-color-outline);
+      border-radius: var(--md-sys-shape-corner-small);
+      outline: none;
+      font-family: inherit;
+      box-sizing: border-box;
+    }
+    .card-title-input::placeholder {
+      color: var(--md-sys-color-on-surface-variant);
+    }
+    .card-title-input:hover {
+      border-color: var(--md-sys-color-on-surface);
+    }
+    .card-title-input:focus {
+      border-color: var(--profile-primary);
+    }
+    .card-title-input:focus-visible {
+      outline: 2px solid var(--profile-primary);
+      outline-offset: 2px;
+    }
+    h2 { font-size: 15px; }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--profile-primary);
+      letter-spacing: 0.02em;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      border: 1px solid var(--md-sys-color-outline);
+      border-radius: var(--md-sys-shape-corner-small);
+      padding: 9px 12px;
+      font: inherit;
+      color: var(--md-sys-color-on-surface);
+      background: var(--md-sys-color-surface);
+      outline: none;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: var(--profile-primary);
+      box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.18);
+    }
+
+    /* M3 sliders (blue theme) */
+    .m3-slider-label {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .m3-slider-value {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+    .m3-slider {
+      width: 100%;
+      appearance: none;
+      -webkit-appearance: none;
+      background: transparent !important;
+      margin: 6px 0 0;
+      height: 25px;
+      padding: 0 !important;
+      border: none !important; /* override .field input border */
+      border-radius: 0 !important;
+      box-shadow: none !important; /* override .field input focus shadow */
+    }
+    .m3-slider:focus { outline: none; }
+    .m3-slider::-webkit-slider-runnable-track {
+      height: 4px;
+      border-radius: 999px;
+      background: #c9ccdb;
+    }
+    .m3-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--profile-primary);
+      margin-top: -7px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    }
+    .m3-slider:focus-visible::-webkit-slider-thumb {
+      box-shadow: 0 0 0 6px rgba(25, 118, 210, 0.18), 0 1px 3px rgba(0,0,0,0.25);
+    }
+    .m3-slider::-moz-range-track {
+      height: 4px;
+      border-radius: 999px;
+      background: #c9ccdb;
+    }
+    .m3-slider::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border: none;
+      border-radius: 50%;
+      background: var(--profile-primary);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    }
+    .m3-slider:focus-visible::-moz-range-thumb {
+      box-shadow: 0 0 0 6px rgba(25, 118, 210, 0.18), 0 1px 3px rgba(0,0,0,0.25);
+    }
+
+    .gantt-card-switches {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .header-switch-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .header-switch-item input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .header-switch-item .header-switch-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--md-sys-color-on-surface);
+    }
+    .header-switch-item .switch {
+      width: 44px;
+      height: 25px;
+      background: var(--md-sys-color-outline);
+      border-radius: 12px;
+      position: relative;
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+    .header-switch-item .switch::after {
+      content: '';
+      position: absolute;
+      width: 21px;
+      height: 21px;
+      border-radius: 50%;
+      background: var(--md-sys-color-surface);
+      top: 2px;
+      left: 2px;
+      transition: left 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .header-switch-item input:checked ~ .switch {
+      background: var(--profile-primary);
+    }
+    .header-switch-item input:checked ~ .switch::after {
+      left: 19px;
+    }
+    .header-switch-item input:focus-visible ~ .switch {
+      outline: 2px solid var(--profile-primary);
+      outline-offset: 2px;
+    }
+
+    button {
+      appearance: none;
+      border: none;
+      border-radius: 24px;
+      padding: 11px 24px;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: opacity 0.15s ease, background 0.15s ease;
+    }
+
+    button:active { opacity: 0.9; }
+    .btn-primary { background: var(--profile-primary); color: #fff; }
+    .btn-secondary {
+      border: 1px solid var(--md-sys-color-outline);
+      background: transparent;
+      color: var(--profile-primary);
+    }
+
+    /* ========== Dialogs ========== */
+    .m3-dialog-overlay {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.32);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .m3-dialog-surface {
+      background: var(--md-sys-color-surface);
+      color: var(--md-sys-color-on-surface);
+      padding: 24px 24px 16px;
+      border-radius: var(--md-sys-shape-corner-large);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.3), 0 1px 3px 1px rgba(0,0,0,0.15);
+      max-width: 400px;
+      width: 90%;
+      border: 1px solid var(--md-sys-color-outline-variant);
+    }
+    .m3-dialog-headline {
+      margin: 0 0 16px;
+      font-size: 22px;
+      font-weight: 400;
+      line-height: 1.27;
+      letter-spacing: 0;
+      color: var(--md-sys-color-on-surface);
+    }
+    .m3-dialog-body {
+      margin: 0 0 16px;
+      font-size: 14px;
+      line-height: 1.43;
+      letter-spacing: 0.25px;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+    .m3-dialog-supporting {
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: var(--md-sys-color-surface-variant);
+      border-radius: var(--md-sys-shape-corner-small);
+      font-size: 12px;
+      line-height: 1.33;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+    .m3-dialog-supporting p { margin: 0 0 10px; }
+    .m3-dialog-supporting p:last-child { margin-bottom: 0; }
+    .m3-dialog-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 24px;
+      padding-top: 16px;
+    }
+    .m3-dialog-btn {
+      padding: 10px 24px;
+      min-height: 40px;
+      border: none;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      background: transparent;
+      color: var(--profile-primary);
+      transition: background 0.15s ease, opacity 0.15s ease;
+    }
+    .m3-dialog-btn:hover { background: rgba(25, 118, 210, 0.08); }
+    body[data-theme="dark"] .m3-dialog-btn:hover { background: rgba(100, 181, 246, 0.12); }
+    .m3-dialog-btn:focus-visible { outline: 2px solid var(--profile-primary); outline-offset: 2px; }
+    .m3-dialog-btn-destructive {
+      background: var(--md-sys-color-error);
+      color: var(--md-sys-color-on-error);
+    }
+    .m3-dialog-btn-destructive:hover { opacity: 0.92; background: var(--md-sys-color-error); }
+    .m3-dialog-btn-destructive:focus-visible { outline: 2px solid var(--md-sys-color-error); outline-offset: 2px; }
+    .m3-dialog-copy-url {
+      padding: 10px 24px;
+      min-height: 40px;
+      border: none;
+      border-radius: 20px;
+      background: var(--profile-primary);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      transition: opacity 0.15s ease, background 0.15s ease;
+    }
+    .m3-dialog-copy-url:hover { opacity: 0.92; }
+    .m3-dialog-copy-url:focus-visible { outline: 2px solid var(--profile-primary); outline-offset: 2px; }
+    .m3-dialog-copy-url.copied { background: #2e7d32; }
+    .m3-dialog-copy-url.copied:hover { opacity: 0.92; }
+
+    /* M3 icon button (e.g. Add task) */
+    .btn-icon {
+      min-width: 43px;
+      min-height: 43px;
+      width: 43px;
+      height: 43px;
+      padding: 0;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-icon .material-symbols-outlined { font-size: 24px; }
+
+    /* ========== Gantt card ========== */
+    .gantt-card {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .gantt-settings-panel {
+      display: none;
+      margin-bottom: 12px;
+      padding: 14px 14px 2px;
+      border: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: var(--md-sys-shape-corner-large);
+      background: var(--md-sys-color-surface);
+    }
+    .gantt-settings-panel.is-open { display: block; }
+
+    .gantt-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 16px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .gantt-card-header h1 { margin: 0; }
+    .gantt-card-switches { margin-left: auto; }
+    .gantt-card-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .gantt-card-collapsed .gantt-settings-panel,
+    .gantt-card-collapsed .viewport { display: none !important; }
+    .header-select {
+      appearance: none;
+      -webkit-appearance: none;
+      border: 1px solid var(--md-sys-color-outline);
+      border-radius: var(--md-sys-shape-corner-small);
+      padding: 0 44px 0 16px;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      background: var(--md-sys-color-surface);
+      color: var(--md-sys-color-on-surface);
+      outline: none;
+      height: 43px;
+      line-height: 43px;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%2349454f' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+    }
+    .header-select:hover {
+      border-color: var(--md-sys-color-on-surface);
+    }
+    .header-select:focus {
+      border-color: var(--profile-primary);
+      box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.18);
+    }
+
+    .viewport {
+      position: relative;
+      overflow-x: auto;
+      overflow-y: visible;
+      background: var(--md-sys-color-surface);
+      border-radius: var(--md-sys-shape-corner-large);
+    }
+
+    #ganttCanvas {
+      display: block;
+      background: var(--md-sys-color-surface);
+    }
+
+    /* Color picker dropdown (calendar-events style) */
+    .color-picker-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      margin-top: 2px;
+    }
+    .color-picker-wrap input[type="hidden"] { display: none; }
+    .color-picker-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid rgba(0,0,0,0.1);
+      cursor: pointer;
+      padding: 0;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .color-picker-btn:hover {
+      transform: scale(1.08);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    .color-picker-dot {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,0.12);
+    }
+    .color-picker-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 6px;
+      background: var(--md-sys-color-surface);
+      border-radius: var(--md-sys-shape-corner-small);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      padding: 8px;
+      display: none;
+      flex-wrap: wrap;
+      gap: 8px;
+      z-index: 100;
+      min-width: 52px;
+    }
+    .color-picker-menu.open { display: flex; }
+    .color-picker-option {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .color-picker-option:hover {
+      transform: scale(1.15);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .color-dot-purple { background: #6750a4; }
+    .color-dot-blue { background: #2196f3; }
+    .color-dot-green { background: #5aaa00; }
+    .color-dot-orange { background: #ff9800; }
+    .color-dot-red { background: #f44336; }
+    .color-dot-teal { background: #007a6e; }
+    .color-dot-magenta { background: #c700a7; }
+    .color-dot-gray { background: #8c8578; }
+
+    /* ========== Schedule table (first card) ========== */
+    .card:first-of-type { font-size: clamp(10px, 1.6vw, 13px); color: var(--text); background: var(--md-sys-color-surface); }
+    .card:first-of-type *, .card:first-of-type *::before, .card:first-of-type *::after { box-sizing: border-box; }
+    .card:first-of-type .nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: clamp(6px, 1.2vw, 12px) clamp(12px, 2.5vw, 24px); border-bottom: 1px solid var(--border); background: var(--bg); flex-wrap: wrap; margin: -16px -16px 0 -16px; }
+    .card:first-of-type .nav-title { margin: 0; font-size: 1rem; font-weight: 600; color: var(--text); }
+    .card:first-of-type .nav-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .card:first-of-type .schedule-card-header { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .card:first-of-type .schedule-card-header .m3-outlined-field { flex: 1; min-width: 0; }
+    #scheduleCard.schedule-card-collapsed .container { display: none !important; }
+    .card:first-of-type .add-row-bar { display: flex; align-items: center; gap: 0.5rem; padding: clamp(2px, 0.5vw, 6px) clamp(12px, 2.5vw, 24px) clamp(2px, 0.5vw, 6px) 0; background: var(--bg); border-bottom: 1px solid var(--border); }
+    .card:first-of-type .add-row-btn {
+      appearance: none;
+      border: none;
+      min-width: 43px;
+      min-height: 43px;
+      width: 43px;
+      height: 43px;
+      padding: 0;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: opacity 0.15s ease, background 0.15s ease;
+      background: var(--profile-primary);
+      color: #fff;
+      font-family: inherit;
+    }
+    .card:first-of-type .add-row-btn .material-symbols-outlined { font-size: 24px; }
+    .card:first-of-type .add-row-btn:hover { opacity: 0.92; }
+    .card:first-of-type .add-row-btn:focus-visible { outline: 2px solid var(--profile-primary); outline-offset: 2px; }
+    .card:first-of-type .clear-all-btn {
+      appearance: none;
+      border: 1px solid #ef4444;
+      border-radius: 24px;
+      padding: 11px 24px;
+      font-size: 14px;
+      font-weight: 500;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: opacity 0.15s ease, background 0.15s ease;
+      background: transparent;
+      color: #ef4444;
+      font-family: inherit;
+    }
+    .card:first-of-type .clear-all-btn:hover { background-color: rgba(239, 68, 68, 0.1); }
+    body[data-theme="dark"] .card:first-of-type .clear-all-btn { background: #ef4444; color: #fff; border-color: #ef4444; }
+    body[data-theme="dark"] .card:first-of-type .clear-all-btn:hover { background-color: #dc2626; color: #fff; }
+    .card:first-of-type .clear-all-btn:focus-visible { outline: 2px solid #ef4444; outline-offset: 2px; }
+    .card:first-of-type .theme-toggle { display: flex; align-items: center; gap: 6px; padding: 0.35rem 0.6rem; border: 1px solid var(--border); background: var(--bg-secondary); color: var(--text); font-size: 0.75rem; cursor: pointer; border-radius: 4px; }
+    .card:first-of-type .theme-toggle:hover { background: var(--symbol-btn-hover); }
+    .app-theme-bar { display: flex; justify-content: flex-end; margin-bottom: 0; }
+    .app-theme-bar .theme-toggle { display: inline-flex; align-items: center; gap: 6px; padding: 2px 0.6rem; border: 1px solid var(--border); background: var(--bg-secondary); color: var(--text); font-size: 0.75rem; cursor: pointer; border-radius: 4px; }
+    .app-theme-bar .theme-toggle:hover { background: var(--symbol-btn-hover); }
+    .card:first-of-type .container { padding: clamp(8px, 1.5vw, 16px) 0; overflow: visible; min-width: 0; }
+    .card:first-of-type .table-wrap { width: 100%; min-width: 0; border: 1px solid var(--md-sys-color-outline); border-radius: var(--md-sys-shape-corner-small); overflow-x: auto; overflow-y: visible; background: var(--bg); }
+    .card:first-of-type .table-wrap table { width: 100%; min-width: 65rem; border-collapse: separate; border-spacing: 0; table-layout: fixed; box-sizing: border-box; }
+    .card:first-of-type .table-wrap col:nth-child(1) { width: 3.5rem; min-width: 3.5rem; }
+    .card:first-of-type .table-wrap col.col-num { width: 2.5ch; min-width: 2.5ch; max-width: 2.5ch; }
+    .card:first-of-type .table-wrap col:nth-child(3) { width: 8rem; min-width: 8rem; }
+    .card:first-of-type .table-wrap col:nth-child(4) { width: 4.5rem; min-width: 4.5rem; max-width: 4.5rem; }
+    .card:first-of-type .table-wrap col:nth-child(5) { width: 10rem; min-width: 10rem; }
+    .card:first-of-type .table-wrap col:nth-child(6), .card:first-of-type .table-wrap col:nth-child(7) { min-width: 8rem; }
+    .card:first-of-type .table-wrap col:nth-child(8) { min-width: 5rem; }
+    .card:first-of-type .table-wrap col:nth-child(9) { min-width: 8rem; }
+    .card:first-of-type .table-wrap col:nth-child(10) { min-width: 5rem; }
+    .card:first-of-type .table-wrap col:nth-child(11) { min-width: 8rem; }
+    .card:first-of-type .table-wrap col:nth-child(12) { min-width: 8rem; }
+    .card:first-of-type .table-wrap col:nth-child(13) { min-width: 6rem; width: auto; }
+    .card:first-of-type .table-wrap col:nth-child(14) { width: 3rem; min-width: 3rem; }
+    .card:first-of-type .table-wrap thead { background: var(--md-sys-color-surface); position: sticky; top: 0; z-index: 1; }
+    .card:first-of-type .table-wrap thead th { padding: 0.45rem 0.3rem; text-align: left; font-weight: 600; font-size: 12px; color: var(--profile-primary); letter-spacing: 0.02em; border-bottom: 1px solid var(--table-row-border); white-space: nowrap; text-transform: none; }
+    .card:first-of-type .table-wrap thead th:last-child { padding-right: 0; }
+    .card:first-of-type .table-wrap thead th:nth-child(4) { min-width: 4.5rem; }
+    .card:first-of-type .table-wrap thead th:nth-child(5) { min-width: 10rem; }
+    .card:first-of-type .table-wrap thead th:nth-child(6), .card:first-of-type .table-wrap thead th:nth-child(7) { min-width: 8rem; }
+    .card:first-of-type .table-wrap thead th:nth-child(8) { min-width: 5rem; }
+    .card:first-of-type .table-wrap thead th:nth-child(9), .card:first-of-type .table-wrap thead th:nth-child(11) { min-width: 8rem; }
+    .card:first-of-type .table-wrap thead th:nth-child(10) { min-width: 5rem; }
+    .card:first-of-type .table-wrap thead th:nth-child(12) { min-width: 8rem; }
+    .card:first-of-type .table-wrap thead th:nth-child(13) { min-width: 6rem; }
+    .card:first-of-type .table-wrap thead th:nth-child(14) { min-width: 3rem; }
+    .card:first-of-type .table-wrap thead th:nth-child(1),
+    .card:first-of-type .table-wrap thead th.col-num-header,
+    .card:first-of-type .table-wrap thead th.row-id-header { position: sticky; z-index: 2; background: var(--md-sys-color-surface); text-align: left; }
+    .card:first-of-type .table-wrap thead th:nth-child(1) { left: 0; }
+    .card:first-of-type .table-wrap thead th.col-num-header { left: 3.5rem; text-align: center; }
+    .card:first-of-type .table-wrap thead th.row-id-header { left: 7rem; }
+    .card:first-of-type .table-wrap tbody td { padding: 0.4rem 0.3rem; vertical-align: middle; border-bottom: 1px solid var(--table-row-border); font-size: 0.85rem; color: var(--header-text); }
+    .card:first-of-type .table-wrap tbody td:last-child { padding-right: 0; }
+    .card:first-of-type .table-wrap tbody td:nth-child(4) { min-width: 4.5rem; }
+    .card:first-of-type .table-wrap tbody td:nth-child(5) { min-width: 10rem; }
+    .card:first-of-type .table-wrap tbody td:nth-child(6), .card:first-of-type .table-wrap tbody td:nth-child(7) { min-width: 8rem; }
+    .card:first-of-type .table-wrap tbody td:nth-child(8) { min-width: 5rem; }
+    .card:first-of-type .table-wrap tbody td:nth-child(9), .card:first-of-type .table-wrap tbody td:nth-child(11) { min-width: 8rem; }
+    .card:first-of-type .table-wrap tbody td:nth-child(10) { min-width: 5rem; }
+    .card:first-of-type .table-wrap tbody td:nth-child(12) { min-width: 8rem; }
+    .card:first-of-type .table-wrap tbody td:nth-child(13) { min-width: 6rem; }
+    .card:first-of-type .table-wrap tbody td:nth-child(14) { min-width: 3rem; }
+    .card:first-of-type .table-wrap tbody td:nth-child(1),
+    .card:first-of-type .table-wrap tbody td.row-num-cell,
+    .card:first-of-type .table-wrap tbody td.row-id-cell { position: sticky; z-index: 1; background: var(--bg); }
+    .card:first-of-type .table-wrap tbody td:nth-child(1) { left: 0; }
+    .card:first-of-type .table-wrap tbody td.row-num-cell { left: 3.5rem; }
+    .card:first-of-type .table-wrap tbody td.row-id-cell { left: 7rem; }
+    .card:first-of-type .table-wrap .row-actions { display: inline-flex; align-items: center; gap: 4px; }
+    .card:first-of-type .table-wrap .row-delete-btn { width: 22px; height: 22px; padding: 0; border: none; background: transparent; color: var(--text-muted); cursor: pointer; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+    .card:first-of-type .table-wrap .row-delete-btn:hover { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
+    .card:first-of-type .table-wrap .row-drag-handle { width: 26px; height: 26px; padding: 0; border: none; background: transparent; color: var(--text-muted); cursor: grab; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; }
+    .card:first-of-type .table-wrap .row-drag-handle:hover { color: var(--text); background: var(--symbol-btn-hover); }
+    .card:first-of-type .table-wrap .row-drag-handle svg { width: 18px; height: 18px; }
+    .card:first-of-type .table-wrap .date-input, .card:first-of-type .table-wrap .task-input, .card:first-of-type .table-wrap .target-select, .card:first-of-type .table-wrap .units-select, .card:first-of-type .table-wrap .link-select, .card:first-of-type .table-wrap .duration-input, .card:first-of-type .table-wrap .progress-input, .card:first-of-type .table-wrap .delay-input { width: 100%; min-width: 0; padding: 0.35rem 0.3rem; border: 1px solid var(--text-muted); border-radius: 4px; background: var(--bg); color: var(--text); font-size: 0.8rem; font-family: inherit; box-sizing: border-box; }
+    .card:first-of-type .table-wrap .date-input { cursor: pointer; }
+    .card:first-of-type .table-wrap .target-select, .card:first-of-type .table-wrap .units-select, .card:first-of-type .table-wrap .link-select { padding-right: 1.5rem; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23787b86' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.3rem center; }
+    .card:first-of-type .table-wrap .duration-input, .card:first-of-type .table-wrap .progress-input, .card:first-of-type .table-wrap .delay-input { text-align: right; }
+    .card:first-of-type .table-wrap .task-flags-cell button { width: 20px; height: 20px; min-width: 20px; min-height: 20px; padding: 0; display: inline-flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 500; cursor: pointer; border: 1px solid var(--text-muted); border-radius: 4px; margin-right: 4px; }
+    .card:first-of-type .table-wrap .critical-btn.selected { background: #ef4444; color: #fff; }
+    .card:first-of-type .table-wrap .a-btn.selected { background: #5aaa00; color: #fff; }
+    .card:first-of-type .table-wrap .d-btn.selected { background: #8c8578; color: #fff; }
+    .card:first-of-type .table-wrap .m-btn.selected { background: #2196f3; color: #fff; }
+    .card:first-of-type .table-wrap .t-btn { background: #8b5cf6; color: #fff; }
+    .card:first-of-type .table-wrap .t-btn.selected { background: #f97316; color: #fff; }
+    .card:first-of-type .table-wrap tbody tr.dragging { opacity: 0.5; }
+    .card:first-of-type .table-wrap tbody tr.drag-over { background: var(--row-hover); }
+    .card:first-of-type .table-wrap tbody tr.drop-before td { box-shadow: inset 0 4px 0 0 var(--symbol-btn-selected); }
+    .card:first-of-type .table-wrap tbody tr.drop-after td { box-shadow: inset 0 -4px 0 0 var(--symbol-btn-selected); }
+    .card:first-of-type .table-wrap tbody tr.row-is-section td:nth-child(2) .row-num, .card:first-of-type .table-wrap tbody tr.row-is-section td:nth-child(n+5) input, .card:first-of-type .table-wrap tbody tr.row-is-section td:nth-child(n+5) select { display: none; }
+    .card:first-of-type .table-wrap .row-num-cell { text-align: center; color: var(--text-muted); font-size: 0.85rem; }
+    .card:first-of-type .table-wrap .row-id-cell { width: 4.5rem; min-width: 4.5rem; max-width: 4.5rem; }
+    .card:first-of-type .table-wrap .row-id-header { width: 4.5rem; min-width: 4.5rem; max-width: 4.5rem; }
+    /* ID column hidden; to show again remove the following rule. */
+    .card:first-of-type .table-wrap .col-id,
+    .card:first-of-type .table-wrap thead th.row-id-header,
+    .card:first-of-type .table-wrap tbody td.row-id-cell { display: none; }
+    /* Color column hidden; bar colors are driven by A/D/M/C (see getBarColorKey). Color data still stored for future use. To show again remove the following rule. */
+    .card:first-of-type .table-wrap .col-color,
+    .card:first-of-type .table-wrap thead th.row-color-header,
+    .card:first-of-type .table-wrap tbody td.row-color-cell { display: none; }
+    .card:first-of-type .table-wrap thead th.task-flags-col,
+    .card:first-of-type .table-wrap .task-flags-cell { white-space: nowrap; min-width: 8rem; }
+    .card:first-of-type .table-wrap .task-input::placeholder { color: var(--text-muted); }
+    .card:first-of-type .table-wrap tbody tr:hover td { background: var(--row-hover); }
+    .card:first-of-type .table-wrap tbody tr:hover td:nth-child(1),
+    .card:first-of-type .table-wrap tbody tr:hover td.row-num-cell,
+    .card:first-of-type .table-wrap tbody tr:hover td.row-id-cell { background: var(--row-hover); }
+    .card:first-of-type .table-wrap .date-input:focus, .card:first-of-type .table-wrap .task-input:focus, .card:first-of-type .table-wrap .target-select:focus, .card:first-of-type .table-wrap .units-select:focus, .card:first-of-type .table-wrap .link-select:focus, .card:first-of-type .table-wrap .duration-input:focus, .card:first-of-type .table-wrap .progress-input:focus, .card:first-of-type .table-wrap .delay-input:focus { outline: none; border-color: var(--symbol-btn-selected); box-shadow: 0 0 0 1px var(--symbol-btn-selected); }
+    .flatpickr-today-wrap { padding: 8px; border-top: 1px solid rgba(0,0,0,0.1); }
+    .flatpickr-today-btn { width: 100%; padding: 6px 12px; font-size: 0.8rem; font-family: inherit; color: var(--profile-primary); background: transparent; border: 1px solid var(--profile-primary); border-radius: 4px; cursor: pointer; }
+    .flatpickr-today-btn:hover { background: rgba(25, 118, 210, 0.08); }
+    body[data-theme="dark"] .flatpickr-today-wrap { border-top-color: rgba(255,255,255,0.12); }
+    body[data-theme="dark"] .flatpickr-today-btn:hover { background: rgba(100, 181, 246, 0.12); }
+    .card:first-of-type .table-wrap .critical-btn, .card:first-of-type .table-wrap .a-btn, .card:first-of-type .table-wrap .d-btn, .card:first-of-type .table-wrap .m-btn { background: var(--bg); color: var(--text); }
+    .card:first-of-type .table-wrap .critical-btn:hover, .card:first-of-type .table-wrap .a-btn:hover, .card:first-of-type .table-wrap .d-btn:hover, .card:first-of-type .table-wrap .m-btn:hover { background: var(--symbol-btn-hover); }
+
+    @media (max-width: 1100px) {
+      .controls-grid { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="app-theme-bar">
+      <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode"><span id="themeIcon">🌙</span></button>
+    </div>
+    <section class="card" id="scheduleCard">
+      <div class="schedule-card-header">
+        <div class="m3-outlined-field">
+          <label for="firstCardTitle">Project Name</label>
+          <input type="text" class="card-title-input" id="firstCardTitle" placeholder="Enter project name" aria-label="Project name">
+        </div>
+        <button type="button" class="btn-secondary btn-icon" id="collapseScheduleCardBtn" aria-label="Collapse schedule" title="Collapse schedule" aria-expanded="true" aria-controls="scheduleCard"><span class="material-symbols-outlined" id="collapseScheduleCardIcon">expand_less</span></button>
+      </div>
+      <div class="container">
+        <div class="add-row-bar">
+          <button type="button" class="add-row-btn btn-icon" id="addRowBtn" aria-label="Add row" title="Add row"><span class="material-symbols-outlined">add</span></button>
+          <button type="button" class="clear-all-btn" id="clearAllBtn">Clear All</button>
+        </div>
+        <div class="table-wrap">
+            <table>
+              <colgroup><col><col class="col-num"><col><col class="col-id"><col><col><col><col><col><col><col><col><col><col class="col-color"></colgroup>
+              <thead>
+                <tr>
+                  <th></th>
+                  <th class="col-num-header">#</th>
+                  <th class="task-flags-col">Properties</th>
+                  <th class="row-id-header">ID</th>
+                  <th>Name</th>
+                  <th>Start Date</th>
+                  <th>End Date</th>
+                  <th>Progress</th>
+                  <th>Duration</th>
+                  <th>Units</th>
+                  <th>Delay</th>
+                  <th>Link</th>
+                  <th>From</th>
+                  <th class="row-color-header">Color</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+            <template id="rowTemplate">
+              <tr>
+                <td>
+                  <div class="row-actions">
+                    <button type="button" class="row-delete-btn" aria-label="Delete row" title="Delete row">×</button>
+                    <span class="row-drag-handle" role="button" tabindex="0" aria-label="Drag to reorder" title="Drag to reorder" draggable="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg></span>
+                  </div>
+                </td>
+                <td class="row-num-cell"><span class="row-num">1</span></td>
+                <td class="task-flags-cell"><button type="button" class="t-btn">T</button><button type="button" class="a-btn">A</button><button type="button" class="d-btn">D</button><button type="button" class="critical-btn">C</button><button type="button" class="m-btn">M</button></td>
+                <td class="row-id-cell"><span class="row-id-display" aria-label="ID"></span></td>
+                <td><input type="text" class="task-input" placeholder="Task/Section Name" aria-label="Task / Section"></td>
+                <td><input type="text" class="date-input" placeholder="Pick date" aria-label="Start date" readonly></td>
+                <td><input type="text" class="date-input" placeholder="Pick date" aria-label="End date" readonly></td>
+                <td><input type="number" class="progress-input" min="0" max="100" step="1" placeholder="0" aria-label="Progress"></td>
+                <td><input type="number" class="duration-input" min="1" step="1" placeholder="0" aria-label="Duration"></td>
+                <td><select class="units-select" aria-label="Units"><option value="days">Days</option><option value="weeks">Weeks</option><option value="months">Months</option></select></td>
+                <td><input type="number" class="delay-input" min="-999" step="1" placeholder="0" aria-label="Delay"></td>
+                <td><select class="link-select" aria-label="Link"><option value="start-to-end">Start to End</option><option value="start-to-start">Start to Start</option><option value="end-to-start">End to Start</option><option value="end-to-end">End to End</option></select></td>
+                <td><select class="target-select" aria-label="Target"></select></td>
+                <td class="row-color-cell">
+                  <div class="color-picker-wrap row-color-picker">
+                    <input type="hidden" class="row-color-input">
+                    <button type="button" class="color-picker-btn" aria-label="Bar color" aria-haspopup="true" aria-expanded="false">
+                      <span class="color-picker-dot"></span>
+                    </button>
+                    <div class="color-picker-menu" role="listbox" aria-label="Bar color">
+                      <span class="color-picker-option color-dot-purple" role="option" data-color="purple" tabindex="0"></span>
+                      <span class="color-picker-option color-dot-blue" role="option" data-color="blue" tabindex="0"></span>
+                      <span class="color-picker-option color-dot-green" role="option" data-color="green" tabindex="0"></span>
+                      <span class="color-picker-option color-dot-orange" role="option" data-color="orange" tabindex="0"></span>
+                      <span class="color-picker-option color-dot-red" role="option" data-color="red" tabindex="0"></span>
+                      <span class="color-picker-option color-dot-teal" role="option" data-color="teal" tabindex="0"></span>
+                      <span class="color-picker-option color-dot-magenta" role="option" data-color="magenta" tabindex="0"></span>
+                      <span class="color-picker-option color-dot-gray" role="option" data-color="gray" tabindex="0"></span>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </template>
+          </div>
+        </div>
+    </section>
+
+    <main class="card gantt-card" id="ganttCard">
+      <div class="gantt-card-header">
+        <h1 id="secondCardTitle"></h1>
+        <div class="gantt-card-switches">
+          <label class="header-switch-item">
+            <input type="checkbox" id="showWeekends" checked>
+            <span class="header-switch-label">Show weekends</span>
+            <span class="switch" aria-hidden="true"></span>
+          </label>
+          <label class="header-switch-item">
+            <input type="checkbox" id="showDependencies" checked>
+            <span class="header-switch-label">Show dependencies</span>
+            <span class="switch" aria-hidden="true"></span>
+          </label>
+        </div>
+        <div class="gantt-card-actions">
+          <select class="header-select" id="viewMode" aria-label="View mode" title="View mode">
+            <option value="day">Day</option>
+            <option value="week">Week</option>
+            <option value="month">Month</option>
+          </select>
+          <button class="btn-secondary btn-icon" id="zoomOutBtn" aria-label="Zoom out" title="Zoom out"><span class="material-symbols-outlined">zoom_out</span></button>
+          <button class="btn-secondary btn-icon" id="zoomInBtn" aria-label="Zoom in" title="Zoom in"><span class="material-symbols-outlined">zoom_in</span></button>
+          <button class="btn-secondary" id="todayBtn">Go to today</button>
+          <button class="btn-secondary btn-icon" id="settingsBtn" aria-label="Settings" title="Settings" aria-expanded="false" aria-controls="ganttSettingsPanel"><span class="material-symbols-outlined">settings</span></button>
+          <button class="btn-secondary btn-icon" id="collapseCardBtn" aria-label="Collapse chart" title="Collapse chart" aria-expanded="true" aria-controls="ganttCard"><span class="material-symbols-outlined" id="collapseCardIcon">expand_less</span></button>
+        </div>
+      </div>
+      <div class="gantt-settings-panel" id="ganttSettingsPanel">
+        <div class="controls-grid">
+          <div class="field">
+            <div class="m3-slider-label">
+              <label for="rowHeight">Row height</label>
+              <span class="m3-slider-value" id="rowHeightValue">36</span>
+            </div>
+            <input class="m3-slider" id="rowHeight" type="range" min="36" max="96" value="36">
+          </div>
+          <div class="field">
+            <div class="m3-slider-label">
+              <label for="barHeight">Bar height</label>
+              <span class="m3-slider-value" id="barHeightValue">29</span>
+            </div>
+            <input class="m3-slider" id="barHeight" type="range" min="12" max="40" value="29">
+          </div>
+          <div class="field">
+            <div class="m3-slider-label">
+              <label for="barRadius">Bar corner radius</label>
+              <span class="m3-slider-value" id="barRadiusValue">4</span>
+            </div>
+            <input class="m3-slider" id="barRadius" type="range" min="0" max="16" step="1" value="4">
+          </div>
+          <div class="field">
+            <div class="m3-slider-label">
+              <label for="strokeWidth">Outline width</label>
+              <span class="m3-slider-value" id="strokeWidthValue">1</span>
+            </div>
+            <input class="m3-slider" id="strokeWidth" type="range" min="1" max="6" step="0.5" value="1">
+          </div>
+          <div class="field">
+            <div class="m3-slider-label">
+              <label for="headerHeight">Header height</label>
+              <span class="m3-slider-value" id="headerHeightValue">72</span>
+            </div>
+            <input class="m3-slider" id="headerHeight" type="range" min="50" max="120" value="72">
+          </div>
+          <div class="field">
+            <div class="m3-slider-label">
+              <label for="leftWidth">Name column width</label>
+              <span class="m3-slider-value" id="leftWidthValue">280</span>
+            </div>
+            <input class="m3-slider" id="leftWidth" type="range" min="180" max="420" value="280">
+          </div>
+        </div>
+      </div>
+      <div class="viewport" id="viewport">
+        <canvas id="ganttCanvas"></canvas>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script>
+    /* ========== Theme + schedule table ========== */
+    (function () {
+      var themeKey = 'schedule-gen-theme';
+      var root = document.body;
+      var themeToggle = document.getElementById('themeToggle');
+      var themeIcon = document.getElementById('themeIcon');
+      if (!root || !themeToggle || !themeIcon) return;
+      function setTheme(theme) {
+        root.setAttribute('data-theme', theme);
+        try { localStorage.setItem(themeKey, theme); } catch (e) {}
+        themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+        try { window.dispatchEvent(new CustomEvent('wf-theme-change', { detail: { theme } })); } catch (e) {}
+      }
+      themeToggle.addEventListener('click', function () {
+        setTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+      });
+      /* Row number (#) = display order; ID = unique 3-char hex (000–FFF) stored in data-row-id and shown in ID column.
+       *
+       * LINKING (parent/child; stored by row ID; From UI is row-number-based; resolve to ID when applying):
+       * Link type (child->parent): Start-to-End, Start-to-Start, End-to-Start, End-to-End. No parent (From=—) => Link/Delay do nothing.
+       * Delay in row Units; 0 = parent link date + 1 day; non-zero adds/subtracts that many units. Recalc delay when Units change (like duration).
+       * Circular linking not allowed: before applying From/Link, check cycle; if cycle, ignore change and show warning.
+       * Current row = row being edited. Progeny = children, grandchildren, etc. Move progeny = recurse without changing their link/duration/delay.
+       *
+       * A1 Change Start (table or drag bar): recalc delay to stay linked; keep duration, recalc end; move progeny.
+       * A2 Change End (table or resize bar): recalc duration to stay linked; move progeny.
+       * A3 Change Duration (table or resize bar): recalc end to stay linked; move progeny.
+       * A4 Change Units: no dates; recalc duration and delay on current row only.
+       * A5 Change Delay: recalc start to stay linked; keep duration, recalc end; move progeny.
+       * A6 Change Link type: keep duration and delay; recalc start and end; move progeny.
+       * A7.1 From -> other row: keep duration and delay; recalc start and end; move progeny.
+       * A7.2 From -> —: break link only; no other changes.
+       * A7.3 From — to parent: keep duration and delay; set start/end from parent+link+delay; move progeny.
+       * A8 Delete row: break link to parent and to immediate children only; no date changes; no effect on grandchildren+.
+       * B7 Task->Section (had parent and children): break links; former parent adopts children; add this row's delay to each child's delay so no dates change.
+       * C1 Reorder: links stay by ID; only row numbers and From options recalc (display). C2 Insert: no link/date changes. C3 Clear all: nuke graph. C4 No undo.
+       * D1 Drag bar = A1. D2 Resize bar = A2/A3.
+       * Future: workdays vs calendar per row; "finish before" / drag front of bar to change start/duration. */
+      var idCounter = 0;
+      function nextId() {
+        var n = idCounter % 4096;
+        idCounter += 1;
+        return n.toString(16).toUpperCase().padStart(3, '0');
+      }
+      function parseStoredId(stored) {
+        if (!stored || typeof stored !== 'string') return null;
+        var s = stored.trim();
+        if (/^[0-9A-Fa-f]{3}$/.test(s)) return s.toUpperCase();
+        var m = /^row-(\d+)$/.exec(s);
+        if (m) return parseInt(m[1], 10).toString(16).toUpperCase().padStart(3, '0');
+        return null;
+      }
+      function ensureRowIds() {
+        var tbody = document.querySelector('.table-wrap tbody');
+        if (!tbody) return;
+        Array.prototype.forEach.call(tbody.rows, function (row) {
+          if (!row.getAttribute('data-row-id')) row.setAttribute('data-row-id', nextId());
+          var disp = row.querySelector('.row-id-display');
+          if (disp) disp.textContent = row.getAttribute('data-row-id') || '';
+        });
+      }
+      function renumberRows() {
+        var tbody = document.querySelector('.table-wrap tbody');
+        if (!tbody) return;
+        var taskNumber = 0;
+        Array.prototype.forEach.call(tbody.rows, function (row) {
+          var span = row.querySelector('.row-num');
+          if (!span) return;
+          if (row.classList.contains('row-is-section')) span.textContent = '';
+          else { taskNumber += 1; span.textContent = taskNumber; }
+        });
+        refreshTargetDropdowns();
+      }
+      /* From = parent by ID; options show row numbers (—, Previous, Next, 1,2,3…). Resolve selection to ID when applying. See README Linking. */
+      function refreshTargetDropdowns() {
+        var tbody = document.querySelector('.table-wrap tbody');
+        if (!tbody) return;
+        ensureRowIds();
+        var rows = tbody.rows;
+        var taskRows = [];
+        Array.prototype.forEach.call(rows, function (row) {
+          if (row.classList.contains('row-is-section')) return;
+          var span = row.querySelector('.row-num');
+          if (span && span.textContent) taskRows.push({ row: row, id: row.getAttribute('data-row-id'), num: span.textContent });
+        });
+        Array.prototype.forEach.call(rows, function (row) {
+          var sel = row.querySelector('.target-select');
+          if (!sel) return;
+          var current = sel.value;
+          var rowIndex = Array.prototype.indexOf.call(rows, row);
+          var previousRow = null, nextRow = null;
+          for (var i = rowIndex - 1; i >= 0; i--) { if (!rows[i].classList.contains('row-is-section')) { previousRow = rows[i]; break; } }
+          for (var j = rowIndex + 1; j < rows.length; j++) { if (!rows[j].classList.contains('row-is-section')) { nextRow = rows[j]; break; } }
+          if (current === 'previous' && previousRow) current = previousRow.getAttribute('data-row-id');
+          if (current === 'next' && nextRow) current = nextRow.getAttribute('data-row-id');
+          sel.innerHTML = '';
+          var optNone = document.createElement('option'); optNone.value = ''; optNone.textContent = '—'; sel.appendChild(optNone);
+          if (previousRow) { var o = document.createElement('option'); o.value = previousRow.getAttribute('data-row-id'); o.textContent = 'Previous'; sel.appendChild(o); }
+          if (nextRow) { var o = document.createElement('option'); o.value = nextRow.getAttribute('data-row-id'); o.textContent = 'Next'; sel.appendChild(o); }
+          taskRows.forEach(function (task) {
+            if (task.row === row) return;
+            var o = document.createElement('option'); o.value = task.id; o.textContent = task.num; sel.appendChild(o);
+          });
+          var optionValues = Array.prototype.map.call(sel.options, function (o) { return o.value; });
+          /* Preserve this row’s From when it points to an existing row (e.g. section not in taskRows). Parent’s From = — must not clear children’s links. */
+          var parentRow = (current && current !== '') ? getRowById(current) : null;
+          var preserveLink = parentRow || (current && optionValues.indexOf(current) !== -1);
+          if (preserveLink && current) {
+            if (optionValues.indexOf(current) === -1 && parentRow) {
+              var numSpan = parentRow.querySelector('.row-num');
+              var opt = document.createElement('option');
+              opt.value = current;
+              opt.textContent = (numSpan && numSpan.textContent) ? numSpan.textContent : '?';
+              sel.appendChild(opt);
+            }
+            sel.value = current;
+          } else {
+            sel.selectedIndex = 0;
+          }
+        });
+      }
+      var ROW_DEFAULTS = {
+        taskName: 'New Task',
+        progress: 0,
+        duration: 2,
+        units: 'days',
+        delay: 0,
+        link: 'start-to-end',
+        target: '',
+        color: 'blue', /* stored for future use; bar colors are driven by A/D/M/C via getBarColorKey */
+        section: false,
+        a: false,
+        d: false,
+        c: false,
+        m: false
+      };
+      function applyRowDefaults(row, overrides) {
+        if (!row) return;
+        var o = overrides || {};
+        var taskInput = row.querySelector('.task-input');
+        if (taskInput) taskInput.value = o.taskName != null ? o.taskName : ROW_DEFAULTS.taskName;
+        var progressInput = row.querySelector('.progress-input');
+        if (progressInput) progressInput.value = String(o.progress != null ? o.progress : ROW_DEFAULTS.progress);
+        var durationInput = row.querySelector('.duration-input');
+        if (durationInput) durationInput.value = String(o.duration != null ? o.duration : ROW_DEFAULTS.duration);
+        var unitsSelect = row.querySelector('.units-select');
+        if (unitsSelect) unitsSelect.value = o.units != null ? o.units : ROW_DEFAULTS.units;
+        var delayInput = row.querySelector('.delay-input');
+        if (delayInput) delayInput.value = String(o.delay != null ? o.delay : ROW_DEFAULTS.delay);
+        var linkSelect = row.querySelector('.link-select');
+        if (linkSelect) linkSelect.value = o.link != null ? o.link : ROW_DEFAULTS.link;
+        var targetSelect = row.querySelector('.target-select');
+        if (targetSelect) targetSelect.value = o.target != null ? o.target : ROW_DEFAULTS.target;
+        var colorInput = row.querySelector('.row-color-input');
+        var color = o.color != null ? o.color : ROW_DEFAULTS.color;
+        if (colorInput) colorInput.value = color;
+        var dot = row.querySelector('.row-color-picker .color-picker-dot');
+        if (dot) dot.className = 'color-picker-dot color-dot-' + color;
+        var section = o.section != null ? o.section : ROW_DEFAULTS.section;
+        if (section) { row.classList.add('row-is-section'); row.querySelector('.t-btn').classList.add('selected'); row.querySelector('.t-btn').textContent = 'S'; }
+        else { row.classList.remove('row-is-section'); row.querySelector('.t-btn').classList.remove('selected'); row.querySelector('.t-btn').textContent = 'T'; }
+        var a = o.a != null ? o.a : ROW_DEFAULTS.a;
+        var d = o.d != null ? o.d : ROW_DEFAULTS.d;
+        var c = o.c != null ? o.c : ROW_DEFAULTS.c;
+        var m = o.m != null ? o.m : ROW_DEFAULTS.m;
+        if (a) row.querySelector('.a-btn').classList.add('selected'); else row.querySelector('.a-btn').classList.remove('selected');
+        if (d) row.querySelector('.d-btn').classList.add('selected'); else row.querySelector('.d-btn').classList.remove('selected');
+        var aBtn = row.querySelector('.a-btn');
+        var dBtn = row.querySelector('.d-btn');
+        if (dBtn.classList.contains('selected')) aBtn.classList.remove('selected');
+        if (aBtn.classList.contains('selected')) dBtn.classList.remove('selected');
+        if (c) row.querySelector('.critical-btn').classList.add('selected'); else row.querySelector('.critical-btn').classList.remove('selected');
+        if (m) row.querySelector('.m-btn').classList.add('selected'); else row.querySelector('.m-btn').classList.remove('selected');
+      }
+      function getScheduleData() {
+        var tbody = document.querySelector('.table-wrap tbody');
+        if (!tbody) return [];
+        var out = [];
+        Array.prototype.forEach.call(tbody.rows, function (row) {
+          var taskInput = row.querySelector('.task-input');
+          var dateInputs = row.querySelectorAll('.date-input');
+          var durationInput = row.querySelector('.duration-input');
+          var unitsSelect = row.querySelector('.units-select');
+          var delayInput = row.querySelector('.delay-input');
+          var linkSelect = row.querySelector('.link-select');
+          var targetSelect = row.querySelector('.target-select');
+          var colorInput = row.querySelector('.row-color-input');
+          var progressInput = row.querySelector('.progress-input');
+          out.push({
+            id: row.getAttribute('data-row-id') || '',
+            section: row.classList.contains('row-is-section'),
+            name: taskInput ? taskInput.value : '',
+            startDate: dateInputs[0] ? dateInputs[0].value : '',
+            endDate: dateInputs[1] ? dateInputs[1].value : '',
+            duration: durationInput ? (parseFloat(durationInput.value) || ROW_DEFAULTS.duration) : ROW_DEFAULTS.duration,
+            units: unitsSelect ? unitsSelect.value : ROW_DEFAULTS.units,
+            delay: delayInput ? (parseInt(delayInput.value, 10) || ROW_DEFAULTS.delay) : ROW_DEFAULTS.delay,
+            link: linkSelect ? linkSelect.value : ROW_DEFAULTS.link,
+            target: targetSelect ? targetSelect.value : ROW_DEFAULTS.target,
+            color: colorInput ? (colorInput.value || ROW_DEFAULTS.color) : ROW_DEFAULTS.color, /* stored; chart uses getBarColorKey(A/D/M/C) */
+            progress: progressInput ? Math.max(0, Math.min(100, parseInt(progressInput.value, 10) || ROW_DEFAULTS.progress)) : ROW_DEFAULTS.progress,
+            a: row.querySelector('.a-btn') && row.querySelector('.a-btn').classList.contains('selected'),
+            d: row.querySelector('.d-btn') && row.querySelector('.d-btn').classList.contains('selected'),
+            c: row.querySelector('.critical-btn') && row.querySelector('.critical-btn').classList.contains('selected'),
+            m: row.querySelector('.m-btn') && row.querySelector('.m-btn').classList.contains('selected')
+          });
+        });
+        return out;
+      }
+      function setScheduleData(data) {
+        var tbody = document.querySelector('.table-wrap tbody');
+        if (!tbody || !data || !data.length) return;
+        var templateSource = tbody.rows.length ? tbody.rows[0] : (document.getElementById('rowTemplate') && document.getElementById('rowTemplate').content.firstElementChild);
+        if (!templateSource) return;
+        var template = templateSource.cloneNode(true);
+        tbody.innerHTML = '';
+        data.forEach(function (item) {
+          var row = template.cloneNode(true);
+          var idToUse = parseStoredId(item.id) || nextId();
+          row.setAttribute('data-row-id', idToUse);
+          var idDisp = row.querySelector('.row-id-display');
+          if (idDisp) idDisp.textContent = idToUse;
+          idCounter = Math.max(idCounter, parseInt(idToUse, 16) + 1);
+          if (item.section) { row.classList.add('row-is-section'); row.querySelector('.t-btn').classList.add('selected'); row.querySelector('.t-btn').textContent = 'S'; }
+          else { row.classList.remove('row-is-section'); row.querySelector('.t-btn').classList.remove('selected'); row.querySelector('.t-btn').textContent = 'T'; }
+          var taskInput = row.querySelector('.task-input'); if (taskInput) taskInput.value = item.name || '';
+          var dateInputs = row.querySelectorAll('.date-input');
+          if (dateInputs[0]) dateInputs[0].value = item.startDate || '';
+          if (dateInputs[1]) dateInputs[1].value = item.endDate || '';
+          var progressInput = row.querySelector('.progress-input');
+          if (progressInput) progressInput.value = String(Math.max(0, Math.min(100, parseInt(item.progress, 10) || ROW_DEFAULTS.progress)));
+          var durationInput = row.querySelector('.duration-input'); if (durationInput) durationInput.value = String(item.duration != null ? item.duration : ROW_DEFAULTS.duration);
+          var unitsSelect = row.querySelector('.units-select'); if (unitsSelect) { unitsSelect.value = item.units || ROW_DEFAULTS.units; if (unitsSelect.value !== item.units) unitsSelect.selectedIndex = 0; }
+          var delayInput = row.querySelector('.delay-input'); if (delayInput) delayInput.value = String(item.delay != null ? item.delay : ROW_DEFAULTS.delay);
+          var linkSelect = row.querySelector('.link-select'); if (linkSelect) linkSelect.value = item.link || ROW_DEFAULTS.link;
+          var targetSelect = row.querySelector('.target-select'); if (targetSelect) targetSelect.value = item.target || ROW_DEFAULTS.target;
+          var colorInput = row.querySelector('.row-color-input');
+          if (colorInput) {
+            colorInput.value = item.color || ROW_DEFAULTS.color;
+            var dot = row.querySelector('.row-color-picker .color-picker-dot');
+            if (dot) dot.className = 'color-picker-dot color-dot-' + (item.color || ROW_DEFAULTS.color);
+          }
+          if (item.a) row.querySelector('.a-btn').classList.add('selected'); else row.querySelector('.a-btn').classList.remove('selected');
+          if (item.d) row.querySelector('.d-btn').classList.add('selected'); else row.querySelector('.d-btn').classList.remove('selected');
+          var aBtn = row.querySelector('.a-btn');
+          var dBtn = row.querySelector('.d-btn');
+          if (dBtn.classList.contains('selected')) aBtn.classList.remove('selected');
+          if (aBtn.classList.contains('selected')) dBtn.classList.remove('selected');
+          if (item.c) row.querySelector('.critical-btn').classList.add('selected'); else row.querySelector('.critical-btn').classList.remove('selected');
+          if (item.m) row.querySelector('.m-btn').classList.add('selected'); else row.querySelector('.m-btn').classList.remove('selected');
+          tbody.appendChild(row);
+          attachRowListeners(row);
+        });
+        renumberRows();
+      }
+      function serialize(data) {
+        try { return btoa(unescape(encodeURIComponent(JSON.stringify(data)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); } catch (e) { return ''; }
+      }
+      function deserialize(str) {
+        try { if (!str) return null; str = str.replace(/-/g, '+').replace(/_/g, '/'); while (str.length % 4) str += '='; return JSON.parse(decodeURIComponent(escape(atob(str)))); } catch (e) { return null; }
+      }
+      var saveToUrlTimer = null;
+      function saveToUrl() {
+        // Notify chart and other listeners immediately so first-card changes feel instant
+        window.dispatchEvent(new CustomEvent('wf-schedule-change'));
+        // Debounce only the URL update to avoid thrashing during typing
+        if (saveToUrlTimer) clearTimeout(saveToUrlTimer);
+        saveToUrlTimer = setTimeout(function () {
+          saveToUrlTimer = null;
+          var data = getScheduleData();
+          var encoded = data.length ? serialize(data) : '';
+          var url = window.location.pathname + (encoded ? '#' + encoded : '');
+          if (window.location.hash !== (encoded ? '#' + encoded : '')) history.replaceState(null, '', url);
+        }, 400);
+      }
+      function formatDateForTable(d) {
+        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      }
+      var dayMs = 24 * 60 * 60 * 1000;
+      function roundToTenth(n) { return Math.round(n * 10) / 10; }
+      function lengthInDaysInclusive(startDate, endDate) {
+        return Math.round((endDate - startDate) / dayMs) + 1;
+      }
+      function lengthToUnit(lengthDays, unit) {
+        if (unit === 'days') return roundToTenth(lengthDays);
+        if (unit === 'weeks') return roundToTenth(lengthDays / 7);
+        if (unit === 'months') return roundToTenth(lengthDays / (365.25 / 12));
+        return roundToTenth(lengthDays);
+      }
+      function addDurationToStart(startDate, durationNum, unit) {
+        var d = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+        if (unit === 'days') {
+          d.setDate(d.getDate() + (durationNum - 1));
+          return d;
+        }
+        if (unit === 'weeks') {
+          d.setDate(d.getDate() + (Math.round(durationNum * 7) - 1));
+          return d;
+        }
+        if (unit === 'months') {
+          d.setDate(d.getDate() + (Math.round(durationNum * (365.25 / 12)) - 1));
+          return d;
+        }
+        d.setDate(d.getDate() + (durationNum - 1));
+        return d;
+      }
+      function unitToLengthDays(amount, unit) {
+        if (unit === 'days') return amount;
+        if (unit === 'weeks') return amount * 7;
+        if (unit === 'months') return amount * (365.25 / 12);
+        return amount;
+      }
+      function subtractDurationFromEnd(endDate, durationNum, unit) {
+        var lengthDays = unitToLengthDays(durationNum, unit);
+        var startTime = endDate.getTime() - (lengthDays - 1) * dayMs;
+        return new Date(startTime);
+      }
+      function delayToDays(delayNum, unit) {
+        return unitToLengthDays(Math.abs(delayNum), unit) * (delayNum >= 0 ? 1 : -1);
+      }
+      function addDelayToParentDate(parentLinkDate, delayNum, unit) {
+        var d = new Date(parentLinkDate.getFullYear(), parentLinkDate.getMonth(), parentLinkDate.getDate());
+        d.setDate(d.getDate() + 1 + Math.round(delayToDays(delayNum, unit)));
+        return d;
+      }
+      function getRowById(id) {
+        if (!id) return null;
+        return document.querySelector('.table-wrap tbody tr[data-row-id="' + id + '"]') || null;
+      }
+      function getRowId(row) { return row ? row.getAttribute('data-row-id') || '' : ''; }
+      function getParentId(row) {
+        var sel = row && row.querySelector('.target-select');
+        return sel ? (sel.value || '').trim() : '';
+      }
+      function getParentRow(row) {
+        var pid = getParentId(row);
+        return pid ? getRowById(pid) : null;
+      }
+      function getChildren(row) {
+        var tbody = document.querySelector('.table-wrap tbody');
+        if (!tbody || !row) return [];
+        var id = getRowId(row);
+        if (!id) return [];
+        var out = [];
+        Array.prototype.forEach.call(tbody.rows, function (r) {
+          if (r.classList.contains('row-is-section')) return;
+          if (getParentId(r) === id) out.push(r);
+        });
+        return out;
+      }
+      function getProgenyIds(row) {
+        var seen = {};
+        var collect = function (r) {
+          var rid = getRowId(r);
+          if (!rid || seen[rid]) return;
+          seen[rid] = true;
+          getChildren(r).forEach(collect);
+        };
+        getChildren(row).forEach(collect);
+        return Object.keys(seen);
+        }
+      function wouldCreateCycle(row, newParentId) {
+        if (!row || !newParentId) return false;
+        if (getRowId(row) === newParentId) return true;
+        return getProgenyIds(row).indexOf(newParentId) !== -1;
+      }
+      function parseDateFromTable(str) {
+        if (!str || !str.trim()) return null;
+        var d = new Date(str.trim());
+        return isNaN(d.getTime()) ? null : d;
+      }
+      function getParentLinkDate(parentRow, linkType) {
+        if (!parentRow) return null;
+        var dateInputs = parentRow.querySelectorAll('.date-input');
+        if (!dateInputs.length || dateInputs.length < 2) return null;
+        var startStr = dateInputs[0].value && dateInputs[0].value.trim();
+        var endStr = dateInputs[1].value && dateInputs[1].value.trim();
+        if (!startStr || !endStr) return null;
+        var startDate = parseDateFromTable(startStr);
+        var endDate = parseDateFromTable(endStr);
+        if (!startDate || !endDate) return null;
+        if (linkType === 'start-to-end' || linkType === 'end-to-end') return endDate;
+        return startDate;
+      }
+      function getChildDatesFromParent(parentRow, linkType, delayNum, unit, durationNum) {
+        var parentLinkDate = getParentLinkDate(parentRow, linkType);
+        if (!parentLinkDate) return null;
+        var childLinkDate = addDelayToParentDate(parentLinkDate, delayNum, unit);
+        var startDate, endDate;
+        if (linkType === 'start-to-end' || linkType === 'start-to-start') {
+          startDate = childLinkDate;
+          endDate = addDurationToStart(startDate, durationNum, unit);
+        } else {
+          endDate = childLinkDate;
+          startDate = subtractDurationFromEnd(endDate, durationNum, unit);
+        }
+        return { startDate: startDate, endDate: endDate };
+      }
+      function applyRowDatesFromParent(row) {
+        var parentRow = getParentRow(row);
+        if (!parentRow) return;
+        var linkSelect = row.querySelector('.link-select');
+        var delayInput = row.querySelector('.delay-input');
+        var unitsSelect = row.querySelector('.units-select');
+        var durationInput = row.querySelector('.duration-input');
+        if (!linkSelect || !delayInput || !unitsSelect || !durationInput) return;
+        var linkType = linkSelect.value || 'start-to-end';
+        var delayNum = parseInt(delayInput.value, 10);
+        if (isNaN(delayNum)) delayNum = 0;
+        var unit = unitsSelect.value || 'days';
+        var durationNum = Math.max(0.1, parseFloat(durationInput.value) || ROW_DEFAULTS.duration);
+        var computed = getChildDatesFromParent(parentRow, linkType, delayNum, unit, durationNum);
+        if (!computed) return;
+        applyStartEndToRow(row, computed.startDate, computed.endDate);
+      }
+      function cascadeToProgeny(row) {
+        getChildren(row).forEach(function (child) {
+          applyRowDatesFromParent(child);
+          cascadeToProgeny(child);
+        });
+      }
+      function recalcDelayFromStart(row) {
+        var parentRow = getParentRow(row);
+        if (!parentRow) return;
+        var linkSelect = row.querySelector('.link-select');
+        var dateInputs = row.querySelectorAll('.date-input');
+        var delayInput = row.querySelector('.delay-input');
+        var unitsSelect = row.querySelector('.units-select');
+        if (!linkSelect || !dateInputs.length || dateInputs.length < 2 || !delayInput || !unitsSelect) return;
+        var linkType = linkSelect.value || 'start-to-end';
+        var parentLinkDate = getParentLinkDate(parentRow, linkType);
+        if (!parentLinkDate) return;
+        var startStr = dateInputs[0].value && dateInputs[0].value.trim();
+        if (!startStr) return;
+        var childLinkDate = parseDateFromTable(startStr);
+        if (!childLinkDate) return;
+        if (linkType === 'end-to-start' || linkType === 'end-to-end') {
+          var endStr = dateInputs[1].value && dateInputs[1].value.trim();
+          childLinkDate = parseDateFromTable(endStr);
+          if (!childLinkDate) return;
+        }
+        var baseNext = new Date(parentLinkDate.getFullYear(), parentLinkDate.getMonth(), parentLinkDate.getDate());
+        baseNext.setDate(baseNext.getDate() + 1);
+        var diffMs = childLinkDate.getTime() - baseNext.getTime();
+        var diffDays = Math.round(diffMs / dayMs);
+        var unit = unitsSelect.value || 'days';
+        var delayValue = lengthToUnit(Math.abs(diffDays), unit) * (diffDays >= 0 ? 1 : -1);
+        delayInput.value = String(roundToTenth(delayValue));
+      }
+      function ensureDefaultRowDates() {
+        var tbody = document.querySelector('.table-wrap tbody');
+        if (!tbody || !tbody.rows.length) return;
+        var firstRow = tbody.rows[0];
+        var dateInputs = firstRow.querySelectorAll('.date-input');
+        if (!dateInputs.length || dateInputs.length < 2) return;
+        var hasStart = dateInputs[0].value && dateInputs[0].value.trim();
+        if (hasStart) return;
+        var today = new Date();
+        var todayStr = formatDateForTable(today);
+        var durationInput = firstRow.querySelector('.duration-input');
+        var unitsSelect = firstRow.querySelector('.units-select');
+        var duration = (durationInput && parseFloat(durationInput.value)) || ROW_DEFAULTS.duration;
+        var unit = (unitsSelect && unitsSelect.value) || 'days';
+        var endDate = addDurationToStart(today, duration, unit);
+        var endStr = formatDateForTable(endDate);
+        dateInputs[0].value = todayStr;
+        dateInputs[1].value = endStr;
+        if (dateInputs[0]._flatpickr) dateInputs[0]._flatpickr.setDate(today);
+        if (dateInputs[1]._flatpickr) dateInputs[1]._flatpickr.setDate(endDate);
+        if (durationInput) durationInput.value = String(duration);
+        saveToUrl();
+      }
+      function applyStartEndToRow(row, startDate, endDate) {
+        var dateInputs = row.querySelectorAll('.date-input');
+        if (!dateInputs.length || dateInputs.length < 2) return;
+        dateInputs[0].value = formatDateForTable(startDate);
+        dateInputs[1].value = formatDateForTable(endDate);
+        if (dateInputs[0]._flatpickr) dateInputs[0]._flatpickr.setDate(startDate);
+        if (dateInputs[1]._flatpickr) dateInputs[1]._flatpickr.setDate(endDate);
+        var durationInput = row.querySelector('.duration-input');
+        var unitsSelect = row.querySelector('.units-select');
+        if (durationInput && unitsSelect) {
+          var lengthDays = lengthInDaysInclusive(startDate, endDate);
+          var unit = unitsSelect.value || 'days';
+          var duration = lengthToUnit(lengthDays, unit);
+          durationInput.value = String(duration);
+        }
+        saveToUrl();
+      }
+      function updateTableRowFromChart(taskId, startStr, endStr) {
+        var row = document.querySelector('.table-wrap tbody tr[data-row-id="' + taskId + '"]');
+        if (!row) return;
+        var startDate = new Date(startStr + 'T00:00:00');
+        var endDate = new Date(endStr + 'T00:00:00');
+        applyStartEndToRow(row, startDate, endDate);
+        if (getParentId(row)) recalcDelayFromStart(row);
+        cascadeToProgeny(row);
+      }
+      function initRowColorPicker(wrap) {
+        if (!wrap) return;
+        var input = wrap.querySelector('.row-color-input');
+        var btn = wrap.querySelector('.color-picker-btn');
+        var menu = wrap.querySelector('.color-picker-menu');
+        var options = wrap.querySelectorAll('.color-picker-option');
+        if (!input || !btn || !menu) return;
+        btn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          var open = menu.classList.toggle('open');
+          btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+          if (open) {
+            var rect = btn.getBoundingClientRect();
+            menu.style.position = 'fixed';
+            menu.style.left = rect.left + 'px';
+            menu.style.top = (rect.bottom + 6) + 'px';
+            menu.style.right = 'auto';
+            document.querySelectorAll('.table-wrap .row-color-picker .color-picker-menu.open').forEach(function (m) {
+              if (m !== menu) {
+                m.classList.remove('open');
+                m.closest('.row-color-picker').querySelector('.color-picker-btn').setAttribute('aria-expanded', 'false');
+                m.style.position = '';
+                m.style.left = '';
+                m.style.top = '';
+              }
+            });
+          } else {
+            menu.style.position = '';
+            menu.style.left = '';
+            menu.style.top = '';
+          }
+        });
+        options.forEach(function (opt) {
+          opt.addEventListener('click', function () {
+            var color = opt.getAttribute('data-color');
+            if (color) {
+              input.value = color;
+              var dot = wrap.querySelector('.color-picker-dot');
+              if (dot) dot.className = 'color-picker-dot color-dot-' + color;
+              menu.classList.remove('open');
+              btn.setAttribute('aria-expanded', 'false');
+              menu.style.position = '';
+              menu.style.left = '';
+              menu.style.top = '';
+              saveToUrl();
+            }
+          });
+        });
+      }
+      function syncEndDateFromDuration(row) {
+        var dateInputs = row.querySelectorAll('.date-input');
+        var durationInput = row.querySelector('.duration-input');
+        var unitsSelect = row.querySelector('.units-select');
+        if (!dateInputs.length || dateInputs.length < 2 || !durationInput || !unitsSelect) return;
+        var startStr = dateInputs[0].value && dateInputs[0].value.trim();
+        if (!startStr) return;
+        var startDate;
+        try { startDate = new Date(startStr); } catch (e) { return; }
+        if (isNaN(startDate.getTime())) return;
+        var duration = Math.max(0.1, parseFloat(durationInput.value) || ROW_DEFAULTS.duration);
+        var unit = unitsSelect.value || 'days';
+        var endDate = addDurationToStart(startDate, duration, unit);
+        applyStartEndToRow(row, startDate, endDate);
+      }
+      function syncDurationFromUnits(row) {
+        var dateInputs = row.querySelectorAll('.date-input');
+        if (!dateInputs.length || dateInputs.length < 2) return;
+        var startStr = dateInputs[0].value && dateInputs[0].value.trim();
+        var endStr = dateInputs[1].value && dateInputs[1].value.trim();
+        if (!startStr || !endStr) return;
+        try {
+          var startDate = new Date(startStr);
+          var endDate = new Date(endStr);
+          if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) applyStartEndToRow(row, startDate, endDate);
+        } catch (e) {}
+      }
+      function attachRowListeners(row) {
+        if (!row) return;
+        var deleteBtn = row.querySelector('.row-delete-btn');
+        if (deleteBtn) deleteBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          var r = this.closest('tr');
+          if (!r) return;
+          var targetSelect = r.querySelector('.target-select');
+          if (targetSelect) targetSelect.value = '';
+          getChildren(r).forEach(function (child) {
+            var cs = child.querySelector('.target-select');
+            if (cs) cs.value = '';
+          });
+          r.remove();
+          renumberRows();
+          saveToUrl();
+        });
+        row.querySelectorAll('.critical-btn').forEach(function (btn) { btn.addEventListener('click', function (e) { e.stopPropagation(); this.classList.toggle('selected'); saveToUrl(); }); });
+        row.querySelectorAll('.a-btn').forEach(function (btn) {
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            this.classList.toggle('selected');
+            if (this.classList.contains('selected')) row.querySelector('.d-btn').classList.remove('selected');
+            saveToUrl();
+          });
+        });
+        row.querySelectorAll('.t-btn').forEach(function (btn) {
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var tr = this.closest('tr');
+            if (tr && !tr.classList.contains('row-is-section')) {
+              var parentId = getParentId(tr);
+              var children = getChildren(tr);
+              if (parentId && children.length) {
+                var delayInput = tr.querySelector('.delay-input');
+                var myDelay = delayInput ? (parseInt(delayInput.value, 10) || 0) : 0;
+                children.forEach(function (child) {
+                  var cs = child.querySelector('.target-select');
+                  if (cs) cs.value = parentId;
+                  var cd = child.querySelector('.delay-input');
+                  if (cd) { var v = (parseInt(cd.value, 10) || 0) + myDelay; cd.value = String(v); }
+                });
+                var ts = tr.querySelector('.target-select');
+                if (ts) ts.value = '';
+              }
+            }
+            this.classList.toggle('selected');
+            this.textContent = this.classList.contains('selected') ? 'S' : 'T';
+            if (tr) { if (this.classList.contains('selected')) tr.classList.add('row-is-section'); else tr.classList.remove('row-is-section'); }
+            renumberRows();
+            saveToUrl();
+          });
+        });
+        row.querySelectorAll('.d-btn').forEach(function (btn) {
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            this.classList.toggle('selected');
+            if (this.classList.contains('selected')) row.querySelector('.a-btn').classList.remove('selected');
+            saveToUrl();
+          });
+        });
+        row.querySelectorAll('.m-btn').forEach(function (btn) { btn.addEventListener('click', function (e) { e.stopPropagation(); this.classList.toggle('selected'); saveToUrl(); }); });
+        var durationInput = row.querySelector('.duration-input');
+        if (durationInput) {
+          durationInput.addEventListener('input', function () { syncEndDateFromDuration(row); cascadeToProgeny(row); });
+          durationInput.addEventListener('change', function () { syncEndDateFromDuration(row); cascadeToProgeny(row); });
+        }
+        var unitsSelect = row.querySelector('.units-select');
+        if (unitsSelect) {
+          unitsSelect.addEventListener('change', function () { syncDurationFromUnits(row); if (!row.classList.contains('row-is-section')) recalcDelayFromStart(row); });
+        }
+        var delayInput = row.querySelector('.delay-input');
+        if (delayInput) {
+          delayInput.addEventListener('change', function () {
+            if (getParentId(row)) { applyRowDatesFromParent(row); cascadeToProgeny(row); }
+          });
+        }
+        var linkSelect = row.querySelector('.link-select');
+        if (linkSelect) {
+          linkSelect.addEventListener('change', function () {
+            if (getParentId(row)) { applyRowDatesFromParent(row); cascadeToProgeny(row); }
+          });
+        }
+        var targetSelect = row.querySelector('.target-select');
+        if (targetSelect) {
+          targetSelect.addEventListener('change', function () {
+            var newVal = (targetSelect.value || '').trim();
+            var oldVal = getParentId(row);
+            if (newVal === '') { saveToUrl(); return; }
+            if (wouldCreateCycle(row, newVal)) {
+              alert('This would create a circular dependency which is not allowed.');
+              targetSelect.value = oldVal || '';
+              return;
+            }
+            applyRowDatesFromParent(row);
+            cascadeToProgeny(row);
+            saveToUrl();
+          });
+        }
+        row.querySelectorAll('.row-color-picker').forEach(function (wrap) { initRowColorPicker(wrap); });
+      }
+      var addRowBtn = document.getElementById('addRowBtn');
+      var tbody = document.querySelector('.table-wrap tbody');
+      if (tbody && tbody.rows.length) {
+        ensureRowIds();
+        renumberRows();
+      }
+      var addRowTemplate = null;
+      if (addRowBtn && tbody) {
+        addRowBtn.addEventListener('click', function () {
+          var templateSource = tbody.rows.length ? (addRowTemplate || tbody.rows[0]) : (document.getElementById('rowTemplate') && document.getElementById('rowTemplate').content.firstElementChild);
+          if (!templateSource) return;
+          var newRow = templateSource.cloneNode(true);
+          newRow.removeAttribute('data-row-id');
+          var newId = nextId();
+          newRow.setAttribute('data-row-id', newId);
+          var idDisp = newRow.querySelector('.row-id-display');
+          if (idDisp) idDisp.textContent = newId;
+          tbody.appendChild(newRow);
+          renumberRows();
+          var prevRow = tbody.rows[tbody.rows.length - 2];
+          var targetId = prevRow ? prevRow.getAttribute('data-row-id') || '' : '';
+          applyRowDefaults(newRow, { target: targetId });
+          var dateInputs = newRow.querySelectorAll('.date-input');
+          if (targetId) {
+            applyRowDatesFromParent(newRow);
+          } else {
+            var today = new Date();
+            var startStr = formatDateForTable(today);
+            var endDate = addDurationToStart(today, ROW_DEFAULTS.duration, 'days');
+            var endStr = formatDateForTable(endDate);
+            if (dateInputs[0]) dateInputs[0].value = startStr;
+            if (dateInputs[1]) dateInputs[1].value = endStr;
+          }
+          saveToUrl();
+          newRow.querySelectorAll('.date-input').forEach(function (input, idx) {
+            var existing = input.value && input.value.trim();
+            var d = existing ? new Date(existing) : new Date();
+            if (isNaN(d.getTime())) d = new Date();
+            flatpickr(input, getFlatpickrOptions({ defaultDate: d }));
+          });
+          attachRowListeners(newRow);
+          if (tbody.rows.length) addRowTemplate = tbody.rows[0].cloneNode(true);
+        });
+      }
+      var clearAllBtn = document.getElementById('clearAllBtn');
+      if (clearAllBtn) clearAllBtn.addEventListener('click', function () {
+        var overlay = document.createElement('div');
+        overlay.className = 'm3-dialog-overlay';
+        var surface = document.createElement('div');
+        surface.className = 'm3-dialog-surface';
+        var headline = document.createElement('h3');
+        headline.className = 'm3-dialog-headline';
+        headline.textContent = 'Clear All Data?';
+        surface.appendChild(headline);
+        var body = document.createElement('p');
+        body.className = 'm3-dialog-body';
+        body.textContent = 'Are you sure you want to clear all data? This will delete all tasks, sections, and schedule data. This action cannot be undone.';
+        surface.appendChild(body);
+        var supporting = document.createElement('div');
+        supporting.className = 'm3-dialog-supporting';
+        var tip = document.createElement('p');
+        tip.textContent = 'Tip: You can bookmark this page to save your current work. The bookmark will include all your data in the URL.';
+        supporting.appendChild(tip);
+        var copyBtn = document.createElement('button');
+        copyBtn.type = 'button';
+        copyBtn.className = 'm3-dialog-copy-url';
+        copyBtn.textContent = 'Copy URL to Save';
+        copyBtn.addEventListener('click', function () {
+          var url = window.location.href;
+          navigator.clipboard.writeText(url).then(function () {
+            copyBtn.textContent = 'URL Copied!';
+            copyBtn.classList.add('copied');
+            setTimeout(function () {
+              copyBtn.textContent = 'Copy URL to Save';
+              copyBtn.classList.remove('copied');
+            }, 2000);
+          }).catch(function () {
+            var ta = document.createElement('textarea');
+            ta.value = url;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            try {
+              document.execCommand('copy');
+              copyBtn.textContent = 'URL Copied!';
+              copyBtn.classList.add('copied');
+              setTimeout(function () {
+                copyBtn.textContent = 'Copy URL to Save';
+                copyBtn.classList.remove('copied');
+              }, 2000);
+            } catch (e) {}
+            document.body.removeChild(ta);
+          });
+        });
+        supporting.appendChild(copyBtn);
+        surface.appendChild(supporting);
+        var actions = document.createElement('div');
+        actions.className = 'm3-dialog-actions';
+        var clearBtn = document.createElement('button');
+        clearBtn.type = 'button';
+        clearBtn.className = 'm3-dialog-btn m3-dialog-btn-destructive';
+        clearBtn.textContent = 'Clear All';
+        clearBtn.addEventListener('click', function () {
+          overlay.remove();
+          history.replaceState(null, '', window.location.pathname + window.location.search);
+          location.reload();
+        });
+        actions.appendChild(clearBtn);
+        var cancelBtn = document.createElement('button');
+        cancelBtn.type = 'button';
+        cancelBtn.className = 'm3-dialog-btn';
+        cancelBtn.textContent = 'Cancel';
+        cancelBtn.addEventListener('click', function () { overlay.remove(); });
+        actions.appendChild(cancelBtn);
+        surface.appendChild(actions);
+        overlay.appendChild(surface);
+        document.body.appendChild(overlay);
+        overlay.addEventListener('click', function (e) {
+          if (e.target === overlay) overlay.remove();
+        });
+      });
+      var restoredFromUrl = false;
+      try {
+        var h = window.location.hash.slice(1);
+        if (h) { var urlData = deserialize(h); if (urlData && urlData.length) { setScheduleData(urlData); restoredFromUrl = true; } }
+      } catch (e) {}
+      if (!restoredFromUrl && tbody && tbody.rows.length) {
+        applyRowDefaults(tbody.rows[0], { target: '' });
+        ensureDefaultRowDates();
+        addRowTemplate = tbody.rows[0].cloneNode(true);
+      } else if (tbody && tbody.rows.length) {
+        addRowTemplate = tbody.rows[0].cloneNode(true);
+      } else if (tbody) {
+        addRowTemplate = null;
+      }
+      if (!restoredFromUrl) document.querySelectorAll('.table-wrap tbody tr').forEach(attachRowListeners);
+      if (tbody) { tbody.addEventListener('input', saveToUrl); tbody.addEventListener('change', saveToUrl); }
+      if (tbody) {
+        tbody.addEventListener('dragstart', function (e) {
+          if (!e.target.classList.contains('row-drag-handle')) return;
+          var row = e.target.closest('tr');
+          if (!row) return;
+          e.dataTransfer.setData('text/plain', Array.prototype.indexOf.call(tbody.rows, row));
+          e.dataTransfer.effectAllowed = 'move';
+          row.classList.add('dragging');
+        });
+        tbody.addEventListener('dragend', function (e) {
+          if (!e.target.classList.contains('row-drag-handle')) return;
+          tbody.querySelectorAll('tr').forEach(function (r) { r.classList.remove('dragging', 'drag-over', 'drop-before', 'drop-after'); });
+        });
+        tbody.addEventListener('dragover', function (e) {
+          var tr = e.target.closest('tr');
+          if (!tr || !e.dataTransfer.types.includes('text/plain')) return;
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          tbody.querySelectorAll('tr').forEach(function (r) { r.classList.remove('drag-over', 'drop-before', 'drop-after'); });
+          tr.classList.add('drag-over');
+          if (e.clientY < tr.getBoundingClientRect().top + tr.getBoundingClientRect().height / 2) tr.classList.add('drop-before'); else tr.classList.add('drop-after');
+        });
+        tbody.addEventListener('dragleave', function (e) {
+          if (!e.relatedTarget || !tbody.contains(e.relatedTarget)) tbody.querySelectorAll('tr').forEach(function (r) { r.classList.remove('drag-over', 'drop-before', 'drop-after'); });
+        });
+        tbody.addEventListener('drop', function (e) {
+          var tr = e.target.closest('tr');
+          if (!tr) return;
+          e.preventDefault();
+          var dropBefore = tr.classList.contains('drop-before');
+          tbody.querySelectorAll('tr').forEach(function (r) { r.classList.remove('drag-over', 'drop-before', 'drop-after'); });
+          var sourceIndex = parseInt(e.dataTransfer.getData('text/plain'), 10);
+          var sourceRow = tbody.rows[sourceIndex];
+          if (sourceRow && sourceRow !== tr) {
+            tbody.insertBefore(sourceRow, dropBefore ? tr : tr.nextSibling);
+            renumberRows();
+            saveToUrl();
+          }
+        });
+      }
+      renumberRows();
+      function getFlatpickrOptions(overrides) {
+        var opts = {
+          dateFormat: 'M j, Y',
+          allowInput: false,
+          altInput: false,
+          defaultDate: overrides && overrides.defaultDate !== undefined ? overrides.defaultDate : new Date(),
+          onReady: function (selectedDates, dateStr, instance) {
+            var wrap = document.createElement('div');
+            wrap.className = 'flatpickr-today-wrap';
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'flatpickr-today-btn';
+            btn.textContent = 'Today';
+            btn.addEventListener('click', function () {
+              instance.setDate(new Date(), true);
+              instance.close();
+            });
+            wrap.appendChild(btn);
+            instance.calendarContainer.appendChild(wrap);
+          },
+          onChange: function (selectedDates, dateStr, instance) {
+            var input = instance.input;
+            if (!input || !input.closest) return;
+            var row = input.closest('tr');
+            if (!row || !row.querySelectorAll) return;
+            var dateInputs = row.querySelectorAll('.date-input');
+            if (dateInputs[0] === input) {
+              syncEndDateFromDuration(row);
+              if (getParentId(row)) recalcDelayFromStart(row);
+              cascadeToProgeny(row);
+            } else if (dateInputs[1] === input) {
+              var startStr = dateInputs[0].value && dateInputs[0].value.trim();
+              var endStr = dateInputs[1].value && dateInputs[1].value.trim();
+              if (startStr && endStr) {
+                try {
+                  var startDate = new Date(startStr);
+                  var endDate = new Date(endStr);
+                  if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
+                    applyStartEndToRow(row, startDate, endDate);
+                    cascadeToProgeny(row);
+                  }
+                } catch (e) {}
+              }
+            }
+          }
+        };
+        if (overrides) { for (var k in overrides) { if (overrides.hasOwnProperty(k)) opts[k] = overrides[k]; } }
+        return opts;
+      }
+      document.querySelectorAll('.date-input').forEach(function (input) {
+        var existing = input.value && input.value.trim();
+        flatpickr(input, getFlatpickrOptions({ defaultDate: existing || new Date() }));
+      });
+      window.getScheduleDataFromTable = getScheduleData;
+      window.updateTableRowFromChart = updateTableRowFromChart;
+      var scheduleCard = document.getElementById('scheduleCard');
+      var collapseScheduleCardBtn = document.getElementById('collapseScheduleCardBtn');
+      var collapseScheduleCardIcon = document.getElementById('collapseScheduleCardIcon');
+      if (scheduleCard && collapseScheduleCardBtn && collapseScheduleCardIcon) {
+        collapseScheduleCardBtn.addEventListener('click', function () {
+          var collapsed = scheduleCard.classList.toggle('schedule-card-collapsed');
+          collapseScheduleCardBtn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+          collapseScheduleCardBtn.setAttribute('aria-label', collapsed ? 'Expand schedule' : 'Collapse schedule');
+          collapseScheduleCardBtn.setAttribute('title', collapsed ? 'Expand schedule' : 'Collapse schedule');
+          collapseScheduleCardIcon.textContent = collapsed ? 'expand_more' : 'expand_less';
+        });
+      }
+      var saved = localStorage.getItem(themeKey);
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setTheme(saved || (prefersDark ? 'dark' : 'light'));
+    })();
+  </script>
+  <script>
+    /* ========== Gantt chart ========== */
+    const DAY_MS = 24 * 60 * 60 * 1000;
+
+    const palette = {
+      purple: { fill: '#6750a4', progress: '#9186c5' },
+      blue: { fill: '#2196f3', progress: '#8bbcfb' },
+      green: { fill: '#5aaa00', progress: '#8ed33b' },
+      orange: { fill: '#ff9800', progress: '#ffb780' },
+      red: { fill: '#f44336', progress: '#f4827c' },
+      teal: { fill: '#007a6e', progress: '#00b29f' },
+      magenta: { fill: '#c700a7', progress: '#ff80ef' },
+      gray: { fill: '#8c8578', progress: '#b0aba0' }
+    };
+
+    function getBarColorKey(task) {
+      if (task.m) return 'blue';
+      if (task.a) return 'green';
+      if (task.d) return 'gray';
+      return 'orange';
+    }
+
+    function getChartTasksFromTable() {
+      const raw = typeof window.getScheduleDataFromTable === 'function' ? window.getScheduleDataFromTable() : [];
+      const out = [];
+      let taskNum = 0;
+      for (let i = 0; i < raw.length; i++) {
+        const item = raw[i];
+        if (item.section) continue;
+        const startDate = item.startDate && item.startDate.trim();
+        const endDate = item.endDate && item.endDate.trim();
+        if (!startDate || !endDate) continue;
+        let startD, endD;
+        try {
+          startD = new Date(startDate);
+          endD = new Date(endDate);
+        } catch (e) { continue; }
+        if (isNaN(startD.getTime()) || isNaN(endD.getTime())) continue;
+        taskNum += 1;
+        const toYmd = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        out.push({
+          id: item.id && String(item.id).trim() ? String(item.id).trim() : (i % 4096).toString(16).toUpperCase().padStart(3, '0'),
+          num: taskNum,
+          name: item.name && item.name.trim() ? item.name.trim() : 'New Task',
+          start: toYmd(startD),
+          end: toYmd(endD),
+          progress: item.progress != null ? Math.max(0, Math.min(100, Number(item.progress) || 0)) : 0,
+          color: item.color || 'blue',
+          a: !!item.a,
+          d: !!item.d,
+          c: !!item.c,
+          m: !!item.m,
+          dependencies: ''
+        });
+      }
+      // Preserve dependencies from current tasks
+      for (const t of out) {
+        const existing = tasks.find(x => x.id === t.id);
+        if (existing && existing.dependencies != null) t.dependencies = String(existing.dependencies);
+      }
+      return out;
+    }
+
+    let tasks = [];
+    let selectedTaskId = tasks[0]?.id || null;
+    let chartMetrics = { bars: [], rows: [], rangeStart: null, rangeEnd: null, canvasWidth: 0, canvasHeight: 0, units: [] };
+    let dragState = null;
+
+    let unitWidth = 44;
+
+    const WEEKEND_RGB = [234, 219, 156];
+    const WEEKEND_ALPHA = { light: 0.4, dark: 0.05 };
+    const PILL_COLORS = { a: '#5aaa00', d: '#8c8578', c: '#ef4444', m: '#2196f3' };
+
+    const els = {
+      viewport: document.getElementById('viewport'),
+      canvas: document.getElementById('ganttCanvas'),
+      firstCardTitle: document.getElementById('firstCardTitle'),
+      secondCardTitle: document.getElementById('secondCardTitle'),
+      viewMode: document.getElementById('viewMode'),
+      rowHeight: document.getElementById('rowHeight'),
+      barHeight: document.getElementById('barHeight'),
+      barRadius: document.getElementById('barRadius'),
+      headerHeight: document.getElementById('headerHeight'),
+      leftWidth: document.getElementById('leftWidth'),
+      strokeWidth: document.getElementById('strokeWidth'),
+      showWeekends: document.getElementById('showWeekends'),
+      showDependencies: document.getElementById('showDependencies'),
+      ganttSettingsPanel: document.getElementById('ganttSettingsPanel'),
+      zoomInBtn: document.getElementById('zoomInBtn'),
+      zoomOutBtn: document.getElementById('zoomOutBtn'),
+      todayBtn: document.getElementById('todayBtn'),
+      settingsBtn: document.getElementById('settingsBtn'),
+      ganttCard: document.getElementById('ganttCard'),
+      collapseCardBtn: document.getElementById('collapseCardBtn'),
+      collapseCardIcon: document.getElementById('collapseCardIcon')
+    };
+
+    function syncSecondCardTitle() {
+      if (els.firstCardTitle && els.secondCardTitle) els.secondCardTitle.textContent = els.firstCardTitle.value || '';
+    }
+
+    function applySettingsLive() { draw(); }
+
+    function bindSliderValue(inputEl, valueEl) {
+      if (!inputEl || !valueEl) return;
+      const sync = () => { valueEl.textContent = String(inputEl.value); };
+      inputEl.addEventListener('input', sync);
+      sync();
+    }
+
+    function toggleSettingsPanel() {
+      if (!els.ganttSettingsPanel) return;
+      const isOpen = els.ganttSettingsPanel.classList.toggle('is-open');
+      if (els.settingsBtn) els.settingsBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    }
+
+    function toggleCardExpand() {
+      if (!els.ganttCard || !els.collapseCardBtn || !els.collapseCardIcon) return;
+      const collapsed = els.ganttCard.classList.toggle('gantt-card-collapsed');
+      els.collapseCardBtn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+      els.collapseCardBtn.setAttribute('aria-label', collapsed ? 'Expand chart' : 'Collapse chart');
+      els.collapseCardBtn.setAttribute('title', collapsed ? 'Expand chart' : 'Collapse chart');
+      els.collapseCardIcon.textContent = collapsed ? 'expand_more' : 'expand_less';
+      if (!collapsed) draw();
+    }
+
+    function parseDate(value) {
+      const d = new Date(value + 'T00:00:00');
+      return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    }
+
+    function fmtDate(date) {
+      const yyyy = date.getFullYear();
+      const mm = String(date.getMonth() + 1).padStart(2, '0');
+      const dd = String(date.getDate()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function addDays(date, days) {
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
+    }
+
+    function startOfWeek(date) {
+      const d = new Date(date);
+      const day = d.getDay();
+      const mondayOffset = day === 0 ? -6 : 1 - day;
+      return addDays(d, mondayOffset);
+    }
+
+    function startOfMonth(date) { return new Date(date.getFullYear(), date.getMonth(), 1); }
+    function endOfMonth(date) { return new Date(date.getFullYear(), date.getMonth() + 1, 0); }
+    function clamp(value, min, max) { return Math.min(max, Math.max(min, value)); }
+
+    function getTaskById(id) { return tasks.find(t => t.id === id) || null; }
+
+    function getSettings() {
+      return {
+        viewMode: els.viewMode.value,
+        rowHeight: clamp(Number(els.rowHeight.value) || 36, 36, 96),
+        barHeight: clamp(Number(els.barHeight.value) || 29, 12, 40),
+        barRadius: clamp(Number(els.barRadius.value) || 4, 0, 16),
+        strokeWidth: clamp(Number(els.strokeWidth.value) || 1, 1, 6),
+        headerHeight: clamp(Number(els.headerHeight.value) || 72, 50, 120),
+        leftWidth: clamp(Number(els.leftWidth.value) || 280, 180, 420),
+        unitWidth: clamp(Number(unitWidth) || 44, 24, 160),
+        showWeekends: els.showWeekends.checked,
+        showDependencies: els.showDependencies.checked
+      };
+    }
+
+    function refreshEditOptions() {
+      if (selectedTaskId && !getTaskById(selectedTaskId)) selectedTaskId = tasks[0]?.id || null;
+      if (!selectedTaskId && tasks.length) selectedTaskId = tasks[0].id;
+    }
+
+    function syncEditForm() { /* Chart-only: no edit form to sync */ }
+
+    function selectTask(id) {
+      if (!getTaskById(id)) return;
+      selectedTaskId = id;
+      refreshEditOptions();
+      draw();
+    }
+
+    function getWeekNumber(date) {
+      const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+      d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+      const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+      return Math.ceil((((d - yearStart) / DAY_MS) + 1) / 7);
+    }
+
+    function getDateUnits(rangeStart, rangeEnd, settings) {
+      const units = [];
+      if (settings.viewMode === 'day') {
+        let cursor = new Date(rangeStart);
+        while (cursor <= rangeEnd) {
+          units.push({ start: new Date(cursor), end: new Date(cursor), labelTop: cursor.toLocaleString('en-US', { month: 'short', year: 'numeric' }), labelBottom: String(cursor.getDate()), kind: 'day' });
+          cursor = addDays(cursor, 1);
+        }
+        return units;
+      }
+      if (settings.viewMode === 'week') {
+        let cursor = startOfWeek(rangeStart);
+        while (cursor <= rangeEnd) {
+          const end = addDays(cursor, 6);
+          units.push({ start: new Date(cursor), end, labelTop: cursor.toLocaleString('en-US', { month: 'short', year: 'numeric' }), labelBottom: `Wk ${getWeekNumber(cursor)}`, kind: 'week' });
+          cursor = addDays(cursor, 7);
+        }
+        return units;
+      }
+      let cursor = startOfMonth(rangeStart);
+      while (cursor <= rangeEnd) {
+        const end = endOfMonth(cursor);
+        units.push({ start: new Date(cursor), end, labelTop: String(cursor.getFullYear()), labelBottom: cursor.toLocaleString('en-US', { month: 'short' }), kind: 'month' });
+        cursor = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1);
+      }
+      return units;
+    }
+
+    function getChartRange(settings) {
+      if (!tasks.length) {
+        const today = parseDate(fmtDate(new Date()));
+        return { start: addDays(today, -7), end: addDays(today, 14) };
+      }
+      let min = parseDate(tasks[0].start);
+      let max = parseDate(tasks[0].end);
+      for (const task of tasks) {
+        const s = parseDate(task.start);
+        const e = parseDate(task.end);
+        if (s < min) min = s;
+        if (e > max) max = e;
+      }
+      if (settings.viewMode === 'day') return { start: addDays(min, -3), end: addDays(max, 3) };
+      if (settings.viewMode === 'week') return { start: addDays(startOfWeek(min), -7), end: addDays(startOfWeek(max), 13) };
+      return { start: new Date(min.getFullYear(), min.getMonth() - 1, 1), end: new Date(max.getFullYear(), max.getMonth() + 2, 0) };
+    }
+
+    function findUnitIndexForDate(units, date) {
+      for (let i = 0; i < units.length; i++) {
+        if (date >= units[i].start && date <= units[i].end) return i;
+      }
+      return -1;
+    }
+
+    function getCanvasContext() { return els.canvas.getContext('2d'); }
+
+    function draw() {
+      tasks = getChartTasksFromTable();
+      if (tasks.length && (!selectedTaskId || !tasks.find(t => t.id === selectedTaskId))) selectedTaskId = tasks[0].id;
+      else if (!tasks.length) selectedTaskId = null;
+      const isDark = document.body.getAttribute('data-theme') === 'dark';
+      const chartBg = isDark ? '#1e222d' : '#fafbff';
+      const chartLeft = isDark ? '#252a37' : '#f1f3f9';
+      const chartHeaderBg = isDark ? '#2a2e39' : '#e8eaef';
+      const chartGrid = isDark ? '#363a45' : '#c9ccdb';
+      const chartText = isDark ? '#d1d4dc' : '#1c1b1f';
+      const chartTextMuted = isDark ? '#787b86' : '#49454f';
+      const chartRowAlt = isDark ? '#252a37' : '#f4f4fa';
+      const chartRowBorder = isDark ? '#363a45' : '#e4e4ec';
+      const chartHighlight = isDark ? 'rgba(100, 181, 246, 0.15)' : 'rgba(25, 118, 210, 0.10)';
+      const chartToday = isDark ? 'rgba(100, 181, 246, 0.12)' : 'rgba(25, 118, 210, 0.10)';
+      const chartDepLine = isDark ? '#787b86' : '#79747e';
+      const chartTodayStroke = isDark ? 'rgba(100, 181, 246, 0.5)' : 'rgba(25, 118, 210, 0.5)';
+      const chartWeekend = `rgba(${WEEKEND_RGB.join(', ')}, ${isDark ? WEEKEND_ALPHA.dark : WEEKEND_ALPHA.light})`;
+      const chartTheme = { chartBg, chartLeft, chartHeaderBg, chartGrid, chartText, chartTextMuted, chartRowAlt, chartRowBorder, chartHighlight, chartToday, chartDepLine, chartTodayStroke, chartWeekend };
+      const settings = getSettings();
+      const ctx = getCanvasContext();
+      const dpr = window.devicePixelRatio || 1;
+      const range = getChartRange(settings);
+      const units = getDateUnits(range.start, range.end, settings);
+      const contentWidth = settings.leftWidth + units.length * settings.unitWidth;
+      const contentHeight = settings.headerHeight + tasks.length * settings.rowHeight;
+      const width = contentWidth;
+      const height = Math.max(contentHeight, 400);
+
+      els.canvas.width = Math.floor(width * dpr);
+      els.canvas.height = Math.floor(height * dpr);
+      els.canvas.style.width = width + 'px';
+      els.canvas.style.height = height + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, width, height);
+
+      chartMetrics = { bars: [], rows: [], rangeStart: range.start, rangeEnd: range.end, canvasWidth: width, canvasHeight: height, units };
+
+      drawBackground(ctx, width, height, settings, chartTheme);
+      drawHeader(ctx, width, settings, units, chartTheme);
+      drawRows(ctx, width, height, settings, chartTheme);
+      drawTimelineGrid(ctx, width, height, settings, units, chartTheme);
+      if (settings.showWeekends && settings.viewMode === 'day') drawWeekendShading(ctx, height, settings, units, chartTheme);
+      drawToday(ctx, height, settings, units, chartTheme);
+      drawTasks(ctx, settings, units, chartTheme);
+      if (settings.showDependencies) drawDependencies(ctx, settings, chartTheme);
+    }
+
+    function drawBackground(ctx, width, height, settings, theme) {
+      ctx.fillStyle = theme.chartBg;
+      ctx.fillRect(0, 0, width, height);
+      ctx.fillStyle = theme.chartLeft;
+      ctx.fillRect(0, 0, settings.leftWidth, height);
+      ctx.fillStyle = theme.chartHeaderBg;
+      ctx.fillRect(0, 0, width, settings.headerHeight);
+      ctx.strokeStyle = theme.chartGrid;
+      ctx.beginPath();
+      ctx.moveTo(0, settings.headerHeight + 0.5);
+      ctx.lineTo(width, settings.headerHeight + 0.5);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(settings.leftWidth + 0.5, 0);
+      ctx.lineTo(settings.leftWidth + 0.5, height);
+      ctx.stroke();
+    }
+
+    function drawHeader(ctx, width, settings, units, theme) {
+      ctx.textBaseline = 'middle';
+
+      units.forEach((unit, i) => {
+        const x = settings.leftWidth + i * settings.unitWidth;
+        if (i === 0 || units[i - 1].labelTop !== unit.labelTop) {
+          ctx.fillStyle = theme.chartText;
+          ctx.font = '500 12px Inter';
+          ctx.fillText(unit.labelTop, x + 8, 22);
+        }
+        ctx.fillStyle = theme.chartTextMuted;
+        ctx.font = '500 11px Inter';
+        ctx.fillText(unit.labelBottom, x + 8, settings.headerHeight - 20);
+      });
+    }
+
+    function drawRows(ctx, width, height, settings, theme) {
+      for (let i = 0; i < tasks.length; i++) {
+        const y = settings.headerHeight + i * settings.rowHeight;
+        if (i % 2 === 1) {
+          ctx.fillStyle = theme.chartRowAlt;
+          ctx.fillRect(0, y, width, settings.rowHeight);
+        }
+        ctx.strokeStyle = theme.chartRowBorder;
+        ctx.beginPath();
+        ctx.moveTo(0, y + 0.5);
+        ctx.lineTo(width, y + 0.5);
+        ctx.stroke();
+
+        const task = tasks[i];
+        ctx.fillStyle = theme.chartText;
+        ctx.font = '500 13px Inter';
+        ctx.textBaseline = 'middle';
+        const taskLabel = (task.num != null ? task.num + '. ' : '') + (task.name || 'New Task');
+        ctx.fillText(taskLabel, 18, y + settings.rowHeight / 2 - 8);
+
+        const barColors = palette[getBarColorKey(task)] || palette.orange;
+        const isDark = document.body.getAttribute('data-theme') === 'dark';
+        const badgeBgAlpha = isDark ? 0.28 : 0.18;
+        const labelWidth = ctx.measureText(taskLabel).width;
+        const padH = 6;
+        const badgeH = 18;
+        const badgeGap = 4;
+        let pillX = 18 + labelWidth + 6;
+        const pillY = y + settings.rowHeight / 2 - 8 - badgeH / 2;
+        ctx.font = '600 11px Inter';
+        ctx.textBaseline = 'middle';
+        ctx.textAlign = 'left';
+        const pills = [
+          { show: task.a, text: 'Active', key: 'a' },
+          { show: task.d, text: 'Done', key: 'd' },
+          { show: task.c, text: 'Critical', key: 'c' },
+          { show: task.m, text: 'Milestone', key: 'm' }
+        ];
+        pills.forEach(function (p) {
+          if (!p.show) return;
+          const hex = PILL_COLORS[p.key] || PILL_COLORS.a;
+          const statusW = ctx.measureText(p.text).width;
+          const badgeW = statusW + padH * 2;
+          roundRect(ctx, pillX, pillY, badgeW, badgeH, 6);
+          ctx.fillStyle = hex;
+          ctx.fill();
+          ctx.fillStyle = '#fff';
+          ctx.fillText(p.text, pillX + padH, pillY + badgeH / 2);
+          pillX += badgeW + badgeGap;
+        });
+
+        ctx.fillStyle = barColors.fill;
+        ctx.font = '700 11px Inter';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(`${task.start} → ${task.end}`, 18, y + settings.rowHeight / 2 + 10);
+
+        chartMetrics.rows.push({ id: task.id, x: 0, y, width: settings.leftWidth, height: settings.rowHeight });
+      }
+      ctx.strokeStyle = theme.chartRowBorder;
+      ctx.beginPath();
+      ctx.moveTo(0, settings.headerHeight + tasks.length * settings.rowHeight + 0.5);
+      ctx.lineTo(width, settings.headerHeight + tasks.length * settings.rowHeight + 0.5);
+      ctx.stroke();
+    }
+
+    function drawTimelineGrid(ctx, width, height, settings, units, theme) {
+      ctx.strokeStyle = theme.chartGrid;
+      ctx.lineWidth = 1;
+      units.forEach((unit, i) => {
+        const x = settings.leftWidth + i * settings.unitWidth + 0.5;
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
+        ctx.stroke();
+      });
+      const endX = settings.leftWidth + units.length * settings.unitWidth + 0.5;
+      ctx.beginPath();
+      ctx.moveTo(endX, 0);
+      ctx.lineTo(endX, height);
+      ctx.stroke();
+    }
+
+    function drawWeekendShading(ctx, height, settings, units, theme) {
+      ctx.fillStyle = theme.chartWeekend || `rgba(${WEEKEND_RGB.join(', ')}, ${WEEKEND_ALPHA.light})`;
+      units.forEach((unit, i) => {
+        const day = unit.start.getDay();
+        if (day === 0 || day === 6) {
+          const x = settings.leftWidth + i * settings.unitWidth;
+          ctx.fillRect(x, settings.headerHeight, settings.unitWidth, height - settings.headerHeight);
+        }
+      });
+    }
+
+    function drawToday(ctx, height, settings, units, theme) {
+      const today = parseDate(fmtDate(new Date()));
+      const idx = findUnitIndexForDate(units, today);
+      if (idx < 0) return;
+      const x = settings.leftWidth + idx * settings.unitWidth;
+      ctx.fillStyle = theme.chartToday;
+      ctx.fillRect(x, 0, settings.unitWidth, height);
+      ctx.strokeStyle = theme.chartTodayStroke;
+      ctx.beginPath();
+      ctx.moveTo(x + 0.5, 0);
+      ctx.lineTo(x + 0.5, height);
+      ctx.stroke();
+    }
+
+    function taskRect(task, rowIndex, settings, units) {
+      const start = parseDate(task.start);
+      const end = parseDate(task.end);
+      const startIndex = Math.max(0, findUnitIndexForDate(units, start));
+      const endIndex = Math.max(startIndex, findUnitIndexForDate(units, end));
+      const x = settings.leftWidth + startIndex * settings.unitWidth + 6;
+      const width = Math.max(18, (endIndex - startIndex + 1) * settings.unitWidth - 12);
+      const y = settings.headerHeight + rowIndex * settings.rowHeight + (settings.rowHeight - settings.barHeight) / 2;
+      return { x, y, width, height: settings.barHeight, startIndex, endIndex };
+    }
+
+    function drawTasks(ctx, settings, units, theme) {
+      tasks.forEach((task, i) => {
+        const rect = taskRect(task, i, settings, units);
+        const colors = palette[getBarColorKey(task)] || palette.orange;
+        const rgb = hexToRgb(colors.fill);
+        const radius = settings.barRadius ?? 10;
+
+        ctx.save();
+        // Outlined bar style
+        roundRect(ctx, rect.x, rect.y, rect.width, rect.height, radius);
+        ctx.fillStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${0x35 / 255})`;
+        ctx.fill();
+        ctx.strokeStyle = task.c ? PILL_COLORS.c : colors.fill;
+        ctx.lineWidth = settings.strokeWidth || 1;
+        ctx.stroke();
+
+        const progressPct = clamp((task.progress || 0) / 100, 0, 1);
+        if (progressPct > 0) {
+          const progressWidth = Math.max(8, rect.width * progressPct);
+          roundRect(ctx, rect.x, rect.y, progressWidth, rect.height, radius);
+          const prgb = hexToRgb(colors.progress);
+          ctx.fillStyle = `rgba(${prgb.r}, ${prgb.g}, ${prgb.b}, ${0x80 / 255})`;
+          ctx.fill();
+        }
+
+        ctx.fillStyle = theme.chartText;
+        ctx.font = '600 12px Inter';
+        ctx.textBaseline = 'middle';
+        const label = task.name.length > 24 ? task.name.slice(0, 24) + '…' : task.name;
+        ctx.fillText(label, rect.x + 10, rect.y + rect.height / 2);
+
+        const handleW = 8;
+        ctx.fillStyle = colors.fill;
+        roundRect(ctx, rect.x + rect.width - handleW - 4, rect.y + 4, handleW, rect.height - 8, 4);
+        ctx.fill();
+        ctx.restore();
+
+        chartMetrics.bars.push({ id: task.id, ...rect, handleX: rect.x + rect.width - 12, handleWidth: 12 });
+      });
+    }
+
+    function drawDependencies(ctx, settings, theme) {
+      const byId = new Map(chartMetrics.bars.map(b => [b.id, b]));
+      ctx.strokeStyle = theme.chartDepLine;
+      ctx.lineWidth = 1.5;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      for (const task of tasks) {
+        if (!task.dependencies) continue;
+        const target = byId.get(task.id);
+        if (!target) continue;
+        const deps = task.dependencies.split(',').map(s => s.trim()).filter(Boolean);
+        for (const depId of deps) {
+          const source = byId.get(depId);
+          if (!source) continue;
+          const startX = source.x + source.width;
+          const startY = source.y + source.height / 2;
+          const endX = target.x;
+          const endY = target.y + target.height / 2;
+          const midX = Math.max(startX + 18, (startX + endX) / 2);
+          ctx.beginPath();
+          ctx.moveTo(startX, startY);
+          ctx.lineTo(midX, startY);
+          ctx.lineTo(midX, endY);
+          ctx.lineTo(endX - 6, endY);
+          ctx.stroke();
+          drawArrowHead(ctx, endX - 6, endY, endX, endY);
+        }
+      }
+    }
+
+    function drawArrowHead(ctx, fromX, fromY, toX, toY) {
+      const angle = Math.atan2(toY - fromY, toX - fromX);
+      const size = 6;
+      ctx.beginPath();
+      ctx.moveTo(toX, toY);
+      ctx.lineTo(toX - size * Math.cos(angle - Math.PI / 6), toY - size * Math.sin(angle - Math.PI / 6));
+      ctx.lineTo(toX - size * Math.cos(angle + Math.PI / 6), toY - size * Math.sin(angle + Math.PI / 6));
+      ctx.closePath();
+      ctx.fillStyle = '#79747e';
+      ctx.fill();
+    }
+
+    function roundRect(ctx, x, y, width, height, radius) {
+      const r = Math.min(radius, width / 2, height / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + width, y, x + width, y + height, r);
+      ctx.arcTo(x + width, y + height, x, y + height, r);
+      ctx.arcTo(x, y + height, x, y, r);
+      ctx.arcTo(x, y, x + width, y, r);
+      ctx.closePath();
+    }
+
+    function lighten(hex, amount) {
+      const { r, g, b } = hexToRgb(hex);
+      const rr = Math.round(r + (255 - r) * amount);
+      const gg = Math.round(g + (255 - g) * amount);
+      const bb = Math.round(b + (255 - b) * amount);
+      return `rgb(${rr}, ${gg}, ${bb})`;
+    }
+
+    function hexToRgb(hex) {
+      const clean = hex.replace('#', '');
+      const bigint = parseInt(clean, 16);
+      return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
+    }
+
+    function zoom(delta) {
+      unitWidth = clamp((Number(unitWidth) || 44) + delta, 24, 160);
+      draw();
+    }
+
+    function goToToday() {
+      const today = parseDate(fmtDate(new Date()));
+      const idx = findUnitIndexForDate(chartMetrics.units || [], today);
+      if (idx < 0) return;
+      const x = (Number(els.leftWidth.value) || 280) + idx * (Number(unitWidth) || 44) - els.viewport.clientWidth / 2;
+      els.viewport.scrollLeft = Math.max(0, x);
+    }
+
+    function pointerPos(event) {
+      const rect = els.canvas.getBoundingClientRect();
+      return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+    }
+
+    function hitTestBar(x, y) {
+      for (let i = chartMetrics.bars.length - 1; i >= 0; i--) {
+        const bar = chartMetrics.bars[i];
+        if (x >= bar.x && x <= bar.x + bar.width && y >= bar.y && y <= bar.y + bar.height) {
+          const nearHandle = x >= bar.handleX;
+          return { bar, nearHandle };
+        }
+      }
+      return null;
+    }
+
+    function hitTestRow(y) { return chartMetrics.rows.find(row => y >= row.y && y <= row.y + row.height) || null; }
+
+    function onPointerDown(event) {
+      const pos = pointerPos(event);
+      const hit = hitTestBar(pos.x, pos.y);
+      if (hit) {
+        selectedTaskId = hit.bar.id;
+        refreshEditOptions();
+        const task = getTaskById(hit.bar.id);
+        dragState = { mode: hit.nearHandle ? 'resize' : 'move', taskId: hit.bar.id, startX: pos.x, originalStart: task.start, originalEnd: task.end };
+        draw();
+        return;
+      }
+      const row = hitTestRow(pos.y);
+      if (row) selectTask(row.id);
+    }
+
+    function onPointerMove(event) {
+      const pos = pointerPos(event);
+      const hit = hitTestBar(pos.x, pos.y);
+      els.canvas.style.cursor = dragState ? (dragState.mode === 'resize' ? 'ew-resize' : 'grabbing') : hit ? (hit.nearHandle ? 'ew-resize' : 'grab') : 'default';
+      if (!dragState) return;
+      const settings = getSettings();
+      const deltaUnits = Math.round((pos.x - dragState.startX) / settings.unitWidth);
+      const unitDays = settings.viewMode === 'day' ? 1 : settings.viewMode === 'week' ? 7 : 30;
+      let newStartStr, newEndStr;
+      if (dragState.mode === 'move') {
+        const originalStart = parseDate(dragState.originalStart);
+        const originalEnd = parseDate(dragState.originalEnd);
+        newStartStr = fmtDate(addDays(originalStart, deltaUnits * unitDays));
+        newEndStr = fmtDate(addDays(originalEnd, deltaUnits * unitDays));
+      } else {
+        const originalEnd = parseDate(dragState.originalEnd);
+        const originalStart = parseDate(dragState.originalStart);
+        const nextEnd = addDays(originalEnd, deltaUnits * unitDays);
+        newEndStr = fmtDate(nextEnd < originalStart ? originalStart : nextEnd);
+        newStartStr = dragState.originalStart;
+      }
+      if (typeof window.updateTableRowFromChart === 'function') {
+        window.updateTableRowFromChart(dragState.taskId, newStartStr, newEndStr);
+      }
+      syncEditForm();
+      draw();
+    }
+
+    function onPointerUp() {
+      dragState = null;
+      els.canvas.style.cursor = 'default';
+    }
+
+    els.firstCardTitle.addEventListener('input', syncSecondCardTitle);
+    // Live chart settings
+    els.viewMode.addEventListener('change', applySettingsLive);
+    els.rowHeight.addEventListener('input', applySettingsLive);
+    els.barHeight.addEventListener('input', applySettingsLive);
+    els.barRadius.addEventListener('input', applySettingsLive);
+    els.strokeWidth.addEventListener('input', applySettingsLive);
+    els.headerHeight.addEventListener('input', applySettingsLive);
+    els.leftWidth.addEventListener('input', applySettingsLive);
+    els.showWeekends.addEventListener('change', applySettingsLive);
+    els.showDependencies.addEventListener('change', applySettingsLive);
+
+    els.zoomInBtn.addEventListener('click', () => zoom(12));
+    els.zoomOutBtn.addEventListener('click', () => zoom(-12));
+    els.todayBtn.addEventListener('click', goToToday);
+    els.settingsBtn.addEventListener('click', toggleSettingsPanel);
+    if (els.collapseCardBtn) els.collapseCardBtn.addEventListener('click', toggleCardExpand);
+
+    els.canvas.addEventListener('mousedown', onPointerDown);
+    window.addEventListener('mousemove', onPointerMove);
+    window.addEventListener('mouseup', onPointerUp);
+    window.addEventListener('resize', draw);
+    window.addEventListener('wf-theme-change', draw);
+    window.addEventListener('wf-schedule-change', draw);
+
+    bindSliderValue(els.rowHeight, document.getElementById('rowHeightValue'));
+    bindSliderValue(els.barHeight, document.getElementById('barHeightValue'));
+    bindSliderValue(els.barRadius, document.getElementById('barRadiusValue'));
+    bindSliderValue(els.strokeWidth, document.getElementById('strokeWidthValue'));
+    bindSliderValue(els.headerHeight, document.getElementById('headerHeightValue'));
+    bindSliderValue(els.leftWidth, document.getElementById('leftWidthValue'));
+
+    refreshEditOptions();
+    syncSecondCardTitle();
+    draw();
+  </script>
+</body>
+</html>
