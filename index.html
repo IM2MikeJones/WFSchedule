@@ -1020,7 +1020,7 @@
         progress: 0,
         duration: 2,
         units: 'days',
-        delay: 0,
+        delay: 1,
         link: 'start-to-end',
         target: '',
         color: 'blue', /* stored for future use; bar colors are driven by A/D/M/C via getBarColorKey */
@@ -1082,13 +1082,15 @@
           var targetSelect = row.querySelector('.target-select');
           var colorInput = row.querySelector('.row-color-input');
           var progressInput = row.querySelector('.progress-input');
+          var parsedDuration = durationInput ? parseFloat(durationInput.value) : NaN;
+          var durationValue = isNaN(parsedDuration) ? ROW_DEFAULTS.duration : parsedDuration;
           out.push({
             id: row.getAttribute('data-row-id') || '',
             section: row.classList.contains('row-is-section'),
             name: taskInput ? taskInput.value : '',
             startDate: dateInputs[0] ? dateInputs[0].value : '',
             endDate: dateInputs[1] ? dateInputs[1].value : '',
-            duration: durationInput ? (parseFloat(durationInput.value) || ROW_DEFAULTS.duration) : ROW_DEFAULTS.duration,
+            duration: durationValue,
             units: unitsSelect ? unitsSelect.value : ROW_DEFAULTS.units,
             delay: delayInput ? (parseInt(delayInput.value, 10) || ROW_DEFAULTS.delay) : ROW_DEFAULTS.delay,
             link: linkSelect ? linkSelect.value : ROW_DEFAULTS.link,
@@ -1185,6 +1187,7 @@
       }
       function addDurationToStart(startDate, durationNum, unit) {
         var d = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+        if (!(durationNum > 0)) return d; // milestone (0) => same-day end
         if (unit === 'days') {
           d.setDate(d.getDate() + (durationNum - 1));
           return d;
@@ -1207,6 +1210,7 @@
         return amount;
       }
       function subtractDurationFromEnd(endDate, durationNum, unit) {
+        if (!(durationNum > 0)) return new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()); // milestone (0) => same-day start
         var lengthDays = unitToLengthDays(durationNum, unit);
         var startTime = endDate.getTime() - (lengthDays - 1) * dayMs;
         return new Date(startTime);
@@ -1216,7 +1220,8 @@
       }
       function addDelayToParentDate(parentLinkDate, delayNum, unit) {
         var d = new Date(parentLinkDate.getFullYear(), parentLinkDate.getMonth(), parentLinkDate.getDate());
-        d.setDate(d.getDate() + 1 + Math.round(delayToDays(delayNum, unit)));
+        // Delay is in row units. Delay 0 means same-day as parent link date.
+        d.setDate(d.getDate() + Math.round(delayToDays(delayNum, unit)));
         return d;
       }
       function getRowById(id) {
@@ -1304,7 +1309,10 @@
         var delayNum = parseInt(delayInput.value, 10);
         if (isNaN(delayNum)) delayNum = 0;
         var unit = unitsSelect.value || 'days';
-        var durationNum = Math.max(0.1, parseFloat(durationInput.value) || ROW_DEFAULTS.duration);
+        var isMilestone = row.querySelector('.m-btn') && row.querySelector('.m-btn').classList.contains('selected');
+        var parsedDur = parseFloat(durationInput.value);
+        if (isNaN(parsedDur)) parsedDur = ROW_DEFAULTS.duration;
+        var durationNum = isMilestone ? 0 : Math.max(0.1, parsedDur);
         var computed = getChildDatesFromParent(parentRow, linkType, delayNum, unit, durationNum);
         if (!computed) return;
         applyStartEndToRow(row, computed.startDate, computed.endDate);
@@ -1336,7 +1344,8 @@
           if (!childLinkDate) return;
         }
         var baseNext = new Date(parentLinkDate.getFullYear(), parentLinkDate.getMonth(), parentLinkDate.getDate());
-        baseNext.setDate(baseNext.getDate() + 1);
+        // Delay 0 means same-day as parent link date.
+        baseNext.setDate(baseNext.getDate() + 0);
         var diffMs = childLinkDate.getTime() - baseNext.getTime();
         var diffDays = Math.round(diffMs / dayMs);
         var unit = unitsSelect.value || 'days';
@@ -1367,6 +1376,8 @@
         saveToUrl();
       }
       function applyStartEndToRow(row, startDate, endDate) {
+        var isMilestone = row && row.querySelector('.m-btn') && row.querySelector('.m-btn').classList.contains('selected');
+        if (isMilestone) endDate = startDate;
         var dateInputs = row.querySelectorAll('.date-input');
         if (!dateInputs.length || dateInputs.length < 2) return;
         dateInputs[0].value = formatDateForTable(startDate);
@@ -1376,10 +1387,14 @@
         var durationInput = row.querySelector('.duration-input');
         var unitsSelect = row.querySelector('.units-select');
         if (durationInput && unitsSelect) {
-          var lengthDays = lengthInDaysInclusive(startDate, endDate);
-          var unit = unitsSelect.value || 'days';
-          var duration = lengthToUnit(lengthDays, unit);
-          durationInput.value = String(duration);
+          if (isMilestone) {
+            durationInput.value = '0';
+          } else {
+            var lengthDays = lengthInDaysInclusive(startDate, endDate);
+            var unit = unitsSelect.value || 'days';
+            var duration = lengthToUnit(lengthDays, unit);
+            durationInput.value = String(duration);
+          }
         }
         saveToUrl();
       }
@@ -1451,6 +1466,12 @@
         var startDate;
         try { startDate = new Date(startStr); } catch (e) { return; }
         if (isNaN(startDate.getTime())) return;
+        var isMilestone = row.querySelector('.m-btn') && row.querySelector('.m-btn').classList.contains('selected');
+        if (isMilestone) {
+          durationInput.value = '0';
+          applyStartEndToRow(row, startDate, startDate);
+          return;
+        }
         var duration = Math.max(0.1, parseFloat(durationInput.value) || ROW_DEFAULTS.duration);
         var unit = unitsSelect.value || 'days';
         var endDate = addDurationToStart(startDate, duration, unit);
@@ -1529,7 +1550,32 @@
             saveToUrl();
           });
         });
-        row.querySelectorAll('.m-btn').forEach(function (btn) { btn.addEventListener('click', function (e) { e.stopPropagation(); this.classList.toggle('selected'); saveToUrl(); }); });
+        row.querySelectorAll('.m-btn').forEach(function (btn) {
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            this.classList.toggle('selected');
+            if (this.classList.contains('selected')) {
+              var dateInputs = row.querySelectorAll('.date-input');
+              var durationInput = row.querySelector('.duration-input');
+              var delayInput = row.querySelector('.delay-input');
+              if (durationInput) durationInput.value = '0';
+              if (delayInput) delayInput.value = '-1';
+              if (dateInputs && dateInputs.length >= 2) {
+                var startStr = dateInputs[0].value && dateInputs[0].value.trim();
+                var startDate = startStr ? parseDateFromTable(startStr) : null;
+                if (startDate) {
+                  // Milestones have 0 duration: shift start one day earlier, keep End = Start.
+                  // From/Link/Delay remain unchanged (delay already set to -1 above).
+                  var shiftedStart = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() - 1);
+                  applyStartEndToRow(row, shiftedStart, shiftedStart);
+                  // Move all progeny like any parent date change.
+                  cascadeToProgeny(row);
+                }
+              }
+            }
+            saveToUrl();
+          });
+        });
         var durationInput = row.querySelector('.duration-input');
         if (durationInput) {
           durationInput.addEventListener('input', function () { syncEndDateFromDuration(row); cascadeToProgeny(row); });
@@ -2267,44 +2313,88 @@
       return { x, y, width, height: settings.barHeight, startIndex, endIndex };
     }
 
+    function milestoneRect(task, rowIndex, settings, units) {
+      // Diamond milestone: a fixed-size square (like a 1-day bar) rotated 45° and placed at start date.
+      const start = parseDate(task.start);
+      const startIndex = Math.max(0, findUnitIndexForDate(units, start));
+      // Center horizontally on the boundary between this date and the next day.
+      const cx = settings.leftWidth + (startIndex + 1) * settings.unitWidth;
+      const y = settings.headerHeight + rowIndex * settings.rowHeight + (settings.rowHeight - settings.barHeight) / 2;
+      const cy = y + settings.barHeight / 2;
+      const side = Math.max(12, settings.barHeight) * 0.893; // 0.95 then another 6% (0.94)
+      const diag = side * Math.SQRT2;
+      // Bounding box used for hit testing / metrics.
+      return { x: cx - diag / 2, y: cy - diag / 2, width: diag, height: diag, startIndex, endIndex: startIndex, cx, cy, side };
+    }
+
     function drawTasks(ctx, settings, units, theme) {
       tasks.forEach((task, i) => {
-        const rect = taskRect(task, i, settings, units);
+        const isMilestone = !!task.m;
+        const rect = isMilestone ? milestoneRect(task, i, settings, units) : taskRect(task, i, settings, units);
         const colors = palette[getBarColorKey(task)] || palette.orange;
         const rgb = hexToRgb(colors.fill);
         const radius = settings.barRadius ?? 10;
 
         ctx.save();
         // Outlined bar style
-        roundRect(ctx, rect.x, rect.y, rect.width, rect.height, radius);
-        ctx.fillStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${0x35 / 255})`;
-        ctx.fill();
-        ctx.strokeStyle = task.c ? PILL_COLORS.c : colors.fill;
-        ctx.lineWidth = settings.strokeWidth || 1;
-        ctx.stroke();
-
-        const progressPct = clamp((task.progress || 0) / 100, 0, 1);
-        if (progressPct > 0) {
-          const progressWidth = Math.max(8, rect.width * progressPct);
-          roundRect(ctx, rect.x, rect.y, progressWidth, rect.height, radius);
-          const prgb = hexToRgb(colors.progress);
-          ctx.fillStyle = `rgba(${prgb.r}, ${prgb.g}, ${prgb.b}, ${0x80 / 255})`;
+        if (isMilestone) {
+          const stroke = settings.strokeWidth || 1;
+          const r = Math.min(radius, rect.side / 2);
+          // Isolate transforms so label renders in normal coordinates.
+          ctx.save();
+          ctx.translate(rect.cx, rect.cy);
+          ctx.rotate(Math.PI / 4);
+          roundRect(ctx, -rect.side / 2, -rect.side / 2, rect.side, rect.side, r);
+          ctx.fillStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${0x35 / 255})`;
           ctx.fill();
+          ctx.strokeStyle = task.c ? PILL_COLORS.c : colors.fill;
+          ctx.lineWidth = stroke;
+          ctx.stroke();
+          ctx.restore();
+          // Milestone is a fixed-size marker for now: no progress fill.
+        } else {
+          roundRect(ctx, rect.x, rect.y, rect.width, rect.height, radius);
+          ctx.fillStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${0x35 / 255})`;
+          ctx.fill();
+          ctx.strokeStyle = task.c ? PILL_COLORS.c : colors.fill;
+          ctx.lineWidth = settings.strokeWidth || 1;
+          ctx.stroke();
+
+          const progressPct = clamp((task.progress || 0) / 100, 0, 1);
+          if (progressPct > 0) {
+            const progressWidth = Math.max(8, rect.width * progressPct);
+            roundRect(ctx, rect.x, rect.y, progressWidth, rect.height, radius);
+            const prgb = hexToRgb(colors.progress);
+            ctx.fillStyle = `rgba(${prgb.r}, ${prgb.g}, ${prgb.b}, ${0x80 / 255})`;
+            ctx.fill();
+          }
         }
 
         ctx.fillStyle = theme.chartText;
         ctx.font = '600 12px Inter';
         ctx.textBaseline = 'middle';
         const label = task.name.length > 24 ? task.name.slice(0, 24) + '…' : task.name;
-        ctx.fillText(label, rect.x + 10, rect.y + rect.height / 2);
+        if (isMilestone) {
+          ctx.fillText(label, rect.x + rect.width + 10, rect.y + rect.height / 2);
+        } else {
+          ctx.fillText(label, rect.x + 10, rect.y + rect.height / 2);
+        }
 
-        const handleW = 8;
-        ctx.fillStyle = colors.fill;
-        roundRect(ctx, rect.x + rect.width - handleW - 4, rect.y + 4, handleW, rect.height - 8, 4);
-        ctx.fill();
+        if (!isMilestone) {
+          const handleW = 8;
+          ctx.fillStyle = colors.fill;
+          roundRect(ctx, rect.x + rect.width - handleW - 4, rect.y + 4, handleW, rect.height - 8, 4);
+          ctx.fill();
+        }
         ctx.restore();
 
-        chartMetrics.bars.push({ id: task.id, ...rect, handleX: rect.x + rect.width - 12, handleWidth: 12 });
+        chartMetrics.bars.push({
+          id: task.id,
+          ...rect,
+          isMilestone,
+          handleX: isMilestone ? Infinity : (rect.x + rect.width - 12),
+          handleWidth: isMilestone ? 0 : 12
+        });
       });
     }
 
@@ -2398,7 +2488,7 @@
       for (let i = chartMetrics.bars.length - 1; i >= 0; i--) {
         const bar = chartMetrics.bars[i];
         if (x >= bar.x && x <= bar.x + bar.width && y >= bar.y && y <= bar.y + bar.height) {
-          const nearHandle = x >= bar.handleX;
+          const nearHandle = bar.isMilestone ? false : (x >= bar.handleX);
           return { bar, nearHandle };
         }
       }
@@ -2414,7 +2504,7 @@
         selectedTaskId = hit.bar.id;
         refreshEditOptions();
         const task = getTaskById(hit.bar.id);
-        dragState = { mode: hit.nearHandle ? 'resize' : 'move', taskId: hit.bar.id, startX: pos.x, originalStart: task.start, originalEnd: task.end };
+        dragState = { mode: (hit.nearHandle && !hit.bar.isMilestone) ? 'resize' : 'move', taskId: hit.bar.id, startX: pos.x, originalStart: task.start, originalEnd: task.end };
         draw();
         return;
       }

@@ -41,7 +41,7 @@ All editing is done in the table or by dragging bars on the chart (no separate f
   - **Start date / End date** — Flatpickr date pickers. Changing start keeps duration and recalculates end; changing end recalculates duration; changing duration recalculates end. Same logic is used when dragging or resizing bars on the chart (one function: `applyStartEndToRow`).
   - **Progress** — 0–100; drives progress fill on the bar.
   - **Duration / Units** — Duration amount and unit (days/weeks/months). Changing units recalculates duration from current start/end.
-  - **Delay** — Numeric delay (default 0). Can be negative (e.g. -999 to 999).
+  - **Delay** — Numeric delay (default 1). Can be negative (e.g. -999 to 999).
   - **Link** — Relationship type (Start to End, Start to Start, End to Start, End to End).
   - **From** — Target task for the link (—, Previous, Next, or row number). New rows default to Previous; first row has no default parent.
 - **Row actions** — Delete row; drag handle to reorder. Reorder is reflected in the chart.
@@ -57,7 +57,7 @@ Links are stored by **row ID**, not row number. The **From** dropdown is row-num
 
 **Link type** (child→parent): Start to End, Start to Start, End to Start, End to End. If no parent (From = —), Link and Delay have no effect.
 
-**Delay** is in the row’s **Units**. Delay 0 = child’s linked date = parent’s linked date + 1 day. Non-zero adds/subtracts that many units. When Units change, delay is recalculated in the new units (same actual time offset). Dates are always calendar days.
+**Delay** is in the row’s **Units**. Delay 0 = child’s linked date = parent’s linked date (same day). Non-zero adds/subtracts that many units. When Units change, delay is recalculated in the new units (same actual time offset). Dates are always calendar days.
 
 **Circular linking is not allowed.** Before applying a From/Link change, the program checks for a cycle; if so, the change is ignored and a warning is shown.
 
@@ -75,6 +75,7 @@ A1 Change Start → recalc delay, keep duration, recalc end, move progeny. A2 Ch
 - **Canvas** — Bars show task span and progress. Click a bar to select; drag to move (updates table via `updateTableRowFromChart` → `applyStartEndToRow`); drag right-edge handle to resize. Dependency arrows when “Show dependencies” is on.
 - **Weekend shading** — When “Show weekends” is on and view mode is day, Saturday/Sunday columns are shaded. Alpha is theme-dependent: light mode `0.4`, dark mode `0.05` (same RGB in both; constants `WEEKEND_RGB`, `WEEKEND_ALPHA` in code).
 - **Bar colors** — Driven by row flags: **Active** → green, **Done** → gray, **Milestone** → blue; otherwise orange. **Critical** only changes the bar outline (red). The Color column is hidden in the table but still stored in data for future use.
+- **Milestones** — Rows with `M` enabled are treated as milestones: they have **duration 0**, **end = start**, **delay -1**, and render as fixed-size diamond markers centered on their date boundary. They can be moved on the chart (drag) but not resized.
 - **Data flow** — On each redraw the chart calls `getScheduleDataFromTable()` to build the task list. Rows without valid start/end dates are skipped. Table is the only source of truth.
 
 ---
@@ -91,7 +92,12 @@ A1 Change Start → recalc delay, keep duration, recalc end, move progeny. A2 Ch
 
 ## Version
 
-Current revision is the main `index.html`. Older revisions are in `old revision 0.2`, `old revision 0.3 (problems with linking)`, etc., for reference.
+Current revision is the main `index.html`.
+
+- **Release snapshots** — Saved in folders like `Rev 1.0/` (and `Rev 1.1/` when you snapshot this version).
+- **Release notes** — See `RELEASE_NOTES.md` (`v1.1` is the current release; `v1.2` is the next planned).
+
+Older revisions are in `old revision 0.2`, `old revision 0.3 (problems with linking)`, etc., for reference.
 
 ---
 
