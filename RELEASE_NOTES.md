@@ -36,7 +36,18 @@ Baseline release captured in `Rev 1.0/`.
 
 ---
 
-## v1.2 — Unreleased
+## v1.2 — Released
 
-Placeholder for future changes after `Rev 1.1/` is created.
+### Changed
+
+- Chart drag/resize snapping is finer than the visible grid:
+  - **Week** view: weekly grid, move/resize in **1-day** steps; bar edges align exactly with day boundaries at any zoom.
+  - **Month** view: monthly grid, move/resize in **1-week** steps.
+- URL payload is now a compact array format (shorter links, all row fields). **Not backward-compatible with v1.0/v1.1 URLs.**
+- Default colors: standard bars **blue**, milestones **orange**. Chart URL persists the status color scheme (Default/Active/Done/Critical/Milestone).
+
+### Fixed
+
+- Milestone diamonds sit on the end-of-day gridline in all views; in week view the diamond center is exactly on that boundary.
+- Delay `0` (same-day link) is preserved when saving/restoring from the URL.
 

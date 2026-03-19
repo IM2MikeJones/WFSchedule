@@ -71,10 +71,10 @@ A1 Change Start → recalc delay, keep duration, recalc end, move progeny. A2 Ch
 ## Gantt chart (second card)
 
 - **Header** — Project name from the first card (or empty). View mode (day/week/month), “Show weekends,” “Show dependencies,” zoom in/out, “Go to today,” settings toggle, and collapse/expand toggle (right of settings).
-- **Settings panel** — Row height, bar height, bar corner radius, outline width, header height, name column width.
+- **Settings panel** — Row height, bar height, bar corner radius, outline width, header height, name column width, plus status color pickers for Default/Active/Done/Critical/Milestone (saved in the URL).
 - **Canvas** — Bars show task span and progress. Click a bar to select; drag to move (updates table via `updateTableRowFromChart` → `applyStartEndToRow`); drag right-edge handle to resize. Dependency arrows when “Show dependencies” is on.
 - **Weekend shading** — When “Show weekends” is on and view mode is day, Saturday/Sunday columns are shaded. Alpha is theme-dependent: light mode `0.4`, dark mode `0.05` (same RGB in both; constants `WEEKEND_RGB`, `WEEKEND_ALPHA` in code).
-- **Bar colors** — Driven by row flags: **Active** → green, **Done** → gray, **Milestone** → blue; otherwise orange. **Critical** only changes the bar outline (red). The Color column is hidden in the table but still stored in data for future use.
+- **Bar colors** — Driven by row flags: **Active** → green, **Done** → gray, **Milestone** → orange. The default fill for unflagged tasks is **blue**; **Critical** only changes the bar outline (red). The Color column is hidden in the table but still stored in data for future use.
 - **Milestones** — Rows with `M` enabled are treated as milestones: they have **duration 0**, **end = start**, **delay -1**, and render as fixed-size diamond markers centered on their date boundary. They can be moved on the chart (drag) but not resized.
 - **Data flow** — On each redraw the chart calls `getScheduleDataFromTable()` to build the task list. Rows without valid start/end dates are skipped. Table is the only source of truth.
 
@@ -92,10 +92,13 @@ A1 Change Start → recalc delay, keep duration, recalc end, move progeny. A2 Ch
 
 ## Version
 
-Current revision is the main `index.html`.
+This snapshot is **v1.2** (`Rev 1.2/`).
 
-- **Release snapshots** — Saved in folders like `Rev 1.0/` (and `Rev 1.1/` when you snapshot this version).
-- **Release notes** — See `RELEASE_NOTES.md` (`v1.1` is the current release; `v1.2` is the next planned).
+> **Compatibility note (v1.2)**
+> URL encoding changed to a compact format. Links from v1.0/v1.1 will not load in v1.2; v1.2 URLs are not for older builds.
+
+- **Release snapshots** — `Rev 1.0/`, `Rev 1.1/`, `Rev 1.2/`.
+- **Release notes** — See `RELEASE_NOTES.md`.
 
 Older revisions are in `old revision 0.2`, `old revision 0.3 (problems with linking)`, etc., for reference.
 

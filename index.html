@@ -30,6 +30,12 @@
       --md-sys-state-hover-opacity: 0.08;
       /* Profile-style primary for buttons (blue) */
       --profile-primary: #1976d2;
+
+      /* v1.2: configurable status colors (can be overridden from URL) */
+      --wf-color-a: #5aaa00; /* Active */
+      --wf-color-d: #8c8578; /* Done */
+      --wf-color-c: #ef4444; /* Critical */
+      --wf-color-m: #ff9800; /* Milestone */
     }
 
     /* App-wide light/dark: theme vars on body (schedule table + rest of app) */
@@ -683,10 +689,10 @@
     .card:first-of-type .table-wrap .target-select, .card:first-of-type .table-wrap .units-select, .card:first-of-type .table-wrap .link-select { padding-right: 1.5rem; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23787b86' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.3rem center; }
     .card:first-of-type .table-wrap .duration-input, .card:first-of-type .table-wrap .progress-input, .card:first-of-type .table-wrap .delay-input { text-align: right; }
     .card:first-of-type .table-wrap .task-flags-cell button { width: 20px; height: 20px; min-width: 20px; min-height: 20px; padding: 0; display: inline-flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 500; cursor: pointer; border: 1px solid var(--text-muted); border-radius: 4px; margin-right: 4px; }
-    .card:first-of-type .table-wrap .critical-btn.selected { background: #ef4444; color: #fff; }
-    .card:first-of-type .table-wrap .a-btn.selected { background: #5aaa00; color: #fff; }
-    .card:first-of-type .table-wrap .d-btn.selected { background: #8c8578; color: #fff; }
-    .card:first-of-type .table-wrap .m-btn.selected { background: #2196f3; color: #fff; }
+    .card:first-of-type .table-wrap .critical-btn.selected { background: var(--wf-color-c); color: #fff; }
+    .card:first-of-type .table-wrap .a-btn.selected { background: var(--wf-color-a); color: #fff; }
+    .card:first-of-type .table-wrap .d-btn.selected { background: var(--wf-color-d); color: #fff; }
+    .card:first-of-type .table-wrap .m-btn.selected { background: var(--wf-color-m); color: #fff; }
     .card:first-of-type .table-wrap .t-btn { background: #8b5cf6; color: #fff; }
     .card:first-of-type .table-wrap .t-btn.selected { background: #f97316; color: #fff; }
     .card:first-of-type .table-wrap tbody tr.dragging { opacity: 0.5; }
@@ -845,9 +851,9 @@
           <div class="field">
             <div class="m3-slider-label">
               <label for="rowHeight">Row height</label>
-              <span class="m3-slider-value" id="rowHeightValue">36</span>
+              <span class="m3-slider-value" id="rowHeightValue">37</span>
             </div>
-            <input class="m3-slider" id="rowHeight" type="range" min="36" max="96" value="36">
+            <input class="m3-slider" id="rowHeight" type="range" min="36" max="96" value="37">
           </div>
           <div class="field">
             <div class="m3-slider-label">
@@ -866,9 +872,9 @@
           <div class="field">
             <div class="m3-slider-label">
               <label for="strokeWidth">Outline width</label>
-              <span class="m3-slider-value" id="strokeWidthValue">1</span>
+              <span class="m3-slider-value" id="strokeWidthValue">2</span>
             </div>
-            <input class="m3-slider" id="strokeWidth" type="range" min="1" max="6" step="0.5" value="1">
+            <input class="m3-slider" id="strokeWidth" type="range" min="1" max="6" step="0.5" value="2">
           </div>
           <div class="field">
             <div class="m3-slider-label">
@@ -880,9 +886,109 @@
           <div class="field">
             <div class="m3-slider-label">
               <label for="leftWidth">Name column width</label>
-              <span class="m3-slider-value" id="leftWidthValue">280</span>
+              <span class="m3-slider-value" id="leftWidthValue">386</span>
             </div>
-            <input class="m3-slider" id="leftWidth" type="range" min="180" max="420" value="280">
+            <input class="m3-slider" id="leftWidth" type="range" min="180" max="420" value="386">
+          </div>
+          <div class="field">
+            <div class="m3-slider-label">
+              <label>Default color</label>
+            </div>
+            <div class="color-picker-wrap status-color-picker" data-role="base" role="group" aria-label="Default color">
+              <button type="button" class="color-picker-btn" aria-label="Default color" aria-haspopup="true" aria-expanded="false">
+                <span class="color-picker-dot color-dot-blue"></span>
+              </button>
+              <div class="color-picker-menu" role="listbox" aria-label="Default color">
+                <span class="color-picker-option color-dot-purple" role="option" data-color="purple" tabindex="0"></span>
+                <span class="color-picker-option color-dot-blue" role="option" data-color="blue" tabindex="0"></span>
+                <span class="color-picker-option color-dot-green" role="option" data-color="green" tabindex="0"></span>
+                <span class="color-picker-option color-dot-orange" role="option" data-color="orange" tabindex="0"></span>
+                <span class="color-picker-option color-dot-red" role="option" data-color="red" tabindex="0"></span>
+                <span class="color-picker-option color-dot-teal" role="option" data-color="teal" tabindex="0"></span>
+                <span class="color-picker-option color-dot-magenta" role="option" data-color="magenta" tabindex="0"></span>
+                <span class="color-picker-option color-dot-gray" role="option" data-color="gray" tabindex="0"></span>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <div class="m3-slider-label">
+              <label>Active color</label>
+            </div>
+            <div class="color-picker-wrap status-color-picker" data-role="a" role="group" aria-label="Active color">
+              <button type="button" class="color-picker-btn" aria-label="Active color" aria-haspopup="true" aria-expanded="false">
+                <span class="color-picker-dot color-dot-green"></span>
+              </button>
+              <div class="color-picker-menu" role="listbox" aria-label="Active color">
+                <span class="color-picker-option color-dot-purple" role="option" data-color="purple" tabindex="0"></span>
+                <span class="color-picker-option color-dot-blue" role="option" data-color="blue" tabindex="0"></span>
+                <span class="color-picker-option color-dot-green" role="option" data-color="green" tabindex="0"></span>
+                <span class="color-picker-option color-dot-orange" role="option" data-color="orange" tabindex="0"></span>
+                <span class="color-picker-option color-dot-red" role="option" data-color="red" tabindex="0"></span>
+                <span class="color-picker-option color-dot-teal" role="option" data-color="teal" tabindex="0"></span>
+                <span class="color-picker-option color-dot-magenta" role="option" data-color="magenta" tabindex="0"></span>
+                <span class="color-picker-option color-dot-gray" role="option" data-color="gray" tabindex="0"></span>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <div class="m3-slider-label">
+              <label>Done color</label>
+            </div>
+            <div class="color-picker-wrap status-color-picker" data-role="d" role="group" aria-label="Done color">
+              <button type="button" class="color-picker-btn" aria-label="Done color" aria-haspopup="true" aria-expanded="false">
+                <span class="color-picker-dot color-dot-gray"></span>
+              </button>
+              <div class="color-picker-menu" role="listbox" aria-label="Done color">
+                <span class="color-picker-option color-dot-purple" role="option" data-color="purple" tabindex="0"></span>
+                <span class="color-picker-option color-dot-blue" role="option" data-color="blue" tabindex="0"></span>
+                <span class="color-picker-option color-dot-green" role="option" data-color="green" tabindex="0"></span>
+                <span class="color-picker-option color-dot-orange" role="option" data-color="orange" tabindex="0"></span>
+                <span class="color-picker-option color-dot-red" role="option" data-color="red" tabindex="0"></span>
+                <span class="color-picker-option color-dot-teal" role="option" data-color="teal" tabindex="0"></span>
+                <span class="color-picker-option color-dot-magenta" role="option" data-color="magenta" tabindex="0"></span>
+                <span class="color-picker-option color-dot-gray" role="option" data-color="gray" tabindex="0"></span>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <div class="m3-slider-label">
+              <label>Critical color</label>
+            </div>
+            <div class="color-picker-wrap status-color-picker" data-role="c" role="group" aria-label="Critical color">
+              <button type="button" class="color-picker-btn" aria-label="Critical color" aria-haspopup="true" aria-expanded="false">
+                <span class="color-picker-dot color-dot-red"></span>
+              </button>
+              <div class="color-picker-menu" role="listbox" aria-label="Critical color">
+                <span class="color-picker-option color-dot-purple" role="option" data-color="purple" tabindex="0"></span>
+                <span class="color-picker-option color-dot-blue" role="option" data-color="blue" tabindex="0"></span>
+                <span class="color-picker-option color-dot-green" role="option" data-color="green" tabindex="0"></span>
+                <span class="color-picker-option color-dot-orange" role="option" data-color="orange" tabindex="0"></span>
+                <span class="color-picker-option color-dot-red" role="option" data-color="red" tabindex="0"></span>
+                <span class="color-picker-option color-dot-teal" role="option" data-color="teal" tabindex="0"></span>
+                <span class="color-picker-option color-dot-magenta" role="option" data-color="magenta" tabindex="0"></span>
+                <span class="color-picker-option color-dot-gray" role="option" data-color="gray" tabindex="0"></span>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <div class="m3-slider-label">
+              <label>Milestone color</label>
+            </div>
+            <div class="color-picker-wrap status-color-picker" data-role="m" role="group" aria-label="Milestone color">
+              <button type="button" class="color-picker-btn" aria-label="Milestone color" aria-haspopup="true" aria-expanded="false">
+                <span class="color-picker-dot color-dot-orange"></span>
+              </button>
+              <div class="color-picker-menu" role="listbox" aria-label="Milestone color">
+                <span class="color-picker-option color-dot-purple" role="option" data-color="purple" tabindex="0"></span>
+                <span class="color-picker-option color-dot-blue" role="option" data-color="blue" tabindex="0"></span>
+                <span class="color-picker-option color-dot-green" role="option" data-color="green" tabindex="0"></span>
+                <span class="color-picker-option color-dot-orange" role="option" data-color="orange" tabindex="0"></span>
+                <span class="color-picker-option color-dot-red" role="option" data-color="red" tabindex="0"></span>
+                <span class="color-picker-option color-dot-teal" role="option" data-color="teal" tabindex="0"></span>
+                <span class="color-picker-option color-dot-magenta" role="option" data-color="magenta" tabindex="0"></span>
+                <span class="color-picker-option color-dot-gray" role="option" data-color="gray" tabindex="0"></span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -982,7 +1088,8 @@
         Array.prototype.forEach.call(rows, function (row) {
           var sel = row.querySelector('.target-select');
           if (!sel) return;
-          var current = sel.value;
+          // v1.2: preserve parent ID independent of the select's option list rebuild.
+          var current = row.getAttribute('data-parent-id') || sel.value;
           var rowIndex = Array.prototype.indexOf.call(rows, row);
           var previousRow = null, nextRow = null;
           for (var i = rowIndex - 1; i >= 0; i--) { if (!rows[i].classList.contains('row-is-section')) { previousRow = rows[i]; break; } }
@@ -1010,8 +1117,10 @@
               sel.appendChild(opt);
             }
             sel.value = current;
+            row.setAttribute('data-parent-id', current);
           } else {
             sel.selectedIndex = 0;
+            row.setAttribute('data-parent-id', '');
           }
         });
       }
@@ -1047,6 +1156,7 @@
         if (linkSelect) linkSelect.value = o.link != null ? o.link : ROW_DEFAULTS.link;
         var targetSelect = row.querySelector('.target-select');
         if (targetSelect) targetSelect.value = o.target != null ? o.target : ROW_DEFAULTS.target;
+        row.setAttribute('data-parent-id', (o.target != null ? o.target : ROW_DEFAULTS.target) || '');
         var colorInput = row.querySelector('.row-color-input');
         var color = o.color != null ? o.color : ROW_DEFAULTS.color;
         if (colorInput) colorInput.value = color;
@@ -1084,6 +1194,7 @@
           var progressInput = row.querySelector('.progress-input');
           var parsedDuration = durationInput ? parseFloat(durationInput.value) : NaN;
           var durationValue = isNaN(parsedDuration) ? ROW_DEFAULTS.duration : parsedDuration;
+          var parsedDelay = delayInput ? parseInt(delayInput.value, 10) : NaN;
           out.push({
             id: row.getAttribute('data-row-id') || '',
             section: row.classList.contains('row-is-section'),
@@ -1092,7 +1203,7 @@
             endDate: dateInputs[1] ? dateInputs[1].value : '',
             duration: durationValue,
             units: unitsSelect ? unitsSelect.value : ROW_DEFAULTS.units,
-            delay: delayInput ? (parseInt(delayInput.value, 10) || ROW_DEFAULTS.delay) : ROW_DEFAULTS.delay,
+            delay: isNaN(parsedDelay) ? ROW_DEFAULTS.delay : parsedDelay,
             link: linkSelect ? linkSelect.value : ROW_DEFAULTS.link,
             target: targetSelect ? targetSelect.value : ROW_DEFAULTS.target,
             color: colorInput ? (colorInput.value || ROW_DEFAULTS.color) : ROW_DEFAULTS.color, /* stored; chart uses getBarColorKey(A/D/M/C) */
@@ -1132,6 +1243,7 @@
           var delayInput = row.querySelector('.delay-input'); if (delayInput) delayInput.value = String(item.delay != null ? item.delay : ROW_DEFAULTS.delay);
           var linkSelect = row.querySelector('.link-select'); if (linkSelect) linkSelect.value = item.link || ROW_DEFAULTS.link;
           var targetSelect = row.querySelector('.target-select'); if (targetSelect) targetSelect.value = item.target || ROW_DEFAULTS.target;
+          row.setAttribute('data-parent-id', item.target || ROW_DEFAULTS.target || '');
           var colorInput = row.querySelector('.row-color-input');
           if (colorInput) {
             colorInput.value = item.color || ROW_DEFAULTS.color;
@@ -1152,10 +1264,76 @@
         renumberRows();
       }
       function serialize(data) {
-        try { return btoa(unescape(encodeURIComponent(JSON.stringify(data)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); } catch (e) { return ''; }
+        try {
+          // v1.2: compact rows => base64 URL-safe payload
+          // [id, section, name, start, end, dur, units, delay, link, target, color, progress, a, d, c, m]
+          var rowsCompact = (data || []).map(function (item) {
+            return [
+              item.id || '',
+              item.section ? 1 : 0,
+              item.name || '',
+              item.startDate || '',
+              item.endDate || '',
+              item.duration != null ? item.duration : ROW_DEFAULTS.duration,
+              item.units || ROW_DEFAULTS.units,
+              item.delay != null ? item.delay : ROW_DEFAULTS.delay,
+              item.link || ROW_DEFAULTS.link,
+              item.target || ROW_DEFAULTS.target,
+              item.color || ROW_DEFAULTS.color,
+              item.progress != null ? item.progress : ROW_DEFAULTS.progress,
+              item.a ? 1 : 0,
+              item.d ? 1 : 0,
+              item.c ? 1 : 0,
+              item.m ? 1 : 0
+            ];
+          });
+
+          // Palette keys order: [base, a, d, c, m]
+          var palette = window.wfStatusPalette;
+          var statusKeys = palette
+            ? [palette.base || 'blue', palette.a || 'green', palette.d || 'gray', palette.c || 'red', palette.m || 'orange']
+            : ['blue', 'green', 'gray', 'red', 'orange'];
+
+          var payload = [rowsCompact, statusKeys];
+          return btoa(unescape(encodeURIComponent(JSON.stringify(payload)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        } catch (e) { return ''; }
       }
       function deserialize(str) {
-        try { if (!str) return null; str = str.replace(/-/g, '+').replace(/_/g, '/'); while (str.length % 4) str += '='; return JSON.parse(decodeURIComponent(escape(atob(str)))); } catch (e) { return null; }
+        try {
+          if (!str) return null;
+          str = str.replace(/-/g, '+').replace(/_/g, '/');
+          while (str.length % 4) str += '=';
+          var decoded = JSON.parse(decodeURIComponent(escape(atob(str))));
+
+          // v1.2 only: [rowsCompact, statusKeys]
+          if (!Array.isArray(decoded) || !Array.isArray(decoded[0])) return null;
+          var rowsCompact = decoded[0];
+          var statusKeys = (decoded.length > 1 && Array.isArray(decoded[1])) ? decoded[1] : null;
+          if (Array.isArray(statusKeys) && statusKeys.length === 5) window.wfPendingStatusPalette = statusKeys;
+          else window.wfPendingStatusPalette = null;
+
+          return rowsCompact.map(function (arr) {
+            // [id, section, name, start, end, dur, units, delay, link, target, color, progress, a, d, c, m]
+            return {
+              id: arr[0] || '',
+              section: !!arr[1],
+              name: arr[2] || '',
+              startDate: arr[3] || '',
+              endDate: arr[4] || '',
+              duration: arr[5] != null && arr[5] !== '' ? Number(arr[5]) : ROW_DEFAULTS.duration,
+              units: arr[6] || ROW_DEFAULTS.units,
+              delay: arr[7] != null && arr[7] !== '' ? Number(arr[7]) : ROW_DEFAULTS.delay,
+              link: arr[8] || ROW_DEFAULTS.link,
+              target: arr[9] || ROW_DEFAULTS.target,
+              color: arr[10] || ROW_DEFAULTS.color,
+              progress: arr[11] != null && arr[11] !== '' ? Number(arr[11]) : ROW_DEFAULTS.progress,
+              a: !!arr[12],
+              d: !!arr[13],
+              c: !!arr[14],
+              m: !!arr[15]
+            };
+          });
+        } catch (e) { return null; }
       }
       var saveToUrlTimer = null;
       function saveToUrl() {
@@ -1171,6 +1349,10 @@
           if (window.location.hash !== (encoded ? '#' + encoded : '')) history.replaceState(null, '', url);
         }, 400);
       }
+
+      // v1.2: chart settings (status color pickers) need to trigger URL persistence.
+      // The schedule script is responsible for debounced URL updates.
+      window.wfScheduleSaveToUrl = saveToUrl;
       function formatDateForTable(d) {
         return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
       }
@@ -1602,12 +1784,18 @@
           targetSelect.addEventListener('change', function () {
             var newVal = (targetSelect.value || '').trim();
             var oldVal = getParentId(row);
-            if (newVal === '') { saveToUrl(); return; }
+            if (newVal === '') {
+              row.setAttribute('data-parent-id', '');
+              saveToUrl();
+              return;
+            }
             if (wouldCreateCycle(row, newVal)) {
               alert('This would create a circular dependency which is not allowed.');
               targetSelect.value = oldVal || '';
+              row.setAttribute('data-parent-id', oldVal || '');
               return;
             }
+            row.setAttribute('data-parent-id', newVal);
             applyRowDatesFromParent(row);
             cascadeToProgeny(row);
             saveToUrl();
@@ -1881,12 +2069,113 @@
       gray: { fill: '#8c8578', progress: '#b0aba0' }
     };
 
-    function getBarColorKey(task) {
-      if (task.m) return 'blue';
-      if (task.a) return 'green';
-      if (task.d) return 'gray';
-      return 'orange';
+    // v1.2: status palette (can be overridden from URL)
+    // Palette keys order in URL: [base, a, d, c, m]
+    const STATUS_PALETTE_DEFAULT = { base: 'blue', a: 'green', d: 'gray', c: 'red', m: 'orange' };
+    var statusPalette = { base: STATUS_PALETTE_DEFAULT.base, a: STATUS_PALETTE_DEFAULT.a, d: STATUS_PALETTE_DEFAULT.d, c: STATUS_PALETTE_DEFAULT.c, m: STATUS_PALETTE_DEFAULT.m };
+    window.wfStatusPalette = statusPalette;
+
+    function getStatusFill(role) {
+      const paletteKey = statusPalette[role] || STATUS_PALETTE_DEFAULT[role] || 'blue';
+      return (palette[paletteKey] && palette[paletteKey].fill) ? palette[paletteKey].fill : palette.blue.fill;
     }
+
+    function applyStatusColorsToCssVars() {
+      const root = document.documentElement;
+      root.style.setProperty('--wf-color-a', getStatusFill('a'));
+      root.style.setProperty('--wf-color-d', getStatusFill('d'));
+      root.style.setProperty('--wf-color-c', getStatusFill('c'));
+      root.style.setProperty('--wf-color-m', getStatusFill('m'));
+    }
+
+    window.wfApplyStatusPaletteFromUrl = function (keys, opts) {
+      if (!Array.isArray(keys) || keys.length !== 5) return;
+      statusPalette.base = keys[0] || STATUS_PALETTE_DEFAULT.base;
+      statusPalette.a = keys[1] || STATUS_PALETTE_DEFAULT.a;
+      statusPalette.d = keys[2] || STATUS_PALETTE_DEFAULT.d;
+      statusPalette.c = keys[3] || STATUS_PALETTE_DEFAULT.c;
+      statusPalette.m = keys[4] || STATUS_PALETTE_DEFAULT.m;
+      applyStatusColorsToCssVars();
+      // Important: during initial load, the URL palette might be applied before
+      // chart-local `tasks` is initialized. Defer draw() unless explicitly wanted.
+      if (!opts || !opts.deferDraw) draw();
+    };
+
+    if (window.wfPendingStatusPalette) {
+      window.wfApplyStatusPaletteFromUrl(window.wfPendingStatusPalette, { deferDraw: true });
+      window.wfPendingStatusPalette = null;
+    }
+
+    function getBarColorKey(task) {
+      if (task.m) return statusPalette.m;
+      if (task.a) return statusPalette.a;
+      if (task.d) return statusPalette.d;
+      return statusPalette.base;
+    }
+
+    function setStatusPickerDot(wrap, colorKey) {
+      var dot = wrap.querySelector('.color-picker-dot');
+      if (!dot) return;
+      dot.className = 'color-picker-dot color-dot-' + colorKey;
+    }
+
+    function initStatusColorPicker(wrap) {
+      var role = wrap && wrap.getAttribute('data-role');
+      if (!role) return;
+
+      var btn = wrap.querySelector('.color-picker-btn');
+      var menu = wrap.querySelector('.color-picker-menu');
+      if (!btn || !menu) return;
+
+      // Init selected dot from current palette.
+      setStatusPickerDot(wrap, statusPalette[role] || STATUS_PALETTE_DEFAULT[role] || 'blue');
+
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        // Close other status menus.
+        document.querySelectorAll('.status-color-picker .color-picker-menu.open').forEach(function (m) {
+          m.classList.remove('open');
+          var b = m.closest('.status-color-picker') ? m.closest('.status-color-picker').querySelector('.color-picker-btn') : null;
+          if (b) b.setAttribute('aria-expanded', 'false');
+        });
+        var isOpen = menu.classList.toggle('open');
+        btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      });
+
+      wrap.querySelectorAll('.color-picker-option').forEach(function (opt) {
+        opt.addEventListener('click', function (e) {
+          e.stopPropagation();
+          var newKey = (opt.getAttribute('data-color') || '').trim();
+          if (!newKey) return;
+
+          statusPalette[role] = newKey;
+          applyStatusColorsToCssVars();
+          setStatusPickerDot(wrap, newKey);
+          draw();
+
+          // Persist palette into the URL hash (debounced inside schedule).
+          if (typeof window.wfScheduleSaveToUrl === 'function') window.wfScheduleSaveToUrl();
+
+          menu.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+        });
+      });
+    }
+
+    function initStatusColorPickers() {
+      var wraps = document.querySelectorAll('.status-color-picker');
+      wraps.forEach(initStatusColorPicker);
+      // Close menus on outside click.
+      document.addEventListener('click', function () {
+        document.querySelectorAll('.status-color-picker .color-picker-menu.open').forEach(function (m) {
+          m.classList.remove('open');
+          var b = m.closest('.status-color-picker') ? m.closest('.status-color-picker').querySelector('.color-picker-btn') : null;
+          if (b) b.setAttribute('aria-expanded', 'false');
+        });
+      });
+    }
+
+    initStatusColorPickers();
 
     function getChartTasksFromTable() {
       const raw = typeof window.getScheduleDataFromTable === 'function' ? window.getScheduleDataFromTable() : [];
@@ -1938,7 +2227,7 @@
 
     const WEEKEND_RGB = [234, 219, 156];
     const WEEKEND_ALPHA = { light: 0.4, dark: 0.05 };
-    const PILL_COLORS = { a: '#5aaa00', d: '#8c8578', c: '#ef4444', m: '#2196f3' };
+    // Status pill colors derived from statusPalette (see getStatusFill()).
 
     const els = {
       viewport: document.getElementById('viewport'),
@@ -2025,12 +2314,12 @@
     function getSettings() {
       return {
         viewMode: els.viewMode.value,
-        rowHeight: clamp(Number(els.rowHeight.value) || 36, 36, 96),
+        rowHeight: clamp(Number(els.rowHeight.value) || 37, 36, 96),
         barHeight: clamp(Number(els.barHeight.value) || 29, 12, 40),
         barRadius: clamp(Number(els.barRadius.value) || 4, 0, 16),
-        strokeWidth: clamp(Number(els.strokeWidth.value) || 1, 1, 6),
+        strokeWidth: clamp(Number(els.strokeWidth.value) || 2, 1, 6),
         headerHeight: clamp(Number(els.headerHeight.value) || 72, 50, 120),
-        leftWidth: clamp(Number(els.leftWidth.value) || 280, 180, 420),
+        leftWidth: clamp(Number(els.leftWidth.value) || 386, 180, 420),
         unitWidth: clamp(Number(unitWidth) || 44, 24, 160),
         showWeekends: els.showWeekends.checked,
         showDependencies: els.showDependencies.checked
@@ -2072,7 +2361,7 @@
         let cursor = startOfWeek(rangeStart);
         while (cursor <= rangeEnd) {
           const end = addDays(cursor, 6);
-          units.push({ start: new Date(cursor), end, labelTop: cursor.toLocaleString('en-US', { month: 'short', year: 'numeric' }), labelBottom: `Wk ${getWeekNumber(cursor)}`, kind: 'week' });
+          units.push({ start: new Date(cursor), end, labelTop: cursor.toLocaleString('en-US', { month: 'short', year: 'numeric' }), labelBottom: `${getWeekNumber(cursor)}`, kind: 'week' });
           cursor = addDays(cursor, 7);
         }
         return units;
@@ -2218,12 +2507,21 @@
         const barColors = palette[getBarColorKey(task)] || palette.orange;
         const isDark = document.body.getAttribute('data-theme') === 'dark';
         const badgeBgAlpha = isDark ? 0.28 : 0.18;
-        const labelWidth = ctx.measureText(taskLabel).width;
         const padH = 6;
         const badgeH = 18;
         const badgeGap = 4;
-        let pillX = 18 + labelWidth + 6;
-        const pillY = y + settings.rowHeight / 2 - 8 - badgeH / 2;
+
+        // v1.2: pills appear after the date range (second line).
+        const dateText = `${task.start} → ${task.end}`;
+        ctx.fillStyle = barColors.fill;
+        ctx.font = '700 11px Inter';
+        const dateY = y + settings.rowHeight / 2 + 10;
+        ctx.textBaseline = 'middle';
+        ctx.fillText(dateText, 18, dateY);
+        const dateWidth = ctx.measureText(dateText).width;
+
+        let pillX = 18 + dateWidth + 6;
+        const pillY = dateY - badgeH / 2;
         ctx.font = '600 11px Inter';
         ctx.textBaseline = 'middle';
         ctx.textAlign = 'left';
@@ -2235,7 +2533,7 @@
         ];
         pills.forEach(function (p) {
           if (!p.show) return;
-          const hex = PILL_COLORS[p.key] || PILL_COLORS.a;
+          const hex = getStatusFill(p.key) || getStatusFill('a');
           const statusW = ctx.measureText(p.text).width;
           const badgeW = statusW + padH * 2;
           roundRect(ctx, pillX, pillY, badgeW, badgeH, 6);
@@ -2245,11 +2543,6 @@
           ctx.fillText(p.text, pillX + padH, pillY + badgeH / 2);
           pillX += badgeW + badgeGap;
         });
-
-        ctx.fillStyle = barColors.fill;
-        ctx.font = '700 11px Inter';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(`${task.start} → ${task.end}`, 18, y + settings.rowHeight / 2 + 10);
 
         chartMetrics.rows.push({ id: task.id, x: 0, y, width: settings.leftWidth, height: settings.rowHeight });
       }
@@ -2302,29 +2595,68 @@
       ctx.stroke();
     }
 
+    function getDayOffset(date, base) {
+      const a = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      const b = new Date(base.getFullYear(), base.getMonth(), base.getDate());
+      return Math.round((a - b) / DAY_MS);
+    }
+
+    // Date->canvas X mapping that is independent of gridlines:
+    // - day: 1 column per day
+    // - week: each week column is internally split into 7 day-slices
+    // - month: each month column is internally split proportionally by actual month day count
+    function dateToX(date, settings, units) {
+      if (!units || !units.length) return settings.leftWidth || 0;
+      const left = settings.leftWidth || 0;
+      const chartRight = left + units.length * settings.unitWidth;
+
+      const first = units[0].start;
+      const lastEndExclusive = addDays(units[units.length - 1].end, 1);
+      if (date <= first) return left;
+      if (date >= lastEndExclusive) return chartRight;
+
+      for (let i = 0; i < units.length; i++) {
+        const unit = units[i];
+        const unitStart = unit.start;
+        const unitEndExclusive = addDays(unit.end, 1);
+        if (date >= unitStart && date < unitEndExclusive) {
+          const dayOffset = getDayOffset(date, unitStart);
+          const totalDays = getDayOffset(unit.end, unitStart) + 1;
+          const pxPerDay = settings.unitWidth / totalDays;
+          return left + i * settings.unitWidth + dayOffset * pxPerDay;
+        }
+      }
+      return left;
+    }
+
     function taskRect(task, rowIndex, settings, units) {
       const start = parseDate(task.start);
       const end = parseDate(task.end);
-      const startIndex = Math.max(0, findUnitIndexForDate(units, start));
-      const endIndex = Math.max(startIndex, findUnitIndexForDate(units, end));
-      const x = settings.leftWidth + startIndex * settings.unitWidth + 6;
-      const width = Math.max(18, (endIndex - startIndex + 1) * settings.unitWidth - 12);
+
+      const inset = settings.viewMode === 'week' ? 0 : 6;
+      const minWidth = 6;
+      const startEdgeX = dateToX(start, settings, units);
+      const endEdgeX = dateToX(addDays(end, 1), settings, units);
+
+      const x = startEdgeX + inset;
+      const right = endEdgeX - inset;
+      const width = Math.max(minWidth, right - x);
       const y = settings.headerHeight + rowIndex * settings.rowHeight + (settings.rowHeight - settings.barHeight) / 2;
-      return { x, y, width, height: settings.barHeight, startIndex, endIndex };
+      return { x, y, width, height: settings.barHeight };
     }
 
     function milestoneRect(task, rowIndex, settings, units) {
-      // Diamond milestone: a fixed-size square (like a 1-day bar) rotated 45° and placed at start date.
       const start = parseDate(task.start);
-      const startIndex = Math.max(0, findUnitIndexForDate(units, start));
-      // Center horizontally on the boundary between this date and the next day.
-      const cx = settings.leftWidth + (startIndex + 1) * settings.unitWidth;
+
+      // Milestone is anchored on the end-of-day gridline for its start date (right edge of a 1-day bar).
+      let cx = dateToX(addDays(start, 1), settings, units);
+      if (settings.viewMode === 'week') cx = Math.round(cx);
+
       const y = settings.headerHeight + rowIndex * settings.rowHeight + (settings.rowHeight - settings.barHeight) / 2;
       const cy = y + settings.barHeight / 2;
       const side = Math.max(12, settings.barHeight) * 0.893; // 0.95 then another 6% (0.94)
       const diag = side * Math.SQRT2;
-      // Bounding box used for hit testing / metrics.
-      return { x: cx - diag / 2, y: cy - diag / 2, width: diag, height: diag, startIndex, endIndex: startIndex, cx, cy, side };
+      return { x: cx - diag / 2, y: cy - diag / 2, width: diag, height: diag, cx, cy, side };
     }
 
     function drawTasks(ctx, settings, units, theme) {
@@ -2347,7 +2679,7 @@
           roundRect(ctx, -rect.side / 2, -rect.side / 2, rect.side, rect.side, r);
           ctx.fillStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${0x35 / 255})`;
           ctx.fill();
-          ctx.strokeStyle = task.c ? PILL_COLORS.c : colors.fill;
+          ctx.strokeStyle = task.c ? getStatusFill('c') : colors.fill;
           ctx.lineWidth = stroke;
           ctx.stroke();
           ctx.restore();
@@ -2356,13 +2688,13 @@
           roundRect(ctx, rect.x, rect.y, rect.width, rect.height, radius);
           ctx.fillStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${0x35 / 255})`;
           ctx.fill();
-          ctx.strokeStyle = task.c ? PILL_COLORS.c : colors.fill;
+          ctx.strokeStyle = task.c ? getStatusFill('c') : colors.fill;
           ctx.lineWidth = settings.strokeWidth || 1;
           ctx.stroke();
 
           const progressPct = clamp((task.progress || 0) / 100, 0, 1);
           if (progressPct > 0) {
-            const progressWidth = Math.max(8, rect.width * progressPct);
+            const progressWidth = Math.min(rect.width, Math.max(8, rect.width * progressPct));
             roundRect(ctx, rect.x, rect.y, progressWidth, rect.height, radius);
             const prgb = hexToRgb(colors.progress);
             ctx.fillStyle = `rgba(${prgb.r}, ${prgb.g}, ${prgb.b}, ${0x80 / 255})`;
@@ -2373,17 +2705,23 @@
         ctx.fillStyle = theme.chartText;
         ctx.font = '600 12px Inter';
         ctx.textBaseline = 'middle';
-        const label = task.name.length > 24 ? task.name.slice(0, 24) + '…' : task.name;
-        if (isMilestone) {
-          ctx.fillText(label, rect.x + rect.width + 10, rect.y + rect.height / 2);
+        const label = task.name.length > 56 ? task.name.slice(0, 56) + '…' : task.name;
+        const labelWidth = ctx.measureText(label).width;
+        const chartRight = settings.leftWidth + units.length * settings.unitWidth;
+        const labelY = rect.y + rect.height / 2;
+        if (rect.x + rect.width + 10 + labelWidth > chartRight) {
+          ctx.textAlign = 'right';
+          ctx.fillText(label, rect.x - 10, labelY);
         } else {
-          ctx.fillText(label, rect.x + 10, rect.y + rect.height / 2);
+          ctx.textAlign = 'left';
+          ctx.fillText(label, rect.x + rect.width + 10, labelY);
         }
 
         if (!isMilestone) {
-          const handleW = 8;
+          const handleW = 4;
           ctx.fillStyle = colors.fill;
-          roundRect(ctx, rect.x + rect.width - handleW - 4, rect.y + 4, handleW, rect.height - 8, 4);
+          // Slim right-edge resize handle.
+          roundRect(ctx, rect.x + rect.width - handleW - 2, rect.y + 4, handleW, rect.height - 8, 2);
           ctx.fill();
         }
         ctx.restore();
@@ -2392,8 +2730,9 @@
           id: task.id,
           ...rect,
           isMilestone,
-          handleX: isMilestone ? Infinity : (rect.x + rect.width - 12),
-          handleWidth: isMilestone ? 0 : 12
+          // Resize hit area is the rightmost 10px of the bar.
+          handleX: isMilestone ? Infinity : (rect.x + rect.width - 10),
+          handleWidth: isMilestone ? 0 : 4
         });
       });
     }
@@ -2473,9 +2812,9 @@
 
     function goToToday() {
       const today = parseDate(fmtDate(new Date()));
-      const idx = findUnitIndexForDate(chartMetrics.units || [], today);
-      if (idx < 0) return;
-      const x = (Number(els.leftWidth.value) || 280) + idx * (Number(unitWidth) || 44) - els.viewport.clientWidth / 2;
+      const settings = getSettings();
+      const xPos = dateToX(today, settings, chartMetrics.units || []);
+      const x = xPos - els.viewport.clientWidth / 2;
       els.viewport.scrollLeft = Math.max(0, x);
     }
 
@@ -2518,18 +2857,39 @@
       els.canvas.style.cursor = dragState ? (dragState.mode === 'resize' ? 'ew-resize' : 'grabbing') : hit ? (hit.nearHandle ? 'ew-resize' : 'grab') : 'default';
       if (!dragState) return;
       const settings = getSettings();
-      const deltaUnits = Math.round((pos.x - dragState.startX) / settings.unitWidth);
-      const unitDays = settings.viewMode === 'day' ? 1 : settings.viewMode === 'week' ? 7 : 30;
       let newStartStr, newEndStr;
-      if (dragState.mode === 'move') {
-        const originalStart = parseDate(dragState.originalStart);
-        const originalEnd = parseDate(dragState.originalEnd);
-        newStartStr = fmtDate(addDays(originalStart, deltaUnits * unitDays));
-        newEndStr = fmtDate(addDays(originalEnd, deltaUnits * unitDays));
+      const dx = pos.x - dragState.startX;
+
+      // v1.2 snapping:
+      // - day view: 1-day steps
+      // - week view: 1-day steps within weekly columns
+      // - month view: 7-day (1-week) steps within monthly columns
+      const snapDays = settings.viewMode === 'month' ? 7 : 1;
+
+      const originalStart = parseDate(dragState.originalStart);
+      const originalEnd = parseDate(dragState.originalEnd);
+      const units = chartMetrics.units || [];
+
+      let pxPerDay;
+      if (settings.viewMode === 'day') {
+        pxPerDay = settings.unitWidth;
+      } else if (settings.viewMode === 'week') {
+        pxPerDay = settings.unitWidth / 7;
       } else {
-        const originalEnd = parseDate(dragState.originalEnd);
-        const originalStart = parseDate(dragState.originalStart);
-        const nextEnd = addDays(originalEnd, deltaUnits * unitDays);
+        const idx = findUnitIndexForDate(units, originalStart);
+        const unit = idx >= 0 ? units[idx] : units[0];
+        const totalDays = unit ? (getDayOffset(unit.end, unit.start) + 1) : 30;
+        pxPerDay = settings.unitWidth / (totalDays || 30);
+      }
+
+      const deltaDaysRaw = dx / pxPerDay;
+      const deltaDays = Math.round(deltaDaysRaw / snapDays) * snapDays;
+
+      if (dragState.mode === 'move') {
+        newStartStr = fmtDate(addDays(originalStart, deltaDays));
+        newEndStr = fmtDate(addDays(originalEnd, deltaDays));
+      } else {
+        const nextEnd = addDays(originalEnd, deltaDays);
         newEndStr = fmtDate(nextEnd < originalStart ? originalStart : nextEnd);
         newStartStr = dragState.originalStart;
       }
