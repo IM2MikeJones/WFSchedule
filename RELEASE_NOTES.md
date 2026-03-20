@@ -6,6 +6,43 @@ This file tracks changes **going forward**.
 
 ---
 
+## v1.3 — Released
+
+### Added
+
+- **Accent themes** — Six accent themes (blue, green, purple, teal, orange, rose) affecting backgrounds, chart colors, and controls. Selector in settings panel.
+- **Chart corner labels** — Top-left cell shows "Month - Year" / "Date" (day), "Month - Year" / "Week Number" (week), or "Year" / "Month" (month). Right-aligned.
+- **Color picker tooltips** — Single-word color names on hover (no delay) in status and row color pickers.
+- **14 status colors** — Palette expanded from 12 to 14: Purple, Indigo, Blue, Cyan, Teal, Green, Lime, Amber, Orange, Red, Rose, Slate, Taupe, Gray. Slate, Taupe, and Gray are unsaturated for clear distinction.
+
+### Changed
+
+- **M3 design system** — Color system uses `--md-sys-color-primary`; M3 type scale; shape tokens; 48px touch targets; responsive layout (compact &lt;600px, medium 600–839px, expanded 840px+); safe-area insets; `100dvh` for mobile.
+- **Chart theme** — Chart colors now read from CSS variables (`--wf-chart-*`); dark mode reads from `body`; weekend shading uses `--wf-chart-weekend`.
+- **Status color defaults** — Default=gray, Active=green, Done=slate, Critical=red, Milestone=teal.
+- **Accent picker** — Moved from top bar into settings panel.
+- **Week mode header** — Year shown only when it changes: first month and each January show "Month Year"; other months show only "Month".
+- **Card collapse** — Toggle moved to top-right of both cards. When collapsed, all content hidden; only the arrow remains. Compact arrow, theme color, no circular background.
+- **Table layout** — Reduced row padding; smaller delete/drag/flag controls; removed add-row-bar border; cards full-width (no max-width).
+- **Chart drag/resize** — requestAnimationFrame throttling; persistence deferred until pointer up (`skipPersist`) for smoother interaction.
+- **Color pickers** — M3 outline style; circular (not oval); tighter horizontal spacing in settings.
+- **Labels** — Unified label style across Project Name, settings sliders, and color pickers.
+- **Theme toggle** — Half size; 20% vertical padding; no fill in light mode.
+- **Spacing** — Reduced padding between project name and add-row bar; tighter spacing around collapse buttons.
+
+### Fixed
+
+- Chart dark mode (theme read from `body`).
+- Accent select dropdown arrow visibility in light and dark modes.
+- Undefined `--header-text` CSS variable (replaced with `var(--text)`).
+
+### Refactor
+
+- **Schedule card** — Added `.schedule-card` class; replaced `.card:first-of-type` throughout.
+- **Unused CSS removed** — `.nav`, `.nav-title`, `.nav-right`; `--wf-chart-boundary`, `--wf-chart-month-alt`; duplicate `.theme-toggle` rules.
+
+---
+
 ## v1.1 — Released
 
 ### Added

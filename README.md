@@ -21,14 +21,14 @@ Then open the URL your server shows (e.g. `http://localhost:8080`). Or open `ind
 
 Two main areas:
 
-1. **Schedule (first card)** — Project name (optional), a collapse/expand toggle to the right of the name, add-row / clear-all, and a table of task rows. The table is the single source of truth; the chart reads from it. The card can be collapsed to show only the header row.
-2. **Gantt chart (second card)** — Timeline view with day/week/month modes, weekend shading, optional dependency arrows, zoom, “Go to today,” settings panel, and a collapse/expand toggle to the right of the settings button. The card can be collapsed to show only the header row.
+1. **Schedule card** — Collapse/expand arrow at top-right. When expanded: project name (optional), add-row / clear-all, and a table of task rows. The table is the single source of truth; the chart reads from it. When collapsed, only the toggle is visible.
+2. **Gantt chart card** — Collapse/expand arrow at top-right. When expanded: project name in header, view mode (day/week/month), weekend shading, optional dependency arrows, zoom, “Go to today,” settings panel, and the timeline canvas. When collapsed, only the toggle is visible.
 
 All editing is done in the table or by dragging bars on the chart (no separate form card).
 
 ---
 
-## Schedule table (first card)
+## Schedule table
 
 - **Project name** — Optional; no default. When set, shown in the chart header.
 - **Add row** — Appends a new task row with defaults (see below). On first use the table is empty; the new row is the first. Subsequent rows default to linking to the previous row (From = Previous) with dates derived from the parent.
@@ -68,13 +68,13 @@ A1 Change Start → recalc delay, keep duration, recalc end, move progeny. A2 Ch
 
 ---
 
-## Gantt chart (second card)
+## Gantt chart
 
-- **Header** — Project name from the first card (or empty). View mode (day/week/month), “Show weekends,” “Show dependencies,” zoom in/out, “Go to today,” settings toggle, and collapse/expand toggle (right of settings).
-- **Settings panel** — Row height, bar height, bar corner radius, outline width, header height, name column width, plus status color pickers for Default/Active/Done/Critical/Milestone (saved in the URL).
+- **Header** — Top-left corner labels: day="Month - Year"/"Date", week="Month - Year"/"Week Number", month="Year"/"Month". Project name from the schedule card (or empty). View mode (day/week/month). In week mode, the year is shown only when it changes (first month and each January). “Show weekends,” “Show dependencies,” zoom in/out, “Go to today,” settings toggle. Collapse/expand arrow at top-right of the card.
+- **Settings panel** — Accent theme (6 options), row height, bar height, bar corner radius, outline width, header height, name column width, plus status color pickers for Default/Active/Done/Critical/Milestone (14 colors each, saved in the URL).
 - **Canvas** — Bars show task span and progress. Click a bar to select; drag to move (updates table via `updateTableRowFromChart` → `applyStartEndToRow`); drag right-edge handle to resize. Dependency arrows when “Show dependencies” is on.
-- **Weekend shading** — When “Show weekends” is on and view mode is day, Saturday/Sunday columns are shaded. Alpha is theme-dependent: light mode `0.4`, dark mode `0.05` (same RGB in both; constants `WEEKEND_RGB`, `WEEKEND_ALPHA` in code).
-- **Bar colors** — Driven by row flags: **Active** → green, **Done** → gray, **Milestone** → orange. The default fill for unflagged tasks is **blue**; **Critical** only changes the bar outline (red). The Color column is hidden in the table but still stored in data for future use.
+- **Weekend shading** — When “Show weekends” is on and view mode is day, Saturday/Sunday columns are shaded. Uses `--wf-chart-weekend` from the chart theme (theme-dependent).
+- **Bar colors** — Driven by row flags. Defaults: Default=gray, Active=green, Done=slate, Critical=red (outline only), Milestone=teal. Each status has 14 color options. The Color column is hidden in the table but still stored in data for future use.
 - **Milestones** — Rows with `M` enabled are treated as milestones: they have **duration 0**, **end = start**, **delay -1**, and render as fixed-size diamond markers centered on their date boundary. They can be moved on the chart (drag) but not resized.
 - **Data flow** — On each redraw the chart calls `getScheduleDataFromTable()` to build the task list. Rows without valid start/end dates are skipped. Table is the only source of truth.
 
@@ -83,21 +83,21 @@ A1 Change Start → recalc delay, keep duration, recalc end, move progeny. A2 Ch
 ## Tech
 
 - **Single file** — `index.html` with inline CSS and two script blocks (theme + schedule table; Gantt chart).
-- **Canvas** — Gantt drawing (no chart library). Chart theme (colors, weekend alpha) is built per draw from `data-theme` and constants.
+- **Canvas** — Gantt drawing (no chart library). Chart theme (colors, weekend shading) is built per draw from CSS variables (`--wf-chart-*`) and `data-theme`.
 - **Flatpickr** — Date inputs in the table.
-- **Material Design 3** — Theming (tokens, outlined fields, sliders, dialog), light/dark mode (stored in `localStorage`).
+- **Material Design 3** — Theming (tokens, outlined fields, sliders, dialog), light/dark mode (stored in `localStorage`), six accent themes (blue, green, purple, teal, orange, rose) in settings.
 - **No build step, no backend.**
 
 ---
 
 ## Version
 
-This snapshot is **v1.2** (`Rev 1.2/`).
+This snapshot is **v1.3** (`Rev 1.3/`).
 
 > **Compatibility note (v1.2)**
 > URL encoding changed to a compact format. Links from v1.0/v1.1 will not load in v1.2; v1.2 URLs are not for older builds.
 
-- **Release snapshots** — `Rev 1.0/`, `Rev 1.1/`, `Rev 1.2/`.
+- **Release snapshots** — `Rev 1.0/`, `Rev 1.1/`, `Rev 1.2/`, `Rev 1.3/`.
 - **Release notes** — See `RELEASE_NOTES.md`.
 
 Older revisions are in `old revision 0.2`, `old revision 0.3 (problems with linking)`, etc., for reference.

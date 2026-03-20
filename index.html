@@ -10,99 +10,271 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <style>
-    /* ========== Design tokens & layout ========== */
+    /* ==========================================================================
+       WFSchedule – Unified Design System (M3 + WF tokens)
+       ========================================================================== */
+
+    /* --------------------------------------------------------------------------
+       1. M3 Design Tokens
+       -------------------------------------------------------------------------- */
     :root {
-      --md-sys-color-primary: #6750a4;
+      /* M3 color roles */
+      --md-sys-color-primary: #1976d2;
       --md-sys-color-on-primary: #ffffff;
-      --md-sys-color-primary-container: #eaddfc;
+      --md-sys-color-primary-container: #d1e4f8;
+      --md-sys-color-on-primary-container: #0d47a1;
       --md-sys-color-surface: #fffbfe;
       --md-sys-color-on-surface: #1c1b1f;
       --md-sys-color-surface-variant: #e7e0ec;
       --md-sys-color-on-surface-variant: #49454f;
       --md-sys-color-outline: #79747e;
       --md-sys-color-outline-variant: #cac4d0;
-      --md-sys-color-background: #fffbfe;
+      --md-sys-color-background: #fafbff;
       --md-sys-color-error: #b3261e;
       --md-sys-color-on-error: #ffffff;
+      --md-sys-color-success: #2e7d32;
+
+      /* M3 elevation & shape */
       --md-sys-elevation-1: 0px 1px 2px rgba(0,0,0,0.3), 0px 1px 3px 1px rgba(0,0,0,0.15);
-      --md-sys-shape-corner-large: 16px;
+      --md-sys-elevation-2: 0px 1px 2px rgba(0,0,0,0.3), 0px 2px 6px 2px rgba(0,0,0,0.15);
+      --md-sys-shape-corner-none: 0;
+      --md-sys-shape-corner-extra-small: 4px;
       --md-sys-shape-corner-small: 8px;
+      --md-sys-shape-corner-medium: 12px;
+      --md-sys-shape-corner-large: 16px;
+      --md-sys-shape-corner-extra-large: 28px;
+      --md-sys-shape-corner-full: 9999px;
       --md-sys-state-hover-opacity: 0.08;
-      /* Profile-style primary for buttons (blue) */
-      --profile-primary: #1976d2;
+      --md-sys-state-focus-opacity: 0.12;
+      --md-sys-state-pressed-opacity: 0.12;
 
-      /* v1.2: configurable status colors (can be overridden from URL) */
-      --wf-color-a: #5aaa00; /* Active */
-      --wf-color-d: #8c8578; /* Done */
-      --wf-color-c: #ef4444; /* Critical */
-      --wf-color-m: #ff9800; /* Milestone */
+      /* M3 typography */
+      --md-sys-typescale-display-large: 400 57px/64px Inter, system-ui, sans-serif;
+      --md-sys-typescale-display-medium: 400 45px/52px Inter, system-ui, sans-serif;
+      --md-sys-typescale-headline-large: 400 32px/40px Inter, system-ui, sans-serif;
+      --md-sys-typescale-headline-medium: 400 28px/36px Inter, system-ui, sans-serif;
+      --md-sys-typescale-headline-small: 400 24px/32px Inter, system-ui, sans-serif;
+      --md-sys-typescale-title-large: 500 22px/28px Inter, system-ui, sans-serif;
+      --md-sys-typescale-title-medium: 500 16px/24px Inter, system-ui, sans-serif;
+      --md-sys-typescale-title-small: 500 14px/20px Inter, system-ui, sans-serif;
+      --md-sys-typescale-body-large: 400 16px/24px Inter, system-ui, sans-serif;
+      --md-sys-typescale-body-medium: 400 14px/20px Inter, system-ui, sans-serif;
+      --md-sys-typescale-body-small: 400 12px/16px Inter, system-ui, sans-serif;
+      --md-sys-typescale-label-large: 500 14px/20px Inter, system-ui, sans-serif;
+      --md-sys-typescale-label-medium: 500 12px/16px Inter, system-ui, sans-serif;
+      --md-sys-typescale-label-small: 500 11px/16px Inter, system-ui, sans-serif;
+
+      /* WF status colors (configurable from URL; applied by applyStatusColorsToCssVars) */
+      --wf-color-base: #757575;
+      --wf-color-a: #2e7d32;
+      --wf-color-d: #546e7a;
+      --wf-color-c: #e53935;
+      --wf-color-m: #00897b;
+
+      /* Chart theme (derived from M3; read by draw()) */
+      --wf-chart-bg: var(--md-sys-color-background);
+      --wf-chart-left: #f1f3f9;
+      --wf-chart-header: #e8eaef;
+      --wf-chart-grid: #c9ccdb;
+      --wf-chart-text: var(--md-sys-color-on-surface);
+      --wf-chart-text-muted: var(--md-sys-color-on-surface-variant);
+      --wf-chart-row-alt: #f4f4fa;
+      --wf-chart-row-border: #e4e4ec;
+      --wf-chart-highlight: color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent);
+      --wf-chart-today: color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent);
+      --wf-chart-today-stroke: color-mix(in srgb, var(--md-sys-color-primary) 50%, transparent);
+      --wf-chart-dep-line: var(--md-sys-color-outline);
+      --wf-chart-weekend: rgba(202, 196, 208, 0.25);
     }
 
-    /* App-wide light/dark: theme vars on body (schedule table + rest of app) */
+    /* --------------------------------------------------------------------------
+       2. Semantic aliases (light theme)
+       -------------------------------------------------------------------------- */
     body {
-      --bg: #ffffff;
-      --bg-secondary: #f5f5f6;
-      --text: #131722;
-      --text-muted: #787b86;
-      --header-text: #131722;
-      --border: #e0e3eb;
-      --table-row-border: #e0e3eb;
-      --symbol-btn: #e0e3eb;
-      --symbol-btn-hover: #d1d4dc;
-      --symbol-btn-selected: #2962ff;
-      --symbol-btn-selected-text: #fff;
-      --row-hover: rgba(41, 98, 255, 0.06);
-      --row-hover-border: #2962ff;
+      --bg: var(--md-sys-color-surface);
+      --bg-secondary: var(--md-sys-color-surface-variant);
+      --text: var(--md-sys-color-on-surface);
+      --text-muted: var(--md-sys-color-on-surface-variant);
+      --border: var(--md-sys-color-outline);
+      --table-row-border: var(--md-sys-color-outline-variant);
+      --symbol-btn: var(--md-sys-color-outline-variant);
+      --symbol-btn-hover: var(--md-sys-color-outline);
+      --symbol-btn-selected: var(--md-sys-color-primary);
+      --row-hover: color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent);
     }
+
+    /* --------------------------------------------------------------------------
+       3. Dark theme overrides
+       -------------------------------------------------------------------------- */
     body[data-theme="dark"] {
-      --bg: #131722;
-      --bg-secondary: #1e222d;
-      --text: #d1d4dc;
-      --text-muted: #787b86;
-      --header-text: #ffffff;
-      --border: #2a2e39;
-      --table-row-border: #363a45;
-      --symbol-btn: #2a2e39;
-      --symbol-btn-hover: #363a45;
-      --row-hover: rgba(41, 98, 255, 0.12);
-      --row-hover-border: #2962ff;
-      /* M3 / app-wide dark */
+      --md-sys-color-primary: #64b5f6;
+      --md-sys-color-on-primary: #0d47a1;
+      --md-sys-color-primary-container: #1565c0;
+      --md-sys-color-on-primary-container: #bbdefb;
       --md-sys-color-surface: #1e222d;
-      --md-sys-color-on-surface: #d1d4dc;
+      --md-sys-color-on-surface: #e6e9f0;
       --md-sys-color-surface-variant: #2a2e39;
       --md-sys-color-on-surface-variant: #787b86;
       --md-sys-color-outline: #363a45;
       --md-sys-color-outline-variant: #363a45;
       --md-sys-color-background: #131722;
-      --profile-primary: #64b5f6;
-      background: #131722;
+      --bg: var(--md-sys-color-surface);
+      --bg-secondary: var(--md-sys-color-surface-variant);
+      --text: var(--md-sys-color-on-surface);
+      --text-muted: var(--md-sys-color-on-surface-variant);
+      --border: var(--md-sys-color-outline);
+      --table-row-border: var(--md-sys-color-outline);
+      --symbol-btn: var(--md-sys-color-outline);
+      --symbol-btn-hover: var(--md-sys-color-outline-variant);
+      --symbol-btn-selected: var(--md-sys-color-primary);
+      --row-hover: color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent);
+
+      --wf-chart-bg: var(--md-sys-color-background);
+      --wf-chart-left: #252a37;
+      --wf-chart-header: #2a2e39;
+      --wf-chart-grid: #363a45;
+      --wf-chart-text: #d1d4dc;
+      --wf-chart-text-muted: #787b86;
+      --wf-chart-row-alt: #252a37;
+      --wf-chart-row-border: #363a45;
+      --wf-chart-highlight: color-mix(in srgb, var(--md-sys-color-primary) 15%, transparent);
+      --wf-chart-today: color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent);
+      --wf-chart-today-stroke: color-mix(in srgb, var(--md-sys-color-primary) 50%, transparent);
+      --wf-chart-dep-line: var(--md-sys-color-on-surface-variant);
+      --wf-chart-weekend: rgba(54, 58, 69, 0.3);
+
+      background: var(--md-sys-color-background);
     }
-    body[data-theme="dark"] .app {
-      background: #131722;
-    }
-    /* First card: same surface as other cards in dark mode (nav, add-row bar only; keep table rows as before) */
-    body[data-theme="dark"] .card:first-of-type .nav,
-    body[data-theme="dark"] .card:first-of-type .add-row-bar {
+    body[data-theme="dark"] .app { background: var(--md-sys-color-background); }
+    body[data-theme="dark"] .schedule-card .add-row-bar {
       background: var(--md-sys-color-surface);
     }
 
-    * { box-sizing: border-box; }
-    html, body { height: 100%; margin: 0; }
-    body { overflow-y: auto; }
-    body {
-      font-family: Inter, system-ui, sans-serif;
-      background: #fafbff;
-      color: var(--md-sys-color-on-surface);
+    /* --------------------------------------------------------------------------
+       3b. Accent themes (blue=default, green, purple, teal, orange, rose)
+       -------------------------------------------------------------------------- */
+    body[data-accent="green"] {
+      --md-sys-color-primary: #2e7d32;
+      --md-sys-color-on-primary: #ffffff;
+      --md-sys-color-primary-container: #c8e6c9;
+      --md-sys-color-on-primary-container: #1b5e20;
+      --wf-chart-left: #eef5ee;
+      --wf-chart-header: #e8f0e8;
+    }
+    body[data-theme="dark"][data-accent="green"] {
+      --md-sys-color-primary: #66bb6a;
+      --md-sys-color-on-primary: #ffffff;
+      --md-sys-color-primary-container: #1b5e20;
+      --md-sys-color-on-primary-container: #c8e6c9;
+      --wf-chart-left: #1e2a1e;
+      --wf-chart-header: #232e23;
     }
 
+    body[data-accent="purple"] {
+      --md-sys-color-primary: #7b1fa2;
+      --md-sys-color-on-primary: #ffffff;
+      --md-sys-color-primary-container: #e1bee7;
+      --md-sys-color-on-primary-container: #4a148c;
+      --wf-chart-left: #f1eef5;
+      --wf-chart-header: #ebe8f0;
+    }
+    body[data-theme="dark"][data-accent="purple"] {
+      --md-sys-color-primary: #ab47bc;
+      --md-sys-color-on-primary: #ffffff;
+      --md-sys-color-primary-container: #4a148c;
+      --md-sys-color-on-primary-container: #e1bee7;
+      --wf-chart-left: #251e2a;
+      --wf-chart-header: #2a232e;
+    }
+
+    body[data-accent="teal"] {
+      --md-sys-color-primary: #00897b;
+      --md-sys-color-on-primary: #ffffff;
+      --md-sys-color-primary-container: #b2dfdb;
+      --md-sys-color-on-primary-container: #004d40;
+      --wf-chart-left: #e8f5f3;
+      --wf-chart-header: #e0f0ee;
+    }
+    body[data-theme="dark"][data-accent="teal"] {
+      --md-sys-color-primary: #26a69a;
+      --md-sys-color-on-primary: #ffffff;
+      --md-sys-color-primary-container: #004d40;
+      --md-sys-color-on-primary-container: #b2dfdb;
+      --wf-chart-left: #1e2a28;
+      --wf-chart-header: #232e2c;
+    }
+
+    body[data-accent="orange"] {
+      --md-sys-color-primary: #e65100;
+      --md-sys-color-on-primary: #ffffff;
+      --md-sys-color-primary-container: #ffe0b2;
+      --md-sys-color-on-primary-container: #bf360c;
+      --wf-chart-left: #faf3ee;
+      --wf-chart-header: #f5ebe5;
+    }
+    body[data-theme="dark"][data-accent="orange"] {
+      --md-sys-color-primary: #ff7043;
+      --md-sys-color-on-primary: #ffffff;
+      --md-sys-color-primary-container: #bf360c;
+      --md-sys-color-on-primary-container: #ffe0b2;
+      --wf-chart-left: #2a1e18;
+      --wf-chart-header: #2e231e;
+    }
+
+    body[data-accent="rose"] {
+      --md-sys-color-primary: #c2185b;
+      --md-sys-color-on-primary: #ffffff;
+      --md-sys-color-primary-container: #f8bbd9;
+      --md-sys-color-on-primary-container: #880e4f;
+      --wf-chart-left: #fce4ec;
+      --wf-chart-header: #f5e0e8;
+    }
+    body[data-theme="dark"][data-accent="rose"] {
+      --md-sys-color-primary: #ec407a;
+      --md-sys-color-on-primary: #ffffff;
+      --md-sys-color-primary-container: #880e4f;
+      --md-sys-color-on-primary-container: #f8bbd9;
+      --wf-chart-left: #2a1e24;
+      --wf-chart-header: #2e2328;
+    }
+
+    /* Blue is default (no data-accent or data-accent="blue") - no overrides needed */
+
+    /* --------------------------------------------------------------------------
+       4. Base & reset
+       -------------------------------------------------------------------------- */
+    * { box-sizing: border-box; }
+    html { height: 100%; -webkit-text-size-adjust: 100%; }
+    html, body { margin: 0; }
+    body {
+      font: var(--md-sys-typescale-body-medium);
+      color: var(--md-sys-color-on-surface);
+      background: var(--md-sys-color-background);
+      min-height: 100%;
+      overflow-y: auto;
+    }
+
+    /* --------------------------------------------------------------------------
+       5. Layout
+       -------------------------------------------------------------------------- */
     .app {
       display: flex;
       flex-direction: column;
       min-height: 100vh;
+      min-height: 100dvh;
       width: 100%;
       overflow: visible;
-      padding: 18px;
-      gap: 14px;
+      padding: 16px;
+      padding-left: max(16px, env(safe-area-inset-left));
+      padding-right: max(16px, env(safe-area-inset-right));
+      padding-bottom: max(16px, env(safe-area-inset-bottom));
+      gap: 16px;
+    }
+    @media (min-width: 600px) {
+      .app { padding: 24px; gap: 24px; }
+    }
+    @media (min-width: 840px) {
+      .app { padding: 24px; gap: 24px; width: 100%; }
     }
 
     .card {
@@ -112,31 +284,33 @@
       padding: 16px;
       box-shadow: var(--md-sys-elevation-1);
     }
+    @media (min-width: 600px) {
+      .card { padding: 24px; }
+    }
 
+    /* --------------------------------------------------------------------------
+       6. Typography
+       -------------------------------------------------------------------------- */
     h1, h2, h3 { margin: 0 0 12px; line-height: 1.2; color: var(--md-sys-color-on-surface); }
-    h1 { font-size: 22px; }
-    /* M3 Outlined text field (blue theme) */
+    h1 { font: var(--md-sys-typescale-title-large); }
+    h2 { font: var(--md-sys-typescale-title-small); }
+
+    /* --------------------------------------------------------------------------
+       7. Form controls
+       -------------------------------------------------------------------------- */
     .m3-outlined-field {
       margin-bottom: 16px;
-    }
-    .m3-outlined-field label {
-      display: block;
-      font-size: 12px;
-      color: var(--profile-primary);
-      margin-bottom: 4px;
-      font-weight: 500;
     }
     .card-title-input {
       display: block;
       width: 100%;
-      padding: 9px 12px;
-      font-size: 16px;
-      font-weight: 400;
-      line-height: 1.5;
+      padding: 12px 16px;
+      min-height: 56px;
+      font: var(--md-sys-typescale-body-large);
       color: var(--md-sys-color-on-surface);
       background: transparent;
       border: 1px solid var(--md-sys-color-outline);
-      border-radius: var(--md-sys-shape-corner-small);
+      border-radius: var(--md-sys-shape-corner-extra-small);
       outline: none;
       font-family: inherit;
       box-sizing: border-box;
@@ -148,18 +322,31 @@
       border-color: var(--md-sys-color-on-surface);
     }
     .card-title-input:focus {
-      border-color: var(--profile-primary);
+      border-color: var(--md-sys-color-primary);
+      border-width: 2px;
+      padding: 11px 15px;
     }
     .card-title-input:focus-visible {
-      outline: 2px solid var(--profile-primary);
+      outline: 2px solid var(--md-sys-color-primary);
       outline-offset: 2px;
     }
-    h2 { font-size: 15px; }
-
     .controls-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 16px;
+    }
+    @media (min-width: 600px) {
+      .controls-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+    }
+    .field-group--colors {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+      align-items: flex-end;
+    }
+    .field-group--colors .field {
+      flex: 0 0 auto;
     }
 
     .field {
@@ -168,12 +355,13 @@
       gap: 6px;
     }
 
+    /* Unified label style for all form fields (m3-outlined-field, .field, settings) */
+    .m3-outlined-field label,
     .field label {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--profile-primary);
-      letter-spacing: 0.02em;
+      font: var(--md-sys-typescale-label-medium);
+      color: var(--md-sys-color-on-surface-variant);
     }
+    .m3-outlined-field label { margin-bottom: 4px; }
 
     .field input,
     .field select {
@@ -189,11 +377,10 @@
 
     .field input:focus,
     .field select:focus {
-      border-color: var(--profile-primary);
-      box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.18);
+      border-color: var(--md-sys-color-primary);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--md-sys-color-primary) 18%, transparent);
     }
 
-    /* M3 sliders (blue theme) */
     .m3-slider-label {
       display: flex;
       align-items: baseline;
@@ -220,38 +407,41 @@
     .m3-slider:focus { outline: none; }
     .m3-slider::-webkit-slider-runnable-track {
       height: 4px;
-      border-radius: 999px;
-      background: #c9ccdb;
+      border-radius: var(--md-sys-shape-corner-full);
+      background: var(--md-sys-color-outline-variant);
     }
     .m3-slider::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
-      background: var(--profile-primary);
-      margin-top: -7px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+      background: var(--md-sys-color-primary);
+      margin-top: -8px;
+      box-shadow: var(--md-sys-elevation-1);
     }
     .m3-slider:focus-visible::-webkit-slider-thumb {
-      box-shadow: 0 0 0 6px rgba(25, 118, 210, 0.18), 0 1px 3px rgba(0,0,0,0.25);
+      box-shadow: 0 0 0 6px color-mix(in srgb, var(--md-sys-color-primary) 18%, transparent), var(--md-sys-elevation-1);
     }
     .m3-slider::-moz-range-track {
       height: 4px;
-      border-radius: 999px;
-      background: #c9ccdb;
+      border-radius: var(--md-sys-shape-corner-full);
+      background: var(--md-sys-color-outline-variant);
     }
     .m3-slider::-moz-range-thumb {
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       border: none;
       border-radius: 50%;
-      background: var(--profile-primary);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+      background: var(--md-sys-color-primary);
+      box-shadow: var(--md-sys-elevation-1);
     }
     .m3-slider:focus-visible::-moz-range-thumb {
-      box-shadow: 0 0 0 6px rgba(25, 118, 210, 0.18), 0 1px 3px rgba(0,0,0,0.25);
+      box-shadow: 0 0 0 6px color-mix(in srgb, var(--md-sys-color-primary) 18%, transparent), var(--md-sys-elevation-1);
     }
 
+    /* --------------------------------------------------------------------------
+       8. Switches
+       -------------------------------------------------------------------------- */
     .gantt-card-switches {
       display: flex;
       align-items: center;
@@ -297,38 +487,45 @@
       box-shadow: 0 1px 3px rgba(0,0,0,0.2);
     }
     .header-switch-item input:checked ~ .switch {
-      background: var(--profile-primary);
+      background: var(--md-sys-color-primary);
     }
     .header-switch-item input:checked ~ .switch::after {
       left: 19px;
     }
     .header-switch-item input:focus-visible ~ .switch {
-      outline: 2px solid var(--profile-primary);
+      outline: 2px solid var(--md-sys-color-primary);
       outline-offset: 2px;
     }
 
+    /* --------------------------------------------------------------------------
+       9. Buttons
+       -------------------------------------------------------------------------- */
     button {
       appearance: none;
       border: none;
-      border-radius: 24px;
-      padding: 11px 24px;
-      font: inherit;
-      font-size: 14px;
-      font-weight: 500;
-      text-transform: uppercase;
+      border-radius: var(--md-sys-shape-corner-full);
+      padding: 10px 24px;
+      min-height: 40px;
+      font: var(--md-sys-typescale-label-large);
       cursor: pointer;
-      transition: opacity 0.15s ease, background 0.15s ease;
+      transition: opacity 0.2s, background 0.2s, box-shadow 0.2s;
     }
-
-    button:active { opacity: 0.9; }
-    .btn-primary { background: var(--profile-primary); color: #fff; }
+    button:active { opacity: 0.92; }
+    .btn-primary {
+      background: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary);
+      box-shadow: var(--md-sys-elevation-1);
+    }
+    .btn-primary:hover { opacity: 0.92; }
     .btn-secondary {
       border: 1px solid var(--md-sys-color-outline);
       background: transparent;
-      color: var(--profile-primary);
+      color: var(--md-sys-color-primary);
     }
 
-    /* ========== Dialogs ========== */
+    /* --------------------------------------------------------------------------
+       10. Dialogs
+       -------------------------------------------------------------------------- */
     .m3-dialog-overlay {
       position: fixed;
       inset: 0;
@@ -391,12 +588,11 @@
       font-family: inherit;
       cursor: pointer;
       background: transparent;
-      color: var(--profile-primary);
+      color: var(--md-sys-color-primary);
       transition: background 0.15s ease, opacity 0.15s ease;
     }
-    .m3-dialog-btn:hover { background: rgba(25, 118, 210, 0.08); }
-    body[data-theme="dark"] .m3-dialog-btn:hover { background: rgba(100, 181, 246, 0.12); }
-    .m3-dialog-btn:focus-visible { outline: 2px solid var(--profile-primary); outline-offset: 2px; }
+    .m3-dialog-btn:hover { background: color-mix(in srgb, var(--md-sys-color-primary) var(--md-sys-state-hover-opacity), transparent); }
+    .m3-dialog-btn:focus-visible { outline: 2px solid var(--md-sys-color-primary); outline-offset: 2px; }
     .m3-dialog-btn-destructive {
       background: var(--md-sys-color-error);
       color: var(--md-sys-color-on-error);
@@ -407,9 +603,9 @@
       padding: 10px 24px;
       min-height: 40px;
       border: none;
-      border-radius: 20px;
-      background: var(--profile-primary);
-      color: #fff;
+      border-radius: var(--md-sys-shape-corner-full);
+      background: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary);
       font-size: 14px;
       font-weight: 500;
       font-family: inherit;
@@ -417,16 +613,16 @@
       transition: opacity 0.15s ease, background 0.15s ease;
     }
     .m3-dialog-copy-url:hover { opacity: 0.92; }
-    .m3-dialog-copy-url:focus-visible { outline: 2px solid var(--profile-primary); outline-offset: 2px; }
-    .m3-dialog-copy-url.copied { background: #2e7d32; }
+    .m3-dialog-copy-url:focus-visible { outline: 2px solid var(--md-sys-color-primary); outline-offset: 2px; }
+    .m3-dialog-copy-url.copied { background: var(--md-sys-color-success); }
     .m3-dialog-copy-url.copied:hover { opacity: 0.92; }
 
-    /* M3 icon button (e.g. Add task) */
+    /* M3 icon button - 48px min for touch targets (M3 standard) */
     .btn-icon {
-      min-width: 43px;
-      min-height: 43px;
-      width: 43px;
-      height: 43px;
+      min-width: 48px;
+      min-height: 48px;
+      width: 48px;
+      height: 48px;
       padding: 0;
       border-radius: 50%;
       display: inline-flex;
@@ -435,7 +631,9 @@
     }
     .btn-icon .material-symbols-outlined { font-size: 24px; }
 
-    /* ========== Gantt card ========== */
+    /* --------------------------------------------------------------------------
+       11. Gantt card
+       -------------------------------------------------------------------------- */
     .gantt-card {
       flex: 0 0 auto;
       display: flex;
@@ -456,40 +654,52 @@
       display: flex;
       align-items: center;
       justify-content: flex-start;
-      gap: 16px;
-      margin-bottom: 8px;
+      margin-top: -8px;
+      gap: 12px;
+      margin-bottom: 12px;
       flex-wrap: wrap;
     }
-    .gantt-card-header h1 { margin: 0; }
+    .gantt-card-header h1 { margin: 0; font: var(--md-sys-typescale-title-large); }
     .gantt-card-switches { margin-left: auto; }
-    .gantt-card-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .gantt-card-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    @media (max-width: 599px) {
+      .gantt-card-header { flex-direction: column; align-items: stretch; gap: 12px; }
+      .gantt-card-switches { margin-left: 0; }
+      .gantt-card-actions { justify-content: flex-start; }
+    }
+    .gantt-card-collapsed .gantt-card-header,
     .gantt-card-collapsed .gantt-settings-panel,
     .gantt-card-collapsed .viewport { display: none !important; }
+    .gantt-card-collapsed .card-top-bar { margin-bottom: 0; }
     .header-select {
       appearance: none;
       -webkit-appearance: none;
       border: 1px solid var(--md-sys-color-outline);
-      border-radius: var(--md-sys-shape-corner-small);
-      padding: 0 44px 0 16px;
-      font: inherit;
-      font-size: 14px;
-      font-weight: 500;
+      border-radius: var(--md-sys-shape-corner-extra-small);
+      padding: 0 48px 0 16px;
+      font: var(--md-sys-typescale-label-large);
       background: var(--md-sys-color-surface);
       color: var(--md-sys-color-on-surface);
       outline: none;
-      height: 43px;
-      line-height: 43px;
+      min-height: 48px;
+      line-height: 48px;
       cursor: pointer;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%2349454f' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: right 12px center;
     }
-    .header-select:hover {
-      border-color: var(--md-sys-color-on-surface);
+    body[data-theme="dark"] .header-select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%23787b86' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
     }
+    .header-select:hover { border-color: var(--md-sys-color-on-surface); }
     .header-select:focus {
-      border-color: var(--profile-primary);
-      box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.18);
+      border-color: var(--md-sys-color-primary);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--md-sys-color-primary) 18%, transparent);
     }
 
     .viewport {
@@ -503,27 +713,36 @@
     #ganttCanvas {
       display: block;
       background: var(--md-sys-color-surface);
+      touch-action: none;
     }
 
-    /* Color picker dropdown (calendar-events style) */
+    /* --------------------------------------------------------------------------
+       12. Color picker
+       -------------------------------------------------------------------------- */
     .color-picker-wrap {
       position: relative;
       display: inline-flex;
       align-items: center;
+      justify-content: flex-start;
       margin-top: 2px;
+      align-self: flex-start;
+      flex-shrink: 0;
     }
     .color-picker-wrap input[type="hidden"] { display: none; }
     .color-picker-btn {
       width: 36px;
       height: 36px;
+      min-width: 36px;
+      min-height: 36px;
       border-radius: 50%;
-      border: 2px solid rgba(0,0,0,0.1);
+      border: 1px solid var(--md-sys-color-outline);
       cursor: pointer;
       padding: 0;
       background: transparent;
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-shrink: 0;
       transition: transform 0.2s, box-shadow 0.2s;
     }
     .color-picker-btn:hover {
@@ -533,8 +752,11 @@
     .color-picker-dot {
       width: 22px;
       height: 22px;
+      min-width: 22px;
+      min-height: 22px;
       border-radius: 50%;
-      border: 1px solid rgba(0,0,0,0.12);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      flex-shrink: 0;
     }
     .color-picker-menu {
       position: absolute;
@@ -542,6 +764,7 @@
       left: 0;
       margin-top: 6px;
       background: var(--md-sys-color-surface);
+      border: 1px solid var(--md-sys-color-outline);
       border-radius: var(--md-sys-shape-corner-small);
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       padding: 8px;
@@ -553,182 +776,352 @@
     }
     .color-picker-menu.open { display: flex; }
     .color-picker-option {
+      position: relative;
       width: 28px;
       height: 28px;
+      min-width: 28px;
+      min-height: 28px;
       border-radius: 50%;
-      border: 2px solid rgba(0,0,0,0.1);
+      border: 1px solid var(--md-sys-color-outline);
       cursor: pointer;
+      flex-shrink: 0;
       transition: transform 0.2s, box-shadow 0.2s;
     }
     .color-picker-option:hover {
       transform: scale(1.15);
       box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
-    .color-dot-purple { background: #6750a4; }
-    .color-dot-blue { background: #2196f3; }
-    .color-dot-green { background: #5aaa00; }
-    .color-dot-orange { background: #ff9800; }
-    .color-dot-red { background: #f44336; }
-    .color-dot-teal { background: #007a6e; }
-    .color-dot-magenta { background: #c700a7; }
-    .color-dot-gray { background: #8c8578; }
+    .color-picker-option::after {
+      content: attr(data-name);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-6px);
+      padding: 3px 8px;
+      font: 500 11px Inter, system-ui, sans-serif;
+      white-space: nowrap;
+      background: var(--md-sys-color-on-surface);
+      color: var(--md-sys-color-surface);
+      border-radius: var(--md-sys-shape-corner-extra-small);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0s;
+      z-index: 101;
+    }
+    .color-picker-option:hover::after {
+      opacity: 1;
+    }
+    .color-dot-purple { background: #7b1fa2; }
+    .color-dot-indigo { background: #3949ab; }
+    .color-dot-blue { background: #1976d2; }
+    .color-dot-cyan { background: #00acc1; }
+    .color-dot-teal { background: #00897b; }
+    .color-dot-green { background: #2e7d32; }
+    .color-dot-lime { background: #8bc34a; }
+    .color-dot-amber { background: #ffb300; }
+    .color-dot-orange { background: #ff6f00; }
+    .color-dot-red { background: #e53935; }
+    .color-dot-rose { background: #ec407a; }
+    .color-dot-slate { background: #546e7a; }
+    .color-dot-taupe { background: #6d4c41; }
+    .color-dot-gray { background: #757575; }
+    .color-dot-coral { background: #ff6f00; }
+    .color-dot-magenta { background: #ec407a; }
 
-    /* ========== Schedule table (first card) ========== */
-    .card:first-of-type { font-size: clamp(10px, 1.6vw, 13px); color: var(--text); background: var(--md-sys-color-surface); }
-    .card:first-of-type *, .card:first-of-type *::before, .card:first-of-type *::after { box-sizing: border-box; }
-    .card:first-of-type .nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: clamp(6px, 1.2vw, 12px) clamp(12px, 2.5vw, 24px); border-bottom: 1px solid var(--border); background: var(--bg); flex-wrap: wrap; margin: -16px -16px 0 -16px; }
-    .card:first-of-type .nav-title { margin: 0; font-size: 1rem; font-weight: 600; color: var(--text); }
-    .card:first-of-type .nav-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-    .card:first-of-type .schedule-card-header { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-    .card:first-of-type .schedule-card-header .m3-outlined-field { flex: 1; min-width: 0; }
+    /* --------------------------------------------------------------------------
+       13. Schedule card
+       -------------------------------------------------------------------------- */
+    .schedule-card { font-size: clamp(10px, 1.6vw, 13px); color: var(--text); background: var(--md-sys-color-surface); }
+    .schedule-card *, .schedule-card *::before, .schedule-card *::after { box-sizing: border-box; }
+    .card-top-bar {
+      display: flex;
+      justify-content: flex-end;
+      margin: -16px -16px 0 -16px;
+      padding: 0;
+    }
+    .card-collapse-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+      border: none;
+      background: transparent;
+      color: var(--md-sys-color-primary);
+      cursor: pointer;
+      transition: opacity 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .card-collapse-btn:hover { opacity: 0.8; }
+    .card-collapse-btn .m3-expand-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--md-sys-color-primary);
+      transition: transform 0.2s;
+    }
+    .card-collapse-btn .m3-expand-icon .material-symbols-outlined { font-size: 24px; }
+    .card-collapse-btn:focus-visible { outline: 2px solid var(--md-sys-color-primary); outline-offset: 2px; border-radius: 4px; }
+    .card-collapse-btn[aria-expanded="false"] .m3-expand-icon { transform: rotate(180deg); }
+    @media (min-width: 600px) {
+      .card-top-bar { margin: -24px -24px 0 -24px; }
+    }
+    .schedule-card .schedule-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: -16px;
+    }
+    .schedule-card .schedule-card-header .m3-outlined-field { flex: 1; min-width: 200px; margin-bottom: 0; }
+    @media (max-width: 599px) {
+      .schedule-card .schedule-card-header { flex-direction: column; align-items: stretch; }
+      .schedule-card .schedule-card-header .m3-outlined-field { min-width: 0; }
+    }
+    #scheduleCard.schedule-card-collapsed .schedule-card-header,
     #scheduleCard.schedule-card-collapsed .container { display: none !important; }
-    .card:first-of-type .add-row-bar { display: flex; align-items: center; gap: 0.5rem; padding: clamp(2px, 0.5vw, 6px) clamp(12px, 2.5vw, 24px) clamp(2px, 0.5vw, 6px) 0; background: var(--bg); border-bottom: 1px solid var(--border); }
-    .card:first-of-type .add-row-btn {
+    #scheduleCard.schedule-card-collapsed .card-top-bar { margin-bottom: 0; }
+    .schedule-card .add-row-bar { display: flex; align-items: center; gap: 0.5rem; padding: clamp(2px, 0.5vw, 6px) clamp(12px, 2.5vw, 24px) clamp(2px, 0.5vw, 6px) 0; background: var(--bg); }
+    .schedule-card .add-row-btn {
       appearance: none;
       border: none;
-      min-width: 43px;
-      min-height: 43px;
-      width: 43px;
-      height: 43px;
+      min-width: 48px;
+      min-height: 48px;
+      width: 48px;
+      height: 48px;
       padding: 0;
       border-radius: 50%;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: opacity 0.15s ease, background 0.15s ease;
-      background: var(--profile-primary);
-      color: #fff;
+      transition: opacity 0.2s, background 0.2s;
+      background: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary);
       font-family: inherit;
+      box-shadow: var(--md-sys-elevation-1);
     }
-    .card:first-of-type .add-row-btn .material-symbols-outlined { font-size: 24px; }
-    .card:first-of-type .add-row-btn:hover { opacity: 0.92; }
-    .card:first-of-type .add-row-btn:focus-visible { outline: 2px solid var(--profile-primary); outline-offset: 2px; }
-    .card:first-of-type .clear-all-btn {
+    .schedule-card .add-row-btn .material-symbols-outlined { font-size: 24px; }
+    .schedule-card .add-row-btn:hover { opacity: 0.92; }
+    .schedule-card .add-row-btn:focus-visible { outline: 2px solid var(--md-sys-color-primary); outline-offset: 2px; }
+    .schedule-card .clear-all-btn {
       appearance: none;
-      border: 1px solid #ef4444;
-      border-radius: 24px;
-      padding: 11px 24px;
-      font-size: 14px;
-      font-weight: 500;
-      text-transform: uppercase;
+      border: 1px solid var(--md-sys-color-error);
+      border-radius: var(--md-sys-shape-corner-full);
+      padding: 10px 24px;
+      min-height: 40px;
+      font: var(--md-sys-typescale-label-large);
       cursor: pointer;
-      transition: opacity 0.15s ease, background 0.15s ease;
+      transition: opacity 0.2s, background 0.2s;
       background: transparent;
-      color: #ef4444;
+      color: var(--md-sys-color-error);
       font-family: inherit;
     }
-    .card:first-of-type .clear-all-btn:hover { background-color: rgba(239, 68, 68, 0.1); }
-    body[data-theme="dark"] .card:first-of-type .clear-all-btn { background: #ef4444; color: #fff; border-color: #ef4444; }
-    body[data-theme="dark"] .card:first-of-type .clear-all-btn:hover { background-color: #dc2626; color: #fff; }
-    .card:first-of-type .clear-all-btn:focus-visible { outline: 2px solid #ef4444; outline-offset: 2px; }
-    .card:first-of-type .theme-toggle { display: flex; align-items: center; gap: 6px; padding: 0.35rem 0.6rem; border: 1px solid var(--border); background: var(--bg-secondary); color: var(--text); font-size: 0.75rem; cursor: pointer; border-radius: 4px; }
-    .card:first-of-type .theme-toggle:hover { background: var(--symbol-btn-hover); }
-    .app-theme-bar { display: flex; justify-content: flex-end; margin-bottom: 0; }
-    .app-theme-bar .theme-toggle { display: inline-flex; align-items: center; gap: 6px; padding: 2px 0.6rem; border: 1px solid var(--border); background: var(--bg-secondary); color: var(--text); font-size: 0.75rem; cursor: pointer; border-radius: 4px; }
-    .app-theme-bar .theme-toggle:hover { background: var(--symbol-btn-hover); }
-    .card:first-of-type .container { padding: clamp(8px, 1.5vw, 16px) 0; overflow: visible; min-width: 0; }
-    .card:first-of-type .table-wrap { width: 100%; min-width: 0; border: 1px solid var(--md-sys-color-outline); border-radius: var(--md-sys-shape-corner-small); overflow-x: auto; overflow-y: visible; background: var(--bg); }
-    .card:first-of-type .table-wrap table { width: 100%; min-width: 65rem; border-collapse: separate; border-spacing: 0; table-layout: fixed; box-sizing: border-box; }
-    .card:first-of-type .table-wrap col:nth-child(1) { width: 3.5rem; min-width: 3.5rem; }
-    .card:first-of-type .table-wrap col.col-num { width: 2.5ch; min-width: 2.5ch; max-width: 2.5ch; }
-    .card:first-of-type .table-wrap col:nth-child(3) { width: 8rem; min-width: 8rem; }
-    .card:first-of-type .table-wrap col:nth-child(4) { width: 4.5rem; min-width: 4.5rem; max-width: 4.5rem; }
-    .card:first-of-type .table-wrap col:nth-child(5) { width: 10rem; min-width: 10rem; }
-    .card:first-of-type .table-wrap col:nth-child(6), .card:first-of-type .table-wrap col:nth-child(7) { min-width: 8rem; }
-    .card:first-of-type .table-wrap col:nth-child(8) { min-width: 5rem; }
-    .card:first-of-type .table-wrap col:nth-child(9) { min-width: 8rem; }
-    .card:first-of-type .table-wrap col:nth-child(10) { min-width: 5rem; }
-    .card:first-of-type .table-wrap col:nth-child(11) { min-width: 8rem; }
-    .card:first-of-type .table-wrap col:nth-child(12) { min-width: 8rem; }
-    .card:first-of-type .table-wrap col:nth-child(13) { min-width: 6rem; width: auto; }
-    .card:first-of-type .table-wrap col:nth-child(14) { width: 3rem; min-width: 3rem; }
-    .card:first-of-type .table-wrap thead { background: var(--md-sys-color-surface); position: sticky; top: 0; z-index: 1; }
-    .card:first-of-type .table-wrap thead th { padding: 0.45rem 0.3rem; text-align: left; font-weight: 600; font-size: 12px; color: var(--profile-primary); letter-spacing: 0.02em; border-bottom: 1px solid var(--table-row-border); white-space: nowrap; text-transform: none; }
-    .card:first-of-type .table-wrap thead th:last-child { padding-right: 0; }
-    .card:first-of-type .table-wrap thead th:nth-child(4) { min-width: 4.5rem; }
-    .card:first-of-type .table-wrap thead th:nth-child(5) { min-width: 10rem; }
-    .card:first-of-type .table-wrap thead th:nth-child(6), .card:first-of-type .table-wrap thead th:nth-child(7) { min-width: 8rem; }
-    .card:first-of-type .table-wrap thead th:nth-child(8) { min-width: 5rem; }
-    .card:first-of-type .table-wrap thead th:nth-child(9), .card:first-of-type .table-wrap thead th:nth-child(11) { min-width: 8rem; }
-    .card:first-of-type .table-wrap thead th:nth-child(10) { min-width: 5rem; }
-    .card:first-of-type .table-wrap thead th:nth-child(12) { min-width: 8rem; }
-    .card:first-of-type .table-wrap thead th:nth-child(13) { min-width: 6rem; }
-    .card:first-of-type .table-wrap thead th:nth-child(14) { min-width: 3rem; }
-    .card:first-of-type .table-wrap thead th:nth-child(1),
-    .card:first-of-type .table-wrap thead th.col-num-header,
-    .card:first-of-type .table-wrap thead th.row-id-header { position: sticky; z-index: 2; background: var(--md-sys-color-surface); text-align: left; }
-    .card:first-of-type .table-wrap thead th:nth-child(1) { left: 0; }
-    .card:first-of-type .table-wrap thead th.col-num-header { left: 3.5rem; text-align: center; }
-    .card:first-of-type .table-wrap thead th.row-id-header { left: 7rem; }
-    .card:first-of-type .table-wrap tbody td { padding: 0.4rem 0.3rem; vertical-align: middle; border-bottom: 1px solid var(--table-row-border); font-size: 0.85rem; color: var(--header-text); }
-    .card:first-of-type .table-wrap tbody td:last-child { padding-right: 0; }
-    .card:first-of-type .table-wrap tbody td:nth-child(4) { min-width: 4.5rem; }
-    .card:first-of-type .table-wrap tbody td:nth-child(5) { min-width: 10rem; }
-    .card:first-of-type .table-wrap tbody td:nth-child(6), .card:first-of-type .table-wrap tbody td:nth-child(7) { min-width: 8rem; }
-    .card:first-of-type .table-wrap tbody td:nth-child(8) { min-width: 5rem; }
-    .card:first-of-type .table-wrap tbody td:nth-child(9), .card:first-of-type .table-wrap tbody td:nth-child(11) { min-width: 8rem; }
-    .card:first-of-type .table-wrap tbody td:nth-child(10) { min-width: 5rem; }
-    .card:first-of-type .table-wrap tbody td:nth-child(12) { min-width: 8rem; }
-    .card:first-of-type .table-wrap tbody td:nth-child(13) { min-width: 6rem; }
-    .card:first-of-type .table-wrap tbody td:nth-child(14) { min-width: 3rem; }
-    .card:first-of-type .table-wrap tbody td:nth-child(1),
-    .card:first-of-type .table-wrap tbody td.row-num-cell,
-    .card:first-of-type .table-wrap tbody td.row-id-cell { position: sticky; z-index: 1; background: var(--bg); }
-    .card:first-of-type .table-wrap tbody td:nth-child(1) { left: 0; }
-    .card:first-of-type .table-wrap tbody td.row-num-cell { left: 3.5rem; }
-    .card:first-of-type .table-wrap tbody td.row-id-cell { left: 7rem; }
-    .card:first-of-type .table-wrap .row-actions { display: inline-flex; align-items: center; gap: 4px; }
-    .card:first-of-type .table-wrap .row-delete-btn { width: 22px; height: 22px; padding: 0; border: none; background: transparent; color: var(--text-muted); cursor: pointer; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; font-size: 1.1rem; }
-    .card:first-of-type .table-wrap .row-delete-btn:hover { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
-    .card:first-of-type .table-wrap .row-drag-handle { width: 26px; height: 26px; padding: 0; border: none; background: transparent; color: var(--text-muted); cursor: grab; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; }
-    .card:first-of-type .table-wrap .row-drag-handle:hover { color: var(--text); background: var(--symbol-btn-hover); }
-    .card:first-of-type .table-wrap .row-drag-handle svg { width: 18px; height: 18px; }
-    .card:first-of-type .table-wrap .date-input, .card:first-of-type .table-wrap .task-input, .card:first-of-type .table-wrap .target-select, .card:first-of-type .table-wrap .units-select, .card:first-of-type .table-wrap .link-select, .card:first-of-type .table-wrap .duration-input, .card:first-of-type .table-wrap .progress-input, .card:first-of-type .table-wrap .delay-input { width: 100%; min-width: 0; padding: 0.35rem 0.3rem; border: 1px solid var(--text-muted); border-radius: 4px; background: var(--bg); color: var(--text); font-size: 0.8rem; font-family: inherit; box-sizing: border-box; }
-    .card:first-of-type .table-wrap .date-input { cursor: pointer; }
-    .card:first-of-type .table-wrap .target-select, .card:first-of-type .table-wrap .units-select, .card:first-of-type .table-wrap .link-select { padding-right: 1.5rem; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23787b86' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.3rem center; }
-    .card:first-of-type .table-wrap .duration-input, .card:first-of-type .table-wrap .progress-input, .card:first-of-type .table-wrap .delay-input { text-align: right; }
-    .card:first-of-type .table-wrap .task-flags-cell button { width: 20px; height: 20px; min-width: 20px; min-height: 20px; padding: 0; display: inline-flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 500; cursor: pointer; border: 1px solid var(--text-muted); border-radius: 4px; margin-right: 4px; }
-    .card:first-of-type .table-wrap .critical-btn.selected { background: var(--wf-color-c); color: #fff; }
-    .card:first-of-type .table-wrap .a-btn.selected { background: var(--wf-color-a); color: #fff; }
-    .card:first-of-type .table-wrap .d-btn.selected { background: var(--wf-color-d); color: #fff; }
-    .card:first-of-type .table-wrap .m-btn.selected { background: var(--wf-color-m); color: #fff; }
-    .card:first-of-type .table-wrap .t-btn { background: #8b5cf6; color: #fff; }
-    .card:first-of-type .table-wrap .t-btn.selected { background: #f97316; color: #fff; }
-    .card:first-of-type .table-wrap tbody tr.dragging { opacity: 0.5; }
-    .card:first-of-type .table-wrap tbody tr.drag-over { background: var(--row-hover); }
-    .card:first-of-type .table-wrap tbody tr.drop-before td { box-shadow: inset 0 4px 0 0 var(--symbol-btn-selected); }
-    .card:first-of-type .table-wrap tbody tr.drop-after td { box-shadow: inset 0 -4px 0 0 var(--symbol-btn-selected); }
-    .card:first-of-type .table-wrap tbody tr.row-is-section td:nth-child(2) .row-num, .card:first-of-type .table-wrap tbody tr.row-is-section td:nth-child(n+5) input, .card:first-of-type .table-wrap tbody tr.row-is-section td:nth-child(n+5) select { display: none; }
-    .card:first-of-type .table-wrap .row-num-cell { text-align: center; color: var(--text-muted); font-size: 0.85rem; }
-    .card:first-of-type .table-wrap .row-id-cell { width: 4.5rem; min-width: 4.5rem; max-width: 4.5rem; }
-    .card:first-of-type .table-wrap .row-id-header { width: 4.5rem; min-width: 4.5rem; max-width: 4.5rem; }
+    .schedule-card .clear-all-btn:hover { background: color-mix(in srgb, var(--md-sys-color-error) 8%, transparent); }
+    body[data-theme="dark"] .schedule-card .clear-all-btn {
+      background: var(--md-sys-color-error);
+      color: var(--md-sys-color-on-error);
+      border-color: var(--md-sys-color-error);
+    }
+    body[data-theme="dark"] .schedule-card .clear-all-btn:hover { opacity: 0.92; }
+    .schedule-card .clear-all-btn:focus-visible { outline: 2px solid var(--md-sys-color-error); outline-offset: 2px; }
+    .app-theme-bar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 12px;
+      margin-top: -12.8px;
+      margin-bottom: -12.8px;
+    }
+    @media (min-width: 600px) {
+      .app-theme-bar { margin-top: -19.2px; margin-bottom: -19.2px; }
+    }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    .accent-select {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      border: 1px solid var(--border);
+      border-radius: var(--md-sys-shape-corner-extra-small);
+      padding: 8px 32px 8px 12px;
+      font: var(--md-sys-typescale-label-medium);
+      background-color: var(--bg-secondary);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%231c1b1f' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 24px 24px;
+      color: var(--text);
+      cursor: pointer;
+      min-height: 40px;
+      width: 100%;
+    }
+    .accent-select::-ms-expand { display: none; }
+    .field .accent-select {
+      padding: 8px 32px 8px 12px;
+      border-color: var(--md-sys-color-outline);
+      background-color: var(--md-sys-color-surface);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%231c1b1f' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 24px 24px;
+      color: var(--md-sys-color-on-surface);
+    }
+    body[data-theme="dark"] .accent-select,
+    body[data-theme="dark"] .field .accent-select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%239ca3af' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 24px 24px;
+    }
+    .accent-select:hover { border-color: var(--symbol-btn-hover); }
+    .accent-select:focus {
+      outline: none;
+      border-color: var(--md-sys-color-primary);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--md-sys-color-primary) 18%, transparent);
+    }
+    .app-theme-bar .theme-toggle {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 4px 8px; min-height: 20px; min-width: 20px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      font: var(--md-sys-typescale-label-medium);
+      cursor: pointer;
+      border-radius: var(--md-sys-shape-corner-extra-small);
+    }
+    body[data-theme="dark"] .app-theme-bar .theme-toggle { background: var(--bg-secondary); }
+    .app-theme-bar .theme-toggle #themeIcon { font-size: 18px; line-height: 1; }
+    .app-theme-bar .theme-toggle:hover { background: color-mix(in srgb, var(--md-sys-color-on-surface) 4%, transparent); }
+    body[data-theme="dark"] .app-theme-bar .theme-toggle:hover { background: var(--symbol-btn-hover); }
+    .schedule-card .container { padding: clamp(2px, 0.4vw, 4px) 0 clamp(8px, 1.5vw, 16px) 0; overflow: visible; min-width: 0; }
+    .schedule-card .table-wrap { width: 100%; min-width: 0; border: 1px solid var(--md-sys-color-outline); border-radius: var(--md-sys-shape-corner-small); overflow-x: auto; overflow-y: visible; background: var(--bg); }
+    .schedule-card .table-wrap table { width: 100%; min-width: 65rem; border-collapse: separate; border-spacing: 0; table-layout: fixed; box-sizing: border-box; }
+    .schedule-card .table-wrap col:nth-child(1) { width: 3.5rem; min-width: 3.5rem; }
+    .schedule-card .table-wrap col.col-num { width: 2.5ch; min-width: 2.5ch; max-width: 2.5ch; }
+    .schedule-card .table-wrap col:nth-child(3) { width: 8rem; min-width: 8rem; }
+    .schedule-card .table-wrap col:nth-child(4) { width: 4.5rem; min-width: 4.5rem; max-width: 4.5rem; }
+    .schedule-card .table-wrap col:nth-child(5) { width: 10rem; min-width: 10rem; }
+    .schedule-card .table-wrap col:nth-child(6), .schedule-card .table-wrap col:nth-child(7) { min-width: 8rem; }
+    .schedule-card .table-wrap col:nth-child(8) { min-width: 5rem; }
+    .schedule-card .table-wrap col:nth-child(9) { min-width: 8rem; }
+    .schedule-card .table-wrap col:nth-child(10) { min-width: 5rem; }
+    .schedule-card .table-wrap col:nth-child(11) { min-width: 8rem; }
+    .schedule-card .table-wrap col:nth-child(12) { min-width: 8rem; }
+    .schedule-card .table-wrap col:nth-child(13) { min-width: 6rem; width: auto; }
+    .schedule-card .table-wrap col:nth-child(14) { width: 3rem; min-width: 3rem; }
+    .schedule-card .table-wrap thead { background: var(--md-sys-color-surface); position: sticky; top: 0; z-index: 1; }
+    .schedule-card .table-wrap thead th { padding: 0.3rem 0.3rem !important; text-align: left; font-weight: 600; font-size: 12px; color: var(--md-sys-color-primary); letter-spacing: 0.02em; border-bottom: 1px solid var(--table-row-border); white-space: nowrap; text-transform: none; }
+    .schedule-card .table-wrap thead th:last-child { padding-right: 0; }
+    .schedule-card .table-wrap thead th:nth-child(4) { min-width: 4.5rem; }
+    .schedule-card .table-wrap thead th:nth-child(5) { min-width: 10rem; }
+    .schedule-card .table-wrap thead th:nth-child(6), .schedule-card .table-wrap thead th:nth-child(7) { min-width: 8rem; }
+    .schedule-card .table-wrap thead th:nth-child(8) { min-width: 5rem; }
+    .schedule-card .table-wrap thead th:nth-child(9), .schedule-card .table-wrap thead th:nth-child(11) { min-width: 8rem; }
+    .schedule-card .table-wrap thead th:nth-child(10) { min-width: 5rem; }
+    .schedule-card .table-wrap thead th:nth-child(12) { min-width: 8rem; }
+    .schedule-card .table-wrap thead th:nth-child(13) { min-width: 6rem; }
+    .schedule-card .table-wrap thead th:nth-child(14) { min-width: 3rem; }
+    .schedule-card .table-wrap thead th:nth-child(1),
+    .schedule-card .table-wrap thead th.col-num-header,
+    .schedule-card .table-wrap thead th.row-id-header { position: sticky; z-index: 2; background: var(--md-sys-color-surface); text-align: left; }
+    .schedule-card .table-wrap thead th:nth-child(1) { left: 0; }
+    .schedule-card .table-wrap thead th.col-num-header { left: 3.5rem; text-align: center; }
+    .schedule-card .table-wrap thead th.row-id-header { left: 7rem; }
+    .schedule-card .table-wrap tbody td { padding: 0.28rem 0.3rem !important; vertical-align: middle; border-bottom: 1px solid var(--table-row-border); font-size: 0.85rem; color: var(--text); }
+    .schedule-card .table-wrap tbody td:last-child { padding-right: 0; }
+    .schedule-card .table-wrap tbody td:nth-child(4) { min-width: 4.5rem; }
+    .schedule-card .table-wrap tbody td:nth-child(5) { min-width: 10rem; }
+    .schedule-card .table-wrap tbody td:nth-child(6), .schedule-card .table-wrap tbody td:nth-child(7) { min-width: 8rem; }
+    .schedule-card .table-wrap tbody td:nth-child(8) { min-width: 5rem; }
+    .schedule-card .table-wrap tbody td:nth-child(9), .schedule-card .table-wrap tbody td:nth-child(11) { min-width: 8rem; }
+    .schedule-card .table-wrap tbody td:nth-child(10) { min-width: 5rem; }
+    .schedule-card .table-wrap tbody td:nth-child(12) { min-width: 8rem; }
+    .schedule-card .table-wrap tbody td:nth-child(13) { min-width: 6rem; }
+    .schedule-card .table-wrap tbody td:nth-child(14) { min-width: 3rem; }
+    .schedule-card .table-wrap tbody td:nth-child(1),
+    .schedule-card .table-wrap tbody td.row-num-cell,
+    .schedule-card .table-wrap tbody td.row-id-cell { position: sticky; z-index: 1; background: var(--bg); }
+    .schedule-card .table-wrap tbody td:nth-child(1) { left: 0; }
+    .schedule-card .table-wrap tbody td.row-num-cell { left: 3.5rem; }
+    .schedule-card .table-wrap tbody td.row-id-cell { left: 7rem; }
+    .schedule-card .table-wrap .row-actions { display: inline-flex; align-items: center; gap: 4px; }
+    .schedule-card .table-wrap .row-delete-btn { width: 18px; height: 18px; min-width: 18px; min-height: 18px; padding: 0; border: none; background: transparent; color: var(--text-muted); cursor: pointer; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; }
+    .schedule-card .table-wrap .row-delete-btn:hover { color: var(--md-sys-color-error); background: color-mix(in srgb, var(--md-sys-color-error) 10%, transparent); }
+    .schedule-card .table-wrap .row-drag-handle { width: 20px; height: 20px; min-width: 20px; min-height: 20px; padding: 0; border: none; background: transparent; color: var(--text-muted); cursor: grab; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; }
+    .schedule-card .table-wrap .row-drag-handle:hover { color: var(--text); background: var(--symbol-btn-hover); }
+    .schedule-card .table-wrap .row-drag-handle svg { width: 14px; height: 14px; }
+    .schedule-card .table-wrap .date-input, .schedule-card .table-wrap .task-input, .schedule-card .table-wrap .target-select, .schedule-card .table-wrap .units-select, .schedule-card .table-wrap .link-select, .schedule-card .table-wrap .duration-input, .schedule-card .table-wrap .progress-input, .schedule-card .table-wrap .delay-input { width: 100%; min-width: 0; padding: 0.22rem 0.3rem !important; border: 1px solid var(--text-muted); border-radius: 4px; background: var(--bg); color: var(--text); font-size: 0.8rem; font-family: inherit; box-sizing: border-box; line-height: 1.2; }
+    .schedule-card .table-wrap .date-input { cursor: pointer; }
+    .schedule-card .table-wrap .target-select, .schedule-card .table-wrap .units-select, .schedule-card .table-wrap .link-select { padding-right: 1.5rem; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23787b86' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.3rem center; }
+    .schedule-card .table-wrap .duration-input, .schedule-card .table-wrap .progress-input, .schedule-card .table-wrap .delay-input { text-align: right; }
+    .schedule-card .table-wrap .task-flags-cell button { width: 18px; height: 18px; min-width: 18px; min-height: 18px; padding: 0; display: inline-flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 500; cursor: pointer; border: 1px solid var(--text-muted); border-radius: 4px; margin-right: 3px; }
+    .schedule-card .table-wrap .critical-btn.selected { background: var(--wf-color-c); color: #fff; }
+    .schedule-card .table-wrap .a-btn.selected { background: var(--wf-color-a); color: #fff; }
+    .schedule-card .table-wrap .d-btn.selected { background: var(--wf-color-d); color: #fff; }
+    .schedule-card .table-wrap .m-btn.selected { background: var(--wf-color-m); color: #fff; }
+    .schedule-card .table-wrap .t-btn { background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
+    .schedule-card .table-wrap .t-btn.selected { background: var(--wf-color-m); color: var(--md-sys-color-on-primary); }
+    .schedule-card .table-wrap tbody tr.dragging { opacity: 0.5; }
+    .schedule-card .table-wrap tbody tr.drag-over { background: var(--row-hover); }
+    .schedule-card .table-wrap tbody tr.drop-before td { box-shadow: inset 0 4px 0 0 var(--symbol-btn-selected); }
+    .schedule-card .table-wrap tbody tr.drop-after td { box-shadow: inset 0 -4px 0 0 var(--symbol-btn-selected); }
+    .schedule-card .table-wrap tbody tr.row-is-section td:nth-child(2) .row-num, .schedule-card .table-wrap tbody tr.row-is-section td:nth-child(n+5) input, .schedule-card .table-wrap tbody tr.row-is-section td:nth-child(n+5) select { display: none; }
+    .schedule-card .table-wrap .row-num-cell { text-align: center; color: var(--text-muted); font-size: 0.85rem; }
+    .schedule-card .table-wrap .row-id-cell { width: 4.5rem; min-width: 4.5rem; max-width: 4.5rem; }
+    .schedule-card .table-wrap .row-id-header { width: 4.5rem; min-width: 4.5rem; max-width: 4.5rem; }
     /* ID column hidden; to show again remove the following rule. */
-    .card:first-of-type .table-wrap .col-id,
-    .card:first-of-type .table-wrap thead th.row-id-header,
-    .card:first-of-type .table-wrap tbody td.row-id-cell { display: none; }
+    .schedule-card .table-wrap .col-id,
+    .schedule-card .table-wrap thead th.row-id-header,
+    .schedule-card .table-wrap tbody td.row-id-cell { display: none; }
     /* Color column hidden; bar colors are driven by A/D/M/C (see getBarColorKey). Color data still stored for future use. To show again remove the following rule. */
-    .card:first-of-type .table-wrap .col-color,
-    .card:first-of-type .table-wrap thead th.row-color-header,
-    .card:first-of-type .table-wrap tbody td.row-color-cell { display: none; }
-    .card:first-of-type .table-wrap thead th.task-flags-col,
-    .card:first-of-type .table-wrap .task-flags-cell { white-space: nowrap; min-width: 8rem; }
-    .card:first-of-type .table-wrap .task-input::placeholder { color: var(--text-muted); }
-    .card:first-of-type .table-wrap tbody tr:hover td { background: var(--row-hover); }
-    .card:first-of-type .table-wrap tbody tr:hover td:nth-child(1),
-    .card:first-of-type .table-wrap tbody tr:hover td.row-num-cell,
-    .card:first-of-type .table-wrap tbody tr:hover td.row-id-cell { background: var(--row-hover); }
-    .card:first-of-type .table-wrap .date-input:focus, .card:first-of-type .table-wrap .task-input:focus, .card:first-of-type .table-wrap .target-select:focus, .card:first-of-type .table-wrap .units-select:focus, .card:first-of-type .table-wrap .link-select:focus, .card:first-of-type .table-wrap .duration-input:focus, .card:first-of-type .table-wrap .progress-input:focus, .card:first-of-type .table-wrap .delay-input:focus { outline: none; border-color: var(--symbol-btn-selected); box-shadow: 0 0 0 1px var(--symbol-btn-selected); }
-    .flatpickr-today-wrap { padding: 8px; border-top: 1px solid rgba(0,0,0,0.1); }
-    .flatpickr-today-btn { width: 100%; padding: 6px 12px; font-size: 0.8rem; font-family: inherit; color: var(--profile-primary); background: transparent; border: 1px solid var(--profile-primary); border-radius: 4px; cursor: pointer; }
-    .flatpickr-today-btn:hover { background: rgba(25, 118, 210, 0.08); }
-    body[data-theme="dark"] .flatpickr-today-wrap { border-top-color: rgba(255,255,255,0.12); }
-    body[data-theme="dark"] .flatpickr-today-btn:hover { background: rgba(100, 181, 246, 0.12); }
-    .card:first-of-type .table-wrap .critical-btn, .card:first-of-type .table-wrap .a-btn, .card:first-of-type .table-wrap .d-btn, .card:first-of-type .table-wrap .m-btn { background: var(--bg); color: var(--text); }
-    .card:first-of-type .table-wrap .critical-btn:hover, .card:first-of-type .table-wrap .a-btn:hover, .card:first-of-type .table-wrap .d-btn:hover, .card:first-of-type .table-wrap .m-btn:hover { background: var(--symbol-btn-hover); }
+    .schedule-card .table-wrap .col-color,
+    .schedule-card .table-wrap thead th.row-color-header,
+    .schedule-card .table-wrap tbody td.row-color-cell { display: none; }
+    .schedule-card .table-wrap thead th.task-flags-col,
+    .schedule-card .table-wrap .task-flags-cell { white-space: nowrap; min-width: 8rem; }
+    .schedule-card .table-wrap .task-input::placeholder { color: var(--text-muted); }
+    .schedule-card .table-wrap tbody tr:hover td { background: var(--row-hover); }
+    .schedule-card .table-wrap tbody tr:hover td:nth-child(1),
+    .schedule-card .table-wrap tbody tr:hover td.row-num-cell,
+    .schedule-card .table-wrap tbody tr:hover td.row-id-cell { background: var(--row-hover); }
+    .schedule-card .table-wrap .date-input:focus, .schedule-card .table-wrap .task-input:focus, .schedule-card .table-wrap .target-select:focus, .schedule-card .table-wrap .units-select:focus, .schedule-card .table-wrap .link-select:focus, .schedule-card .table-wrap .duration-input:focus, .schedule-card .table-wrap .progress-input:focus, .schedule-card .table-wrap .delay-input:focus { outline: none; border-color: var(--symbol-btn-selected); box-shadow: 0 0 0 1px var(--symbol-btn-selected); }
+    .flatpickr-today-wrap { padding: 8px; border-top: 1px solid var(--md-sys-color-outline-variant); }
+    .flatpickr-today-btn {
+      width: 100%;
+      padding: 8px 16px;
+      min-height: 40px;
+      font: var(--md-sys-typescale-label-medium);
+      font-family: inherit;
+      color: var(--md-sys-color-primary);
+      background: transparent;
+      border: 1px solid var(--md-sys-color-primary);
+      border-radius: var(--md-sys-shape-corner-extra-small);
+      cursor: pointer;
+    }
+    .flatpickr-today-btn:hover { background: color-mix(in srgb, var(--md-sys-color-primary) var(--md-sys-state-hover-opacity), transparent); }
+    .schedule-card .table-wrap .critical-btn, .schedule-card .table-wrap .a-btn, .schedule-card .table-wrap .d-btn, .schedule-card .table-wrap .m-btn { background: var(--bg); color: var(--text); }
+    .schedule-card .table-wrap .critical-btn:hover, .schedule-card .table-wrap .a-btn:hover, .schedule-card .table-wrap .d-btn:hover, .schedule-card .table-wrap .m-btn:hover { background: var(--symbol-btn-hover); }
 
-    @media (max-width: 1100px) {
-      .controls-grid { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+    /* --------------------------------------------------------------------------
+       14. Media queries
+       -------------------------------------------------------------------------- */
+    @media (max-width: 599px) {
+      .schedule-card { font-size: 11px; }
+      .schedule-card .table-wrap .row-delete-btn,
+      .schedule-card .table-wrap .row-drag-handle {
+        min-width: 24px;
+        min-height: 24px;
+        width: 24px;
+        height: 24px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .schedule-card .table-wrap .task-flags-cell button {
+        min-width: 24px;
+        min-height: 24px;
+        width: 24px;
+        height: 24px;
+      }
     }
   </style>
 </head>
@@ -737,13 +1130,17 @@
     <div class="app-theme-bar">
       <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode"><span id="themeIcon">🌙</span></button>
     </div>
-    <section class="card" id="scheduleCard">
+    <section class="card schedule-card" id="scheduleCard">
+      <div class="card-top-bar">
+        <button type="button" class="card-collapse-btn" id="collapseScheduleCardBtn" aria-label="Collapse schedule" title="Collapse schedule" aria-expanded="true" aria-controls="scheduleCard">
+          <span class="m3-expand-icon"><span class="material-symbols-outlined" id="collapseScheduleCardIcon">expand_less</span></span>
+        </button>
+      </div>
       <div class="schedule-card-header">
         <div class="m3-outlined-field">
           <label for="firstCardTitle">Project Name</label>
           <input type="text" class="card-title-input" id="firstCardTitle" placeholder="Enter project name" aria-label="Project name">
         </div>
-        <button type="button" class="btn-secondary btn-icon" id="collapseScheduleCardBtn" aria-label="Collapse schedule" title="Collapse schedule" aria-expanded="true" aria-controls="scheduleCard"><span class="material-symbols-outlined" id="collapseScheduleCardIcon">expand_less</span></button>
       </div>
       <div class="container">
         <div class="add-row-bar">
@@ -801,14 +1198,20 @@
                       <span class="color-picker-dot"></span>
                     </button>
                     <div class="color-picker-menu" role="listbox" aria-label="Bar color">
-                      <span class="color-picker-option color-dot-purple" role="option" data-color="purple" tabindex="0"></span>
-                      <span class="color-picker-option color-dot-blue" role="option" data-color="blue" tabindex="0"></span>
-                      <span class="color-picker-option color-dot-green" role="option" data-color="green" tabindex="0"></span>
-                      <span class="color-picker-option color-dot-orange" role="option" data-color="orange" tabindex="0"></span>
-                      <span class="color-picker-option color-dot-red" role="option" data-color="red" tabindex="0"></span>
-                      <span class="color-picker-option color-dot-teal" role="option" data-color="teal" tabindex="0"></span>
-                      <span class="color-picker-option color-dot-magenta" role="option" data-color="magenta" tabindex="0"></span>
-                      <span class="color-picker-option color-dot-gray" role="option" data-color="gray" tabindex="0"></span>
+                      <span class="color-picker-option color-dot-purple" role="option" data-color="purple" data-name="Purple" tabindex="0"></span>
+                      <span class="color-picker-option color-dot-indigo" role="option" data-color="indigo" data-name="Indigo" tabindex="0"></span>
+                      <span class="color-picker-option color-dot-blue" role="option" data-color="blue" data-name="Blue" tabindex="0"></span>
+                      <span class="color-picker-option color-dot-cyan" role="option" data-color="cyan" data-name="Cyan" tabindex="0"></span>
+                      <span class="color-picker-option color-dot-teal" role="option" data-color="teal" data-name="Teal" tabindex="0"></span>
+                      <span class="color-picker-option color-dot-green" role="option" data-color="green" data-name="Green" tabindex="0"></span>
+                      <span class="color-picker-option color-dot-lime" role="option" data-color="lime" data-name="Lime" tabindex="0"></span>
+                      <span class="color-picker-option color-dot-amber" role="option" data-color="amber" data-name="Amber" tabindex="0"></span>
+                      <span class="color-picker-option color-dot-orange" role="option" data-color="orange" data-name="Orange" tabindex="0"></span>
+                      <span class="color-picker-option color-dot-red" role="option" data-color="red" data-name="Red" tabindex="0"></span>
+                      <span class="color-picker-option color-dot-rose" role="option" data-color="rose" data-name="Rose" tabindex="0"></span>
+                      <span class="color-picker-option color-dot-slate" role="option" data-color="slate" data-name="Slate" tabindex="0"></span>
+                      <span class="color-picker-option color-dot-taupe" role="option" data-color="taupe" data-name="Taupe" tabindex="0"></span>
+                      <span class="color-picker-option color-dot-gray" role="option" data-color="gray" data-name="Gray" tabindex="0"></span>
                     </div>
                   </div>
                 </td>
@@ -819,6 +1222,11 @@
     </section>
 
     <main class="card gantt-card" id="ganttCard">
+      <div class="card-top-bar">
+        <button type="button" class="card-collapse-btn" id="collapseCardBtn" aria-label="Collapse chart" title="Collapse chart" aria-expanded="true" aria-controls="ganttCard">
+          <span class="m3-expand-icon"><span class="material-symbols-outlined" id="collapseCardIcon">expand_less</span></span>
+        </button>
+      </div>
       <div class="gantt-card-header">
         <h1 id="secondCardTitle"></h1>
         <div class="gantt-card-switches">
@@ -843,11 +1251,23 @@
           <button class="btn-secondary btn-icon" id="zoomInBtn" aria-label="Zoom in" title="Zoom in"><span class="material-symbols-outlined">zoom_in</span></button>
           <button class="btn-secondary" id="todayBtn">Go to today</button>
           <button class="btn-secondary btn-icon" id="settingsBtn" aria-label="Settings" title="Settings" aria-expanded="false" aria-controls="ganttSettingsPanel"><span class="material-symbols-outlined">settings</span></button>
-          <button class="btn-secondary btn-icon" id="collapseCardBtn" aria-label="Collapse chart" title="Collapse chart" aria-expanded="true" aria-controls="ganttCard"><span class="material-symbols-outlined" id="collapseCardIcon">expand_less</span></button>
         </div>
       </div>
       <div class="gantt-settings-panel" id="ganttSettingsPanel">
         <div class="controls-grid">
+          <div class="field">
+            <div class="m3-slider-label">
+              <label for="accentSelect">Accent theme</label>
+            </div>
+            <select id="accentSelect" class="accent-select" aria-label="Accent theme">
+              <option value="blue">Blue</option>
+              <option value="green">Green</option>
+              <option value="purple">Purple</option>
+              <option value="teal">Teal</option>
+              <option value="orange">Orange</option>
+              <option value="rose">Rose</option>
+            </select>
+          </div>
           <div class="field">
             <div class="m3-slider-label">
               <label for="rowHeight">Row height</label>
@@ -890,23 +1310,30 @@
             </div>
             <input class="m3-slider" id="leftWidth" type="range" min="180" max="420" value="386">
           </div>
+          <div class="field-group field-group--colors">
           <div class="field">
             <div class="m3-slider-label">
               <label>Default color</label>
             </div>
             <div class="color-picker-wrap status-color-picker" data-role="base" role="group" aria-label="Default color">
               <button type="button" class="color-picker-btn" aria-label="Default color" aria-haspopup="true" aria-expanded="false">
-                <span class="color-picker-dot color-dot-blue"></span>
+                <span class="color-picker-dot color-dot-gray"></span>
               </button>
               <div class="color-picker-menu" role="listbox" aria-label="Default color">
-                <span class="color-picker-option color-dot-purple" role="option" data-color="purple" tabindex="0"></span>
-                <span class="color-picker-option color-dot-blue" role="option" data-color="blue" tabindex="0"></span>
-                <span class="color-picker-option color-dot-green" role="option" data-color="green" tabindex="0"></span>
-                <span class="color-picker-option color-dot-orange" role="option" data-color="orange" tabindex="0"></span>
-                <span class="color-picker-option color-dot-red" role="option" data-color="red" tabindex="0"></span>
-                <span class="color-picker-option color-dot-teal" role="option" data-color="teal" tabindex="0"></span>
-                <span class="color-picker-option color-dot-magenta" role="option" data-color="magenta" tabindex="0"></span>
-                <span class="color-picker-option color-dot-gray" role="option" data-color="gray" tabindex="0"></span>
+                <span class="color-picker-option color-dot-purple" role="option" data-color="purple" data-name="Purple" tabindex="0"></span>
+                <span class="color-picker-option color-dot-indigo" role="option" data-color="indigo" data-name="Indigo" tabindex="0"></span>
+                <span class="color-picker-option color-dot-blue" role="option" data-color="blue" data-name="Blue" tabindex="0"></span>
+                <span class="color-picker-option color-dot-cyan" role="option" data-color="cyan" data-name="Cyan" tabindex="0"></span>
+                <span class="color-picker-option color-dot-teal" role="option" data-color="teal" data-name="Teal" tabindex="0"></span>
+                <span class="color-picker-option color-dot-green" role="option" data-color="green" data-name="Green" tabindex="0"></span>
+                <span class="color-picker-option color-dot-lime" role="option" data-color="lime" data-name="Lime" tabindex="0"></span>
+                <span class="color-picker-option color-dot-amber" role="option" data-color="amber" data-name="Amber" tabindex="0"></span>
+                <span class="color-picker-option color-dot-orange" role="option" data-color="orange" data-name="Orange" tabindex="0"></span>
+                <span class="color-picker-option color-dot-red" role="option" data-color="red" data-name="Red" tabindex="0"></span>
+                <span class="color-picker-option color-dot-rose" role="option" data-color="rose" data-name="Rose" tabindex="0"></span>
+                <span class="color-picker-option color-dot-slate" role="option" data-color="slate" data-name="Slate" tabindex="0"></span>
+                <span class="color-picker-option color-dot-taupe" role="option" data-color="taupe" data-name="Taupe" tabindex="0"></span>
+                <span class="color-picker-option color-dot-gray" role="option" data-color="gray" data-name="Gray" tabindex="0"></span>
               </div>
             </div>
           </div>
@@ -919,14 +1346,20 @@
                 <span class="color-picker-dot color-dot-green"></span>
               </button>
               <div class="color-picker-menu" role="listbox" aria-label="Active color">
-                <span class="color-picker-option color-dot-purple" role="option" data-color="purple" tabindex="0"></span>
-                <span class="color-picker-option color-dot-blue" role="option" data-color="blue" tabindex="0"></span>
-                <span class="color-picker-option color-dot-green" role="option" data-color="green" tabindex="0"></span>
-                <span class="color-picker-option color-dot-orange" role="option" data-color="orange" tabindex="0"></span>
-                <span class="color-picker-option color-dot-red" role="option" data-color="red" tabindex="0"></span>
-                <span class="color-picker-option color-dot-teal" role="option" data-color="teal" tabindex="0"></span>
-                <span class="color-picker-option color-dot-magenta" role="option" data-color="magenta" tabindex="0"></span>
-                <span class="color-picker-option color-dot-gray" role="option" data-color="gray" tabindex="0"></span>
+                <span class="color-picker-option color-dot-purple" role="option" data-color="purple" data-name="Purple" tabindex="0"></span>
+                <span class="color-picker-option color-dot-indigo" role="option" data-color="indigo" data-name="Indigo" tabindex="0"></span>
+                <span class="color-picker-option color-dot-blue" role="option" data-color="blue" data-name="Blue" tabindex="0"></span>
+                <span class="color-picker-option color-dot-cyan" role="option" data-color="cyan" data-name="Cyan" tabindex="0"></span>
+                <span class="color-picker-option color-dot-teal" role="option" data-color="teal" data-name="Teal" tabindex="0"></span>
+                <span class="color-picker-option color-dot-green" role="option" data-color="green" data-name="Green" tabindex="0"></span>
+                <span class="color-picker-option color-dot-lime" role="option" data-color="lime" data-name="Lime" tabindex="0"></span>
+                <span class="color-picker-option color-dot-amber" role="option" data-color="amber" data-name="Amber" tabindex="0"></span>
+                <span class="color-picker-option color-dot-orange" role="option" data-color="orange" data-name="Orange" tabindex="0"></span>
+                <span class="color-picker-option color-dot-red" role="option" data-color="red" data-name="Red" tabindex="0"></span>
+                <span class="color-picker-option color-dot-rose" role="option" data-color="rose" data-name="Rose" tabindex="0"></span>
+                <span class="color-picker-option color-dot-slate" role="option" data-color="slate" data-name="Slate" tabindex="0"></span>
+                <span class="color-picker-option color-dot-taupe" role="option" data-color="taupe" data-name="Taupe" tabindex="0"></span>
+                <span class="color-picker-option color-dot-gray" role="option" data-color="gray" data-name="Gray" tabindex="0"></span>
               </div>
             </div>
           </div>
@@ -936,17 +1369,23 @@
             </div>
             <div class="color-picker-wrap status-color-picker" data-role="d" role="group" aria-label="Done color">
               <button type="button" class="color-picker-btn" aria-label="Done color" aria-haspopup="true" aria-expanded="false">
-                <span class="color-picker-dot color-dot-gray"></span>
+                <span class="color-picker-dot color-dot-slate"></span>
               </button>
               <div class="color-picker-menu" role="listbox" aria-label="Done color">
-                <span class="color-picker-option color-dot-purple" role="option" data-color="purple" tabindex="0"></span>
-                <span class="color-picker-option color-dot-blue" role="option" data-color="blue" tabindex="0"></span>
-                <span class="color-picker-option color-dot-green" role="option" data-color="green" tabindex="0"></span>
-                <span class="color-picker-option color-dot-orange" role="option" data-color="orange" tabindex="0"></span>
-                <span class="color-picker-option color-dot-red" role="option" data-color="red" tabindex="0"></span>
-                <span class="color-picker-option color-dot-teal" role="option" data-color="teal" tabindex="0"></span>
-                <span class="color-picker-option color-dot-magenta" role="option" data-color="magenta" tabindex="0"></span>
-                <span class="color-picker-option color-dot-gray" role="option" data-color="gray" tabindex="0"></span>
+                <span class="color-picker-option color-dot-purple" role="option" data-color="purple" data-name="Purple" tabindex="0"></span>
+                <span class="color-picker-option color-dot-indigo" role="option" data-color="indigo" data-name="Indigo" tabindex="0"></span>
+                <span class="color-picker-option color-dot-blue" role="option" data-color="blue" data-name="Blue" tabindex="0"></span>
+                <span class="color-picker-option color-dot-cyan" role="option" data-color="cyan" data-name="Cyan" tabindex="0"></span>
+                <span class="color-picker-option color-dot-teal" role="option" data-color="teal" data-name="Teal" tabindex="0"></span>
+                <span class="color-picker-option color-dot-green" role="option" data-color="green" data-name="Green" tabindex="0"></span>
+                <span class="color-picker-option color-dot-lime" role="option" data-color="lime" data-name="Lime" tabindex="0"></span>
+                <span class="color-picker-option color-dot-amber" role="option" data-color="amber" data-name="Amber" tabindex="0"></span>
+                <span class="color-picker-option color-dot-orange" role="option" data-color="orange" data-name="Orange" tabindex="0"></span>
+                <span class="color-picker-option color-dot-red" role="option" data-color="red" data-name="Red" tabindex="0"></span>
+                <span class="color-picker-option color-dot-rose" role="option" data-color="rose" data-name="Rose" tabindex="0"></span>
+                <span class="color-picker-option color-dot-slate" role="option" data-color="slate" data-name="Slate" tabindex="0"></span>
+                <span class="color-picker-option color-dot-taupe" role="option" data-color="taupe" data-name="Taupe" tabindex="0"></span>
+                <span class="color-picker-option color-dot-gray" role="option" data-color="gray" data-name="Gray" tabindex="0"></span>
               </div>
             </div>
           </div>
@@ -959,14 +1398,20 @@
                 <span class="color-picker-dot color-dot-red"></span>
               </button>
               <div class="color-picker-menu" role="listbox" aria-label="Critical color">
-                <span class="color-picker-option color-dot-purple" role="option" data-color="purple" tabindex="0"></span>
-                <span class="color-picker-option color-dot-blue" role="option" data-color="blue" tabindex="0"></span>
-                <span class="color-picker-option color-dot-green" role="option" data-color="green" tabindex="0"></span>
-                <span class="color-picker-option color-dot-orange" role="option" data-color="orange" tabindex="0"></span>
-                <span class="color-picker-option color-dot-red" role="option" data-color="red" tabindex="0"></span>
-                <span class="color-picker-option color-dot-teal" role="option" data-color="teal" tabindex="0"></span>
-                <span class="color-picker-option color-dot-magenta" role="option" data-color="magenta" tabindex="0"></span>
-                <span class="color-picker-option color-dot-gray" role="option" data-color="gray" tabindex="0"></span>
+                <span class="color-picker-option color-dot-purple" role="option" data-color="purple" data-name="Purple" tabindex="0"></span>
+                <span class="color-picker-option color-dot-indigo" role="option" data-color="indigo" data-name="Indigo" tabindex="0"></span>
+                <span class="color-picker-option color-dot-blue" role="option" data-color="blue" data-name="Blue" tabindex="0"></span>
+                <span class="color-picker-option color-dot-cyan" role="option" data-color="cyan" data-name="Cyan" tabindex="0"></span>
+                <span class="color-picker-option color-dot-teal" role="option" data-color="teal" data-name="Teal" tabindex="0"></span>
+                <span class="color-picker-option color-dot-green" role="option" data-color="green" data-name="Green" tabindex="0"></span>
+                <span class="color-picker-option color-dot-lime" role="option" data-color="lime" data-name="Lime" tabindex="0"></span>
+                <span class="color-picker-option color-dot-amber" role="option" data-color="amber" data-name="Amber" tabindex="0"></span>
+                <span class="color-picker-option color-dot-orange" role="option" data-color="orange" data-name="Orange" tabindex="0"></span>
+                <span class="color-picker-option color-dot-red" role="option" data-color="red" data-name="Red" tabindex="0"></span>
+                <span class="color-picker-option color-dot-rose" role="option" data-color="rose" data-name="Rose" tabindex="0"></span>
+                <span class="color-picker-option color-dot-slate" role="option" data-color="slate" data-name="Slate" tabindex="0"></span>
+                <span class="color-picker-option color-dot-taupe" role="option" data-color="taupe" data-name="Taupe" tabindex="0"></span>
+                <span class="color-picker-option color-dot-gray" role="option" data-color="gray" data-name="Gray" tabindex="0"></span>
               </div>
             </div>
           </div>
@@ -976,19 +1421,26 @@
             </div>
             <div class="color-picker-wrap status-color-picker" data-role="m" role="group" aria-label="Milestone color">
               <button type="button" class="color-picker-btn" aria-label="Milestone color" aria-haspopup="true" aria-expanded="false">
-                <span class="color-picker-dot color-dot-orange"></span>
+                <span class="color-picker-dot color-dot-teal"></span>
               </button>
               <div class="color-picker-menu" role="listbox" aria-label="Milestone color">
-                <span class="color-picker-option color-dot-purple" role="option" data-color="purple" tabindex="0"></span>
-                <span class="color-picker-option color-dot-blue" role="option" data-color="blue" tabindex="0"></span>
-                <span class="color-picker-option color-dot-green" role="option" data-color="green" tabindex="0"></span>
-                <span class="color-picker-option color-dot-orange" role="option" data-color="orange" tabindex="0"></span>
-                <span class="color-picker-option color-dot-red" role="option" data-color="red" tabindex="0"></span>
-                <span class="color-picker-option color-dot-teal" role="option" data-color="teal" tabindex="0"></span>
-                <span class="color-picker-option color-dot-magenta" role="option" data-color="magenta" tabindex="0"></span>
-                <span class="color-picker-option color-dot-gray" role="option" data-color="gray" tabindex="0"></span>
+                <span class="color-picker-option color-dot-purple" role="option" data-color="purple" data-name="Purple" tabindex="0"></span>
+                <span class="color-picker-option color-dot-indigo" role="option" data-color="indigo" data-name="Indigo" tabindex="0"></span>
+                <span class="color-picker-option color-dot-blue" role="option" data-color="blue" data-name="Blue" tabindex="0"></span>
+                <span class="color-picker-option color-dot-cyan" role="option" data-color="cyan" data-name="Cyan" tabindex="0"></span>
+                <span class="color-picker-option color-dot-teal" role="option" data-color="teal" data-name="Teal" tabindex="0"></span>
+                <span class="color-picker-option color-dot-green" role="option" data-color="green" data-name="Green" tabindex="0"></span>
+                <span class="color-picker-option color-dot-lime" role="option" data-color="lime" data-name="Lime" tabindex="0"></span>
+                <span class="color-picker-option color-dot-amber" role="option" data-color="amber" data-name="Amber" tabindex="0"></span>
+                <span class="color-picker-option color-dot-orange" role="option" data-color="orange" data-name="Orange" tabindex="0"></span>
+                <span class="color-picker-option color-dot-red" role="option" data-color="red" data-name="Red" tabindex="0"></span>
+                <span class="color-picker-option color-dot-rose" role="option" data-color="rose" data-name="Rose" tabindex="0"></span>
+                <span class="color-picker-option color-dot-slate" role="option" data-color="slate" data-name="Slate" tabindex="0"></span>
+                <span class="color-picker-option color-dot-taupe" role="option" data-color="taupe" data-name="Taupe" tabindex="0"></span>
+                <span class="color-picker-option color-dot-gray" role="option" data-color="gray" data-name="Gray" tabindex="0"></span>
               </div>
             </div>
+          </div>
           </div>
         </div>
       </div>
@@ -1016,6 +1468,22 @@
       themeToggle.addEventListener('click', function () {
         setTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
       });
+      var accentKey = 'schedule-gen-accent';
+      var accentSelect = document.getElementById('accentSelect');
+      var validAccents = ['blue', 'green', 'purple', 'teal', 'orange', 'rose'];
+      function setAccent(accent) {
+        if (!validAccents.includes(accent)) accent = 'blue';
+        root.setAttribute('data-accent', accent);
+        try { localStorage.setItem(accentKey, accent); } catch (e) {}
+        if (accentSelect) accentSelect.value = accent;
+        try { window.dispatchEvent(new CustomEvent('wf-theme-change', { detail: { theme: root.getAttribute('data-theme'), accent } })); } catch (e) {}
+      }
+      if (accentSelect) {
+        accentSelect.addEventListener('change', function () { setAccent(accentSelect.value); });
+        var savedAccent = null;
+        try { savedAccent = localStorage.getItem(accentKey); } catch (e) {}
+        setAccent(savedAccent || 'blue');
+      }
       /* Row number (#) = display order; ID = unique 3-char hex (000–FFF) stored in data-row-id and shown in ID column.
        *
        * LINKING (parent/child; stored by row ID; From UI is row-number-based; resolve to ID when applying):
@@ -1288,11 +1756,10 @@
             ];
           });
 
-          // Palette keys order: [base, a, d, c, m]
           var palette = window.wfStatusPalette;
           var statusKeys = palette
-            ? [palette.base || 'blue', palette.a || 'green', palette.d || 'gray', palette.c || 'red', palette.m || 'orange']
-            : ['blue', 'green', 'gray', 'red', 'orange'];
+            ? [palette.base || 'gray', palette.a || 'green', palette.d || 'slate', palette.c || 'red', palette.m || 'teal']
+            : ['gray', 'green', 'slate', 'red', 'teal'];
 
           var payload = [rowsCompact, statusKeys];
           return btoa(unescape(encodeURIComponent(JSON.stringify(payload)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
@@ -1305,7 +1772,6 @@
           while (str.length % 4) str += '=';
           var decoded = JSON.parse(decodeURIComponent(escape(atob(str))));
 
-          // v1.2 only: [rowsCompact, statusKeys]
           if (!Array.isArray(decoded) || !Array.isArray(decoded[0])) return null;
           var rowsCompact = decoded[0];
           var statusKeys = (decoded.length > 1 && Array.isArray(decoded[1])) ? decoded[1] : null;
@@ -1479,7 +1945,7 @@
         }
         return { startDate: startDate, endDate: endDate };
       }
-      function applyRowDatesFromParent(row) {
+      function applyRowDatesFromParent(row, opts) {
         var parentRow = getParentRow(row);
         if (!parentRow) return;
         var linkSelect = row.querySelector('.link-select');
@@ -1497,12 +1963,12 @@
         var durationNum = isMilestone ? 0 : Math.max(0.1, parsedDur);
         var computed = getChildDatesFromParent(parentRow, linkType, delayNum, unit, durationNum);
         if (!computed) return;
-        applyStartEndToRow(row, computed.startDate, computed.endDate);
+        applyStartEndToRow(row, computed.startDate, computed.endDate, opts);
       }
-      function cascadeToProgeny(row) {
+      function cascadeToProgeny(row, opts) {
         getChildren(row).forEach(function (child) {
-          applyRowDatesFromParent(child);
-          cascadeToProgeny(child);
+          applyRowDatesFromParent(child, opts);
+          cascadeToProgeny(child, opts);
         });
       }
       function recalcDelayFromStart(row) {
@@ -1557,7 +2023,7 @@
         if (durationInput) durationInput.value = String(duration);
         saveToUrl();
       }
-      function applyStartEndToRow(row, startDate, endDate) {
+      function applyStartEndToRow(row, startDate, endDate, opts) {
         var isMilestone = row && row.querySelector('.m-btn') && row.querySelector('.m-btn').classList.contains('selected');
         if (isMilestone) endDate = startDate;
         var dateInputs = row.querySelectorAll('.date-input');
@@ -1578,16 +2044,16 @@
             durationInput.value = String(duration);
           }
         }
-        saveToUrl();
+        if (!opts || !opts.skipPersist) saveToUrl();
       }
-      function updateTableRowFromChart(taskId, startStr, endStr) {
+      function updateTableRowFromChart(taskId, startStr, endStr, opts) {
         var row = document.querySelector('.table-wrap tbody tr[data-row-id="' + taskId + '"]');
         if (!row) return;
         var startDate = new Date(startStr + 'T00:00:00');
         var endDate = new Date(endStr + 'T00:00:00');
-        applyStartEndToRow(row, startDate, endDate);
+        applyStartEndToRow(row, startDate, endDate, opts);
         if (getParentId(row)) recalcDelayFromStart(row);
-        cascadeToProgeny(row);
+        cascadeToProgeny(row, opts);
       }
       function initRowColorPicker(wrap) {
         if (!wrap) return;
@@ -2039,14 +2505,12 @@
       window.updateTableRowFromChart = updateTableRowFromChart;
       var scheduleCard = document.getElementById('scheduleCard');
       var collapseScheduleCardBtn = document.getElementById('collapseScheduleCardBtn');
-      var collapseScheduleCardIcon = document.getElementById('collapseScheduleCardIcon');
-      if (scheduleCard && collapseScheduleCardBtn && collapseScheduleCardIcon) {
+      if (scheduleCard && collapseScheduleCardBtn) {
         collapseScheduleCardBtn.addEventListener('click', function () {
           var collapsed = scheduleCard.classList.toggle('schedule-card-collapsed');
           collapseScheduleCardBtn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
           collapseScheduleCardBtn.setAttribute('aria-label', collapsed ? 'Expand schedule' : 'Collapse schedule');
           collapseScheduleCardBtn.setAttribute('title', collapsed ? 'Expand schedule' : 'Collapse schedule');
-          collapseScheduleCardIcon.textContent = collapsed ? 'expand_more' : 'expand_less';
         });
       }
       var saved = localStorage.getItem(themeKey);
@@ -2058,30 +2522,38 @@
     /* ========== Gantt chart ========== */
     const DAY_MS = 24 * 60 * 60 * 1000;
 
+    /* 14 colors: 11 vivid + 3 unsaturated (gray, slate, taupe) */
     const palette = {
-      purple: { fill: '#6750a4', progress: '#9186c5' },
-      blue: { fill: '#2196f3', progress: '#8bbcfb' },
-      green: { fill: '#5aaa00', progress: '#8ed33b' },
-      orange: { fill: '#ff9800', progress: '#ffb780' },
-      red: { fill: '#f44336', progress: '#f4827c' },
-      teal: { fill: '#007a6e', progress: '#00b29f' },
-      magenta: { fill: '#c700a7', progress: '#ff80ef' },
-      gray: { fill: '#8c8578', progress: '#b0aba0' }
+      purple: { fill: '#7b1fa2', progress: '#9c27b0' },
+      indigo: { fill: '#3949ab', progress: '#5c6bc0' },
+      blue: { fill: '#1976d2', progress: '#42a5f5' },
+      cyan: { fill: '#00acc1', progress: '#26c6da' },
+      teal: { fill: '#00897b', progress: '#26a69a' },
+      green: { fill: '#2e7d32', progress: '#66bb6a' },
+      lime: { fill: '#8bc34a', progress: '#aed581' },
+      amber: { fill: '#ffb300', progress: '#ffca28' },
+      orange: { fill: '#ff6f00', progress: '#ff8a65' },
+      red: { fill: '#e53935', progress: '#ef5350' },
+      rose: { fill: '#ec407a', progress: '#f48fb1' },
+      slate: { fill: '#546e7a', progress: '#78909c' },
+      taupe: { fill: '#6d4c41', progress: '#8d6e63' },
+      gray: { fill: '#757575', progress: '#9e9e9e' }
     };
 
-    // v1.2: status palette (can be overridden from URL)
-    // Palette keys order in URL: [base, a, d, c, m]
-    const STATUS_PALETTE_DEFAULT = { base: 'blue', a: 'green', d: 'gray', c: 'red', m: 'orange' };
+    const STATUS_PALETTE_DEFAULT = { base: 'gray', a: 'green', d: 'slate', c: 'red', m: 'teal' };
     var statusPalette = { base: STATUS_PALETTE_DEFAULT.base, a: STATUS_PALETTE_DEFAULT.a, d: STATUS_PALETTE_DEFAULT.d, c: STATUS_PALETTE_DEFAULT.c, m: STATUS_PALETTE_DEFAULT.m };
     window.wfStatusPalette = statusPalette;
 
+    const PALETTE_KEY_ALIAS = { coral: 'orange', magenta: 'rose' };
     function getStatusFill(role) {
-      const paletteKey = statusPalette[role] || STATUS_PALETTE_DEFAULT[role] || 'blue';
+      var paletteKey = statusPalette[role] || STATUS_PALETTE_DEFAULT[role] || 'blue';
+      paletteKey = PALETTE_KEY_ALIAS[paletteKey] || paletteKey;
       return (palette[paletteKey] && palette[paletteKey].fill) ? palette[paletteKey].fill : palette.blue.fill;
     }
 
     function applyStatusColorsToCssVars() {
       const root = document.documentElement;
+      root.style.setProperty('--wf-color-base', getStatusFill('base'));
       root.style.setProperty('--wf-color-a', getStatusFill('a'));
       root.style.setProperty('--wf-color-d', getStatusFill('d'));
       root.style.setProperty('--wf-color-c', getStatusFill('c'));
@@ -2096,14 +2568,15 @@
       statusPalette.c = keys[3] || STATUS_PALETTE_DEFAULT.c;
       statusPalette.m = keys[4] || STATUS_PALETTE_DEFAULT.m;
       applyStatusColorsToCssVars();
-      // Important: during initial load, the URL palette might be applied before
-      // chart-local `tasks` is initialized. Defer draw() unless explicitly wanted.
+      refreshStatusPickerDots();
       if (!opts || !opts.deferDraw) draw();
     };
 
     if (window.wfPendingStatusPalette) {
       window.wfApplyStatusPaletteFromUrl(window.wfPendingStatusPalette, { deferDraw: true });
       window.wfPendingStatusPalette = null;
+    } else {
+      applyStatusColorsToCssVars();
     }
 
     function getBarColorKey(task) {
@@ -2113,10 +2586,26 @@
       return statusPalette.base;
     }
 
+    function getBarColorForTask(task) {
+      var key = getBarColorKey(task);
+      key = PALETTE_KEY_ALIAS[key] || key;
+      const p = palette[key] || palette.blue;
+      return { fill: p.fill, progress: p.progress };
+    }
+
     function setStatusPickerDot(wrap, colorKey) {
       var dot = wrap.querySelector('.color-picker-dot');
       if (!dot) return;
-      dot.className = 'color-picker-dot color-dot-' + colorKey;
+      var displayKey = PALETTE_KEY_ALIAS[colorKey] || colorKey || 'blue';
+      dot.className = 'color-picker-dot color-dot-' + displayKey;
+    }
+
+    function refreshStatusPickerDots() {
+      ['base', 'a', 'd', 'c', 'm'].forEach(function (role) {
+        var wrap = document.querySelector('.status-color-picker[data-role="' + role + '"]');
+        if (!wrap) return;
+        setStatusPickerDot(wrap, statusPalette[role] || STATUS_PALETTE_DEFAULT[role]);
+      });
     }
 
     function initStatusColorPicker(wrap) {
@@ -2127,12 +2616,10 @@
       var menu = wrap.querySelector('.color-picker-menu');
       if (!btn || !menu) return;
 
-      // Init selected dot from current palette.
-      setStatusPickerDot(wrap, statusPalette[role] || STATUS_PALETTE_DEFAULT[role] || 'blue');
+      setStatusPickerDot(wrap, statusPalette[role] || STATUS_PALETTE_DEFAULT[role]);
 
       btn.addEventListener('click', function (e) {
         e.stopPropagation();
-        // Close other status menus.
         document.querySelectorAll('.status-color-picker .color-picker-menu.open').forEach(function (m) {
           m.classList.remove('open');
           var b = m.closest('.status-color-picker') ? m.closest('.status-color-picker').querySelector('.color-picker-btn') : null;
@@ -2153,7 +2640,6 @@
           setStatusPickerDot(wrap, newKey);
           draw();
 
-          // Persist palette into the URL hash (debounced inside schedule).
           if (typeof window.wfScheduleSaveToUrl === 'function') window.wfScheduleSaveToUrl();
 
           menu.classList.remove('open');
@@ -2165,7 +2651,6 @@
     function initStatusColorPickers() {
       var wraps = document.querySelectorAll('.status-color-picker');
       wraps.forEach(initStatusColorPicker);
-      // Close menus on outside click.
       document.addEventListener('click', function () {
         document.querySelectorAll('.status-color-picker .color-picker-menu.open').forEach(function (m) {
           m.classList.remove('open');
@@ -2225,9 +2710,32 @@
 
     let unitWidth = 44;
 
-    const WEEKEND_RGB = [234, 219, 156];
-    const WEEKEND_ALPHA = { light: 0.4, dark: 0.05 };
-    // Status pill colors derived from statusPalette (see getStatusFill()).
+    function getChartThemeFromCss() {
+      const el = document.body;
+      const get = (name, fallback) => {
+        const v = getComputedStyle(el).getPropertyValue(name).trim();
+        return v || fallback || '';
+      };
+      const isDark = document.body.getAttribute('data-theme') === 'dark';
+      const def = isDark
+        ? { bg: '#1e222d', left: '#252a37', header: '#2a2e39', grid: '#363a45', text: '#d1d4dc', muted: '#787b86', rowAlt: '#252a37', rowBorder: '#363a45', dep: '#787b86', weekend: 'rgba(54,58,69,0.3)' }
+        : { bg: '#fafbff', left: '#f1f3f9', header: '#e8eaef', grid: '#c9ccdb', text: '#1c1b1f', muted: '#49454f', rowAlt: '#f4f4fa', rowBorder: '#e4e4ec', dep: '#79747e', weekend: 'rgba(202,196,208,0.25)' };
+      return {
+        chartBg: get('--wf-chart-bg', def.bg),
+        chartLeft: get('--wf-chart-left', def.left),
+        chartHeaderBg: get('--wf-chart-header', def.header),
+        chartGrid: get('--wf-chart-grid', def.grid),
+        chartText: get('--wf-chart-text', def.text),
+        chartTextMuted: get('--wf-chart-text-muted', def.muted),
+        chartRowAlt: get('--wf-chart-row-alt', def.rowAlt),
+        chartRowBorder: get('--wf-chart-row-border', def.rowBorder),
+        chartHighlight: get('--wf-chart-highlight', `rgba(${isDark ? '100,181,246' : '25,118,210'}, 0.1)`),
+        chartToday: get('--wf-chart-today', `rgba(${isDark ? '100,181,246' : '25,118,210'}, 0.1)`),
+        chartTodayStroke: get('--wf-chart-today-stroke', `rgba(${isDark ? '100,181,246' : '25,118,210'}, 0.5)`),
+        chartDepLine: get('--wf-chart-dep-line', def.dep),
+        chartWeekend: get('--wf-chart-weekend', def.weekend)
+      };
+    }
 
     const els = {
       viewport: document.getElementById('viewport'),
@@ -2249,8 +2757,7 @@
       todayBtn: document.getElementById('todayBtn'),
       settingsBtn: document.getElementById('settingsBtn'),
       ganttCard: document.getElementById('ganttCard'),
-      collapseCardBtn: document.getElementById('collapseCardBtn'),
-      collapseCardIcon: document.getElementById('collapseCardIcon')
+      collapseCardBtn: document.getElementById('collapseCardBtn')
     };
 
     function syncSecondCardTitle() {
@@ -2273,12 +2780,11 @@
     }
 
     function toggleCardExpand() {
-      if (!els.ganttCard || !els.collapseCardBtn || !els.collapseCardIcon) return;
+      if (!els.ganttCard || !els.collapseCardBtn) return;
       const collapsed = els.ganttCard.classList.toggle('gantt-card-collapsed');
       els.collapseCardBtn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
       els.collapseCardBtn.setAttribute('aria-label', collapsed ? 'Expand chart' : 'Collapse chart');
       els.collapseCardBtn.setAttribute('title', collapsed ? 'Expand chart' : 'Collapse chart');
-      els.collapseCardIcon.textContent = collapsed ? 'expand_more' : 'expand_less';
       if (!collapsed) draw();
     }
 
@@ -2359,9 +2865,24 @@
       }
       if (settings.viewMode === 'week') {
         let cursor = startOfWeek(rangeStart);
+        let lastYearShown = null;
+        let lastLabelTop = '';
         while (cursor <= rangeEnd) {
           const end = addDays(cursor, 6);
-          units.push({ start: new Date(cursor), end, labelTop: cursor.toLocaleString('en-US', { month: 'short', year: 'numeric' }), labelBottom: `${getWeekNumber(cursor)}`, kind: 'week' });
+          const year = cursor.getFullYear();
+          const month = cursor.getMonth();
+          const prevMonth = units.length > 0 ? units[units.length - 1].start.getMonth() : -1;
+          const isNewMonth = units.length === 0 || month !== prevMonth;
+          let labelTop;
+          if (isNewMonth) {
+            const showYear = lastYearShown === null || year !== lastYearShown;
+            labelTop = showYear ? cursor.toLocaleString('en-US', { month: 'short', year: 'numeric' }) : cursor.toLocaleString('en-US', { month: 'short' });
+            if (showYear) lastYearShown = year;
+            lastLabelTop = labelTop;
+          } else {
+            labelTop = lastLabelTop;
+          }
+          units.push({ start: new Date(cursor), end, labelTop, labelBottom: `${getWeekNumber(cursor)}`, kind: 'week' });
           cursor = addDays(cursor, 7);
         }
         return units;
@@ -2406,21 +2927,7 @@
       tasks = getChartTasksFromTable();
       if (tasks.length && (!selectedTaskId || !tasks.find(t => t.id === selectedTaskId))) selectedTaskId = tasks[0].id;
       else if (!tasks.length) selectedTaskId = null;
-      const isDark = document.body.getAttribute('data-theme') === 'dark';
-      const chartBg = isDark ? '#1e222d' : '#fafbff';
-      const chartLeft = isDark ? '#252a37' : '#f1f3f9';
-      const chartHeaderBg = isDark ? '#2a2e39' : '#e8eaef';
-      const chartGrid = isDark ? '#363a45' : '#c9ccdb';
-      const chartText = isDark ? '#d1d4dc' : '#1c1b1f';
-      const chartTextMuted = isDark ? '#787b86' : '#49454f';
-      const chartRowAlt = isDark ? '#252a37' : '#f4f4fa';
-      const chartRowBorder = isDark ? '#363a45' : '#e4e4ec';
-      const chartHighlight = isDark ? 'rgba(100, 181, 246, 0.15)' : 'rgba(25, 118, 210, 0.10)';
-      const chartToday = isDark ? 'rgba(100, 181, 246, 0.12)' : 'rgba(25, 118, 210, 0.10)';
-      const chartDepLine = isDark ? '#787b86' : '#79747e';
-      const chartTodayStroke = isDark ? 'rgba(100, 181, 246, 0.5)' : 'rgba(25, 118, 210, 0.5)';
-      const chartWeekend = `rgba(${WEEKEND_RGB.join(', ')}, ${isDark ? WEEKEND_ALPHA.dark : WEEKEND_ALPHA.light})`;
-      const chartTheme = { chartBg, chartLeft, chartHeaderBg, chartGrid, chartText, chartTextMuted, chartRowAlt, chartRowBorder, chartHighlight, chartToday, chartDepLine, chartTodayStroke, chartWeekend };
+      const chartTheme = getChartThemeFromCss();
       const settings = getSettings();
       const ctx = getCanvasContext();
       const dpr = window.devicePixelRatio || 1;
@@ -2471,6 +2978,21 @@
     function drawHeader(ctx, width, settings, units, theme) {
       ctx.textBaseline = 'middle';
 
+      const vm = settings.viewMode || 'day';
+      let cornerTop = 'Month - Year';
+      let cornerBottom = 'Date';
+      if (vm === 'week') { cornerTop = 'Month - Year'; cornerBottom = 'Week Number'; }
+      else if (vm === 'month') { cornerTop = 'Year'; cornerBottom = 'Month'; }
+
+      ctx.fillStyle = theme.chartText;
+      ctx.font = '500 12px Inter';
+      ctx.textAlign = 'right';
+      ctx.fillText(cornerTop, settings.leftWidth - 12, 22);
+      ctx.fillStyle = theme.chartTextMuted;
+      ctx.font = '500 11px Inter';
+      ctx.fillText(cornerBottom, settings.leftWidth - 12, settings.headerHeight - 20);
+      ctx.textAlign = 'left';
+
       units.forEach((unit, i) => {
         const x = settings.leftWidth + i * settings.unitWidth;
         if (i === 0 || units[i - 1].labelTop !== unit.labelTop) {
@@ -2504,7 +3026,7 @@
         const taskLabel = (task.num != null ? task.num + '. ' : '') + (task.name || 'New Task');
         ctx.fillText(taskLabel, 18, y + settings.rowHeight / 2 - 8);
 
-        const barColors = palette[getBarColorKey(task)] || palette.orange;
+        const barColors = getBarColorForTask(task);
         const isDark = document.body.getAttribute('data-theme') === 'dark';
         const badgeBgAlpha = isDark ? 0.28 : 0.18;
         const padH = 6;
@@ -2554,16 +3076,18 @@
     }
 
     function drawTimelineGrid(ctx, width, height, settings, units, theme) {
-      ctx.strokeStyle = theme.chartGrid;
+      const chartLeft = settings.leftWidth;
+      const chartRight = chartLeft + units.length * settings.unitWidth;
       ctx.lineWidth = 1;
+      ctx.strokeStyle = theme.chartGrid;
       units.forEach((unit, i) => {
-        const x = settings.leftWidth + i * settings.unitWidth + 0.5;
+        const x = chartLeft + i * settings.unitWidth + 0.5;
         ctx.beginPath();
         ctx.moveTo(x, 0);
         ctx.lineTo(x, height);
         ctx.stroke();
       });
-      const endX = settings.leftWidth + units.length * settings.unitWidth + 0.5;
+      const endX = chartRight + 0.5;
       ctx.beginPath();
       ctx.moveTo(endX, 0);
       ctx.lineTo(endX, height);
@@ -2571,7 +3095,7 @@
     }
 
     function drawWeekendShading(ctx, height, settings, units, theme) {
-      ctx.fillStyle = theme.chartWeekend || `rgba(${WEEKEND_RGB.join(', ')}, ${WEEKEND_ALPHA.light})`;
+      ctx.fillStyle = theme.chartWeekend || 'rgba(202, 196, 208, 0.25)';
       units.forEach((unit, i) => {
         const day = unit.start.getDay();
         if (day === 0 || day === 6) {
@@ -2663,7 +3187,7 @@
       tasks.forEach((task, i) => {
         const isMilestone = !!task.m;
         const rect = isMilestone ? milestoneRect(task, i, settings, units) : taskRect(task, i, settings, units);
-        const colors = palette[getBarColorKey(task)] || palette.orange;
+        const colors = getBarColorForTask(task);
         const rgb = hexToRgb(colors.fill);
         const radius = settings.barRadius ?? 10;
 
@@ -2763,12 +3287,12 @@
           ctx.lineTo(midX, endY);
           ctx.lineTo(endX - 6, endY);
           ctx.stroke();
-          drawArrowHead(ctx, endX - 6, endY, endX, endY);
+          drawArrowHead(ctx, endX - 6, endY, endX, endY, theme);
         }
       }
     }
 
-    function drawArrowHead(ctx, fromX, fromY, toX, toY) {
+    function drawArrowHead(ctx, fromX, fromY, toX, toY, theme) {
       const angle = Math.atan2(toY - fromY, toX - fromX);
       const size = 6;
       ctx.beginPath();
@@ -2776,7 +3300,7 @@
       ctx.lineTo(toX - size * Math.cos(angle - Math.PI / 6), toY - size * Math.sin(angle - Math.PI / 6));
       ctx.lineTo(toX - size * Math.cos(angle + Math.PI / 6), toY - size * Math.sin(angle + Math.PI / 6));
       ctx.closePath();
-      ctx.fillStyle = '#79747e';
+      ctx.fillStyle = theme && theme.chartDepLine ? theme.chartDepLine : '#79747e';
       ctx.fill();
     }
 
@@ -2820,7 +3344,9 @@
 
     function pointerPos(event) {
       const rect = els.canvas.getBoundingClientRect();
-      return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+      const clientX = event.clientX !== undefined ? event.clientX : (event.touches && event.touches[0] ? event.touches[0].clientX : 0);
+      const clientY = event.clientY !== undefined ? event.clientY : (event.touches && event.touches[0] ? event.touches[0].clientY : 0);
+      return { x: clientX - rect.left, y: clientY - rect.top };
     }
 
     function hitTestBar(x, y) {
@@ -2837,6 +3363,8 @@
     function hitTestRow(y) { return chartMetrics.rows.find(row => y >= row.y && y <= row.y + row.height) || null; }
 
     function onPointerDown(event) {
+      event.preventDefault();
+      els.canvas.setPointerCapture && els.canvas.setPointerCapture(event.pointerId);
       const pos = pointerPos(event);
       const hit = hitTestBar(pos.x, pos.y);
       if (hit) {
@@ -2851,21 +3379,15 @@
       if (row) selectTask(row.id);
     }
 
-    function onPointerMove(event) {
-      const pos = pointerPos(event);
-      const hit = hitTestBar(pos.x, pos.y);
-      els.canvas.style.cursor = dragState ? (dragState.mode === 'resize' ? 'ew-resize' : 'grabbing') : hit ? (hit.nearHandle ? 'ew-resize' : 'grab') : 'default';
+    let dragRafId = null;
+    let pendingDragPos = null;
+    function processDragMove(pos) {
       if (!dragState) return;
       const settings = getSettings();
       let newStartStr, newEndStr;
       const dx = pos.x - dragState.startX;
 
-      // v1.2 snapping:
-      // - day view: 1-day steps
-      // - week view: 1-day steps within weekly columns
-      // - month view: 7-day (1-week) steps within monthly columns
       const snapDays = settings.viewMode === 'month' ? 7 : 1;
-
       const originalStart = parseDate(dragState.originalStart);
       const originalEnd = parseDate(dragState.originalEnd);
       const units = chartMetrics.units || [];
@@ -2894,13 +3416,42 @@
         newStartStr = dragState.originalStart;
       }
       if (typeof window.updateTableRowFromChart === 'function') {
-        window.updateTableRowFromChart(dragState.taskId, newStartStr, newEndStr);
+        window.updateTableRowFromChart(dragState.taskId, newStartStr, newEndStr, { skipPersist: true });
       }
       syncEditForm();
       draw();
     }
+    function onPointerMove(event) {
+      const pos = pointerPos(event);
+      const hit = hitTestBar(pos.x, pos.y);
+      els.canvas.style.cursor = dragState ? (dragState.mode === 'resize' ? 'ew-resize' : 'grabbing') : hit ? (hit.nearHandle ? 'ew-resize' : 'grab') : 'default';
+      if (!dragState) return;
+      pendingDragPos = pos;
+      if (dragRafId != null) return;
+      dragRafId = requestAnimationFrame(function () {
+        dragRafId = null;
+        if (pendingDragPos && dragState) {
+          processDragMove(pendingDragPos);
+          pendingDragPos = null;
+        }
+      });
+    }
 
-    function onPointerUp() {
+    function onPointerUp(event) {
+      if (event && event.pointerId !== undefined && els.canvas.releasePointerCapture) {
+        try { els.canvas.releasePointerCapture(event.pointerId); } catch (e) {}
+      }
+      if (dragRafId != null) {
+        cancelAnimationFrame(dragRafId);
+        dragRafId = null;
+      }
+      if (pendingDragPos && dragState) {
+        processDragMove(pendingDragPos);
+      }
+      pendingDragPos = null;
+      if (dragState && typeof window.wfScheduleSaveToUrl === 'function') {
+        window.wfScheduleSaveToUrl();
+      }
       dragState = null;
       els.canvas.style.cursor = 'default';
     }
@@ -2923,9 +3474,10 @@
     els.settingsBtn.addEventListener('click', toggleSettingsPanel);
     if (els.collapseCardBtn) els.collapseCardBtn.addEventListener('click', toggleCardExpand);
 
-    els.canvas.addEventListener('mousedown', onPointerDown);
-    window.addEventListener('mousemove', onPointerMove);
-    window.addEventListener('mouseup', onPointerUp);
+    els.canvas.addEventListener('pointerdown', onPointerDown);
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', onPointerUp);
+    window.addEventListener('pointercancel', onPointerUp);
     window.addEventListener('resize', draw);
     window.addEventListener('wf-theme-change', draw);
     window.addEventListener('wf-schedule-change', draw);
