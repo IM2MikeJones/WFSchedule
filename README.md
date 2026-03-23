@@ -30,12 +30,12 @@ All editing is done in the table or by dragging bars on the chart (no separate f
 
 ## Schedule table
 
-- **Project name** — Optional; no default. When set, shown in the chart header.
+- **Project name** — Optional; no default. When set, shown in the chart header and in the browser tab title. Saved in the URL for bookmarks.
 - **Add row** — Appends a new task row with defaults (see below). On first use the table is empty; the new row is the first. Subsequent rows default to linking to the previous row (From = Previous) with dates derived from the parent.
 - **Clear all** — Confirmation dialog; clears all rows and reloads. Dialog offers “Copy URL to Save” before clearing.
 - **Per row:**
   - **#** — Row number (read-only, display order).
-  - **Properties** — T (task) / S (section), A, D, C (critical), M. Section rows hide most columns.
+  - **Properties** — T (task) / S (section), plus status buttons showing the first letter of each custom label (Active, Done, Critical, Milestone). Section rows hide most columns.
   - **ID** — Unique 3-character hex (e.g. `001`), stored in `data-row-id`; used for linking.
   - **Name** — Task or section name.
   - **Start date / End date** — Flatpickr date pickers. Changing start keeps duration and recalculates end; changing end recalculates duration; changing duration recalculates end. Same logic is used when dragging or resizing bars on the chart (one function: `applyStartEndToRow`).
@@ -71,7 +71,7 @@ A1 Change Start → recalc delay, keep duration, recalc end, move progeny. A2 Ch
 ## Gantt chart
 
 - **Header** — Top-left corner labels: day="Month - Year"/"Date", week="Month - Year"/"Week Number", month="Year"/"Month". Project name from the schedule card (or empty). View mode (day/week/month). In week mode, the year is shown only when it changes (first month and each January). “Show weekends,” “Show dependencies,” zoom in/out, “Go to today,” settings toggle. Collapse/expand arrow at top-right of the card.
-- **Settings panel** — Accent theme (6 options), row height, bar height, bar corner radius, outline width, header height, name column width, plus status color pickers for Default/Active/Done/Critical/Milestone (14 colors each, saved in the URL).
+- **Settings panel** — Accent theme (6 options), row height, bar height, bar corner radius, outline width, header height, plus status buttons (Default, Active, Done, Critical, Milestone) that open dialogs with color pickers and optional custom labels (14 colors each, saved in the URL).
 - **Canvas** — Bars show task span and progress. Click a bar to select; drag to move (updates table via `updateTableRowFromChart` → `applyStartEndToRow`); drag right-edge handle to resize. Dependency arrows when “Show dependencies” is on.
 - **Weekend shading** — When “Show weekends” is on and view mode is day, Saturday/Sunday columns are shaded. Uses `--wf-chart-weekend` from the chart theme (theme-dependent).
 - **Bar colors** — Driven by row flags. Defaults: Default=gray, Active=green, Done=slate, Critical=red (outline only), Milestone=teal. Each status has 14 color options. The Color column is hidden in the table but still stored in data for future use.
@@ -92,12 +92,12 @@ A1 Change Start → recalc delay, keep duration, recalc end, move progeny. A2 Ch
 
 ## Version
 
-This snapshot is **v1.3** (`Rev 1.3/`).
+This snapshot is **v1.4** (`Rev 1.4/`).
 
 > **Compatibility note (v1.2)**
 > URL encoding changed to a compact format. Links from v1.0/v1.1 will not load in v1.2; v1.2 URLs are not for older builds.
 
-- **Release snapshots** — `Rev 1.0/`, `Rev 1.1/`, `Rev 1.2/`, `Rev 1.3/`.
+- **Release snapshots** — `Rev 1.0/`, `Rev 1.1/`, `Rev 1.2/`, `Rev 1.3/`, `Rev 1.4/`.
 - **Release notes** — See `RELEASE_NOTES.md`.
 
 Older revisions are in `old revision 0.2`, `old revision 0.3 (problems with linking)`, etc., for reference.

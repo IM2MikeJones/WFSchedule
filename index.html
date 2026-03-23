@@ -348,6 +348,21 @@
     .field-group--colors .field {
       flex: 0 0 auto;
     }
+    .config-buttons {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .config-popup-btn--color {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .config-popup-btn--color .color-picker-dot {
+      flex-shrink: 0;
+    }
 
     .field {
       display: flex;
@@ -616,6 +631,23 @@
     .m3-dialog-copy-url:focus-visible { outline: 2px solid var(--md-sys-color-primary); outline-offset: 2px; }
     .m3-dialog-copy-url.copied { background: var(--md-sys-color-success); }
     .m3-dialog-copy-url.copied:hover { opacity: 0.92; }
+
+    /* Config popup modal (native dialog for focus trap) */
+    .m3-config-dialog {
+      border: none;
+      padding: 0;
+      margin: auto;
+      background: transparent;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: none;
+    }
+    .m3-config-dialog::backdrop {
+      background-color: rgba(0, 0, 0, 0.32);
+    }
+    .m3-config-dialog .m3-dialog-surface {
+      margin: 0;
+    }
 
     /* M3 icon button - 48px min for touch targets (M3 standard) */
     .btn-icon {
@@ -1244,7 +1276,7 @@
         <div class="gantt-card-actions">
           <select class="header-select" id="viewMode" aria-label="View mode" title="View mode">
             <option value="day">Day</option>
-            <option value="week">Week</option>
+            <option value="week" selected>Week</option>
             <option value="month">Month</option>
           </select>
           <button class="btn-secondary btn-icon" id="zoomOutBtn" aria-label="Zoom out" title="Zoom out"><span class="material-symbols-outlined">zoom_out</span></button>
@@ -1303,144 +1335,12 @@
             </div>
             <input class="m3-slider" id="headerHeight" type="range" min="50" max="120" value="72">
           </div>
-          <div class="field">
-            <div class="m3-slider-label">
-              <label for="leftWidth">Name column width</label>
-              <span class="m3-slider-value" id="leftWidthValue">386</span>
-            </div>
-            <input class="m3-slider" id="leftWidth" type="range" min="180" max="420" value="386">
-          </div>
-          <div class="field-group field-group--colors">
-          <div class="field">
-            <div class="m3-slider-label">
-              <label>Default color</label>
-            </div>
-            <div class="color-picker-wrap status-color-picker" data-role="base" role="group" aria-label="Default color">
-              <button type="button" class="color-picker-btn" aria-label="Default color" aria-haspopup="true" aria-expanded="false">
-                <span class="color-picker-dot color-dot-gray"></span>
-              </button>
-              <div class="color-picker-menu" role="listbox" aria-label="Default color">
-                <span class="color-picker-option color-dot-purple" role="option" data-color="purple" data-name="Purple" tabindex="0"></span>
-                <span class="color-picker-option color-dot-indigo" role="option" data-color="indigo" data-name="Indigo" tabindex="0"></span>
-                <span class="color-picker-option color-dot-blue" role="option" data-color="blue" data-name="Blue" tabindex="0"></span>
-                <span class="color-picker-option color-dot-cyan" role="option" data-color="cyan" data-name="Cyan" tabindex="0"></span>
-                <span class="color-picker-option color-dot-teal" role="option" data-color="teal" data-name="Teal" tabindex="0"></span>
-                <span class="color-picker-option color-dot-green" role="option" data-color="green" data-name="Green" tabindex="0"></span>
-                <span class="color-picker-option color-dot-lime" role="option" data-color="lime" data-name="Lime" tabindex="0"></span>
-                <span class="color-picker-option color-dot-amber" role="option" data-color="amber" data-name="Amber" tabindex="0"></span>
-                <span class="color-picker-option color-dot-orange" role="option" data-color="orange" data-name="Orange" tabindex="0"></span>
-                <span class="color-picker-option color-dot-red" role="option" data-color="red" data-name="Red" tabindex="0"></span>
-                <span class="color-picker-option color-dot-rose" role="option" data-color="rose" data-name="Rose" tabindex="0"></span>
-                <span class="color-picker-option color-dot-slate" role="option" data-color="slate" data-name="Slate" tabindex="0"></span>
-                <span class="color-picker-option color-dot-taupe" role="option" data-color="taupe" data-name="Taupe" tabindex="0"></span>
-                <span class="color-picker-option color-dot-gray" role="option" data-color="gray" data-name="Gray" tabindex="0"></span>
-              </div>
-            </div>
-          </div>
-          <div class="field">
-            <div class="m3-slider-label">
-              <label>Active color</label>
-            </div>
-            <div class="color-picker-wrap status-color-picker" data-role="a" role="group" aria-label="Active color">
-              <button type="button" class="color-picker-btn" aria-label="Active color" aria-haspopup="true" aria-expanded="false">
-                <span class="color-picker-dot color-dot-green"></span>
-              </button>
-              <div class="color-picker-menu" role="listbox" aria-label="Active color">
-                <span class="color-picker-option color-dot-purple" role="option" data-color="purple" data-name="Purple" tabindex="0"></span>
-                <span class="color-picker-option color-dot-indigo" role="option" data-color="indigo" data-name="Indigo" tabindex="0"></span>
-                <span class="color-picker-option color-dot-blue" role="option" data-color="blue" data-name="Blue" tabindex="0"></span>
-                <span class="color-picker-option color-dot-cyan" role="option" data-color="cyan" data-name="Cyan" tabindex="0"></span>
-                <span class="color-picker-option color-dot-teal" role="option" data-color="teal" data-name="Teal" tabindex="0"></span>
-                <span class="color-picker-option color-dot-green" role="option" data-color="green" data-name="Green" tabindex="0"></span>
-                <span class="color-picker-option color-dot-lime" role="option" data-color="lime" data-name="Lime" tabindex="0"></span>
-                <span class="color-picker-option color-dot-amber" role="option" data-color="amber" data-name="Amber" tabindex="0"></span>
-                <span class="color-picker-option color-dot-orange" role="option" data-color="orange" data-name="Orange" tabindex="0"></span>
-                <span class="color-picker-option color-dot-red" role="option" data-color="red" data-name="Red" tabindex="0"></span>
-                <span class="color-picker-option color-dot-rose" role="option" data-color="rose" data-name="Rose" tabindex="0"></span>
-                <span class="color-picker-option color-dot-slate" role="option" data-color="slate" data-name="Slate" tabindex="0"></span>
-                <span class="color-picker-option color-dot-taupe" role="option" data-color="taupe" data-name="Taupe" tabindex="0"></span>
-                <span class="color-picker-option color-dot-gray" role="option" data-color="gray" data-name="Gray" tabindex="0"></span>
-              </div>
-            </div>
-          </div>
-          <div class="field">
-            <div class="m3-slider-label">
-              <label>Done color</label>
-            </div>
-            <div class="color-picker-wrap status-color-picker" data-role="d" role="group" aria-label="Done color">
-              <button type="button" class="color-picker-btn" aria-label="Done color" aria-haspopup="true" aria-expanded="false">
-                <span class="color-picker-dot color-dot-slate"></span>
-              </button>
-              <div class="color-picker-menu" role="listbox" aria-label="Done color">
-                <span class="color-picker-option color-dot-purple" role="option" data-color="purple" data-name="Purple" tabindex="0"></span>
-                <span class="color-picker-option color-dot-indigo" role="option" data-color="indigo" data-name="Indigo" tabindex="0"></span>
-                <span class="color-picker-option color-dot-blue" role="option" data-color="blue" data-name="Blue" tabindex="0"></span>
-                <span class="color-picker-option color-dot-cyan" role="option" data-color="cyan" data-name="Cyan" tabindex="0"></span>
-                <span class="color-picker-option color-dot-teal" role="option" data-color="teal" data-name="Teal" tabindex="0"></span>
-                <span class="color-picker-option color-dot-green" role="option" data-color="green" data-name="Green" tabindex="0"></span>
-                <span class="color-picker-option color-dot-lime" role="option" data-color="lime" data-name="Lime" tabindex="0"></span>
-                <span class="color-picker-option color-dot-amber" role="option" data-color="amber" data-name="Amber" tabindex="0"></span>
-                <span class="color-picker-option color-dot-orange" role="option" data-color="orange" data-name="Orange" tabindex="0"></span>
-                <span class="color-picker-option color-dot-red" role="option" data-color="red" data-name="Red" tabindex="0"></span>
-                <span class="color-picker-option color-dot-rose" role="option" data-color="rose" data-name="Rose" tabindex="0"></span>
-                <span class="color-picker-option color-dot-slate" role="option" data-color="slate" data-name="Slate" tabindex="0"></span>
-                <span class="color-picker-option color-dot-taupe" role="option" data-color="taupe" data-name="Taupe" tabindex="0"></span>
-                <span class="color-picker-option color-dot-gray" role="option" data-color="gray" data-name="Gray" tabindex="0"></span>
-              </div>
-            </div>
-          </div>
-          <div class="field">
-            <div class="m3-slider-label">
-              <label>Critical color</label>
-            </div>
-            <div class="color-picker-wrap status-color-picker" data-role="c" role="group" aria-label="Critical color">
-              <button type="button" class="color-picker-btn" aria-label="Critical color" aria-haspopup="true" aria-expanded="false">
-                <span class="color-picker-dot color-dot-red"></span>
-              </button>
-              <div class="color-picker-menu" role="listbox" aria-label="Critical color">
-                <span class="color-picker-option color-dot-purple" role="option" data-color="purple" data-name="Purple" tabindex="0"></span>
-                <span class="color-picker-option color-dot-indigo" role="option" data-color="indigo" data-name="Indigo" tabindex="0"></span>
-                <span class="color-picker-option color-dot-blue" role="option" data-color="blue" data-name="Blue" tabindex="0"></span>
-                <span class="color-picker-option color-dot-cyan" role="option" data-color="cyan" data-name="Cyan" tabindex="0"></span>
-                <span class="color-picker-option color-dot-teal" role="option" data-color="teal" data-name="Teal" tabindex="0"></span>
-                <span class="color-picker-option color-dot-green" role="option" data-color="green" data-name="Green" tabindex="0"></span>
-                <span class="color-picker-option color-dot-lime" role="option" data-color="lime" data-name="Lime" tabindex="0"></span>
-                <span class="color-picker-option color-dot-amber" role="option" data-color="amber" data-name="Amber" tabindex="0"></span>
-                <span class="color-picker-option color-dot-orange" role="option" data-color="orange" data-name="Orange" tabindex="0"></span>
-                <span class="color-picker-option color-dot-red" role="option" data-color="red" data-name="Red" tabindex="0"></span>
-                <span class="color-picker-option color-dot-rose" role="option" data-color="rose" data-name="Rose" tabindex="0"></span>
-                <span class="color-picker-option color-dot-slate" role="option" data-color="slate" data-name="Slate" tabindex="0"></span>
-                <span class="color-picker-option color-dot-taupe" role="option" data-color="taupe" data-name="Taupe" tabindex="0"></span>
-                <span class="color-picker-option color-dot-gray" role="option" data-color="gray" data-name="Gray" tabindex="0"></span>
-              </div>
-            </div>
-          </div>
-          <div class="field">
-            <div class="m3-slider-label">
-              <label>Milestone color</label>
-            </div>
-            <div class="color-picker-wrap status-color-picker" data-role="m" role="group" aria-label="Milestone color">
-              <button type="button" class="color-picker-btn" aria-label="Milestone color" aria-haspopup="true" aria-expanded="false">
-                <span class="color-picker-dot color-dot-teal"></span>
-              </button>
-              <div class="color-picker-menu" role="listbox" aria-label="Milestone color">
-                <span class="color-picker-option color-dot-purple" role="option" data-color="purple" data-name="Purple" tabindex="0"></span>
-                <span class="color-picker-option color-dot-indigo" role="option" data-color="indigo" data-name="Indigo" tabindex="0"></span>
-                <span class="color-picker-option color-dot-blue" role="option" data-color="blue" data-name="Blue" tabindex="0"></span>
-                <span class="color-picker-option color-dot-cyan" role="option" data-color="cyan" data-name="Cyan" tabindex="0"></span>
-                <span class="color-picker-option color-dot-teal" role="option" data-color="teal" data-name="Teal" tabindex="0"></span>
-                <span class="color-picker-option color-dot-green" role="option" data-color="green" data-name="Green" tabindex="0"></span>
-                <span class="color-picker-option color-dot-lime" role="option" data-color="lime" data-name="Lime" tabindex="0"></span>
-                <span class="color-picker-option color-dot-amber" role="option" data-color="amber" data-name="Amber" tabindex="0"></span>
-                <span class="color-picker-option color-dot-orange" role="option" data-color="orange" data-name="Orange" tabindex="0"></span>
-                <span class="color-picker-option color-dot-red" role="option" data-color="red" data-name="Red" tabindex="0"></span>
-                <span class="color-picker-option color-dot-rose" role="option" data-color="rose" data-name="Rose" tabindex="0"></span>
-                <span class="color-picker-option color-dot-slate" role="option" data-color="slate" data-name="Slate" tabindex="0"></span>
-                <span class="color-picker-option color-dot-taupe" role="option" data-color="taupe" data-name="Taupe" tabindex="0"></span>
-                <span class="color-picker-option color-dot-gray" role="option" data-color="gray" data-name="Gray" tabindex="0"></span>
-              </div>
-            </div>
-          </div>
+          <div class="field-group config-buttons">
+            <button type="button" class="btn-secondary config-popup-btn config-popup-btn--color" data-role="base" data-config-title="Default" aria-label="Default color"><span class="color-picker-dot color-dot-gray"></span>Default</button>
+            <button type="button" class="btn-secondary config-popup-btn config-popup-btn--color" data-role="a" data-config-title="Active" aria-label="Active color"><span class="color-picker-dot color-dot-green"></span>Active</button>
+            <button type="button" class="btn-secondary config-popup-btn config-popup-btn--color" data-role="d" data-config-title="Done" aria-label="Done color"><span class="color-picker-dot color-dot-slate"></span>Done</button>
+            <button type="button" class="btn-secondary config-popup-btn config-popup-btn--color" data-role="c" data-config-title="Critical" aria-label="Critical color"><span class="color-picker-dot color-dot-red"></span>Critical</button>
+            <button type="button" class="btn-secondary config-popup-btn config-popup-btn--color" data-role="m" data-config-title="Milestone" aria-label="Milestone color"><span class="color-picker-dot color-dot-teal"></span>Milestone</button>
           </div>
         </div>
       </div>
@@ -1730,7 +1630,21 @@
           attachRowListeners(row);
         });
         renumberRows();
+        if (window.wfRefreshStatusLabelButtons) window.wfRefreshStatusLabelButtons();
       }
+      function refreshStatusLabelButtons() {
+        var getLetter = window.wfGetStatusLabelLetter;
+        if (!getLetter) return;
+        var tbody = document.querySelector('.table-wrap tbody');
+        if (!tbody) return;
+        Array.prototype.forEach.call(tbody.rows, function (row) {
+          var a = row.querySelector('.a-btn'); if (a) a.textContent = getLetter('a');
+          var d = row.querySelector('.d-btn'); if (d) d.textContent = getLetter('d');
+          var c = row.querySelector('.critical-btn'); if (c) c.textContent = getLetter('c');
+          var m = row.querySelector('.m-btn'); if (m) m.textContent = getLetter('m');
+        });
+      }
+      window.wfRefreshStatusLabelButtons = refreshStatusLabelButtons;
       function serialize(data) {
         try {
           // v1.2: compact rows => base64 URL-safe payload
@@ -1761,7 +1675,18 @@
             ? [palette.base || 'gray', palette.a || 'green', palette.d || 'slate', palette.c || 'red', palette.m || 'teal']
             : ['gray', 'green', 'slate', 'red', 'teal'];
 
-          var payload = [rowsCompact, statusKeys];
+          var labels = window.wfStatusLabels || {};
+          var statusLabels = {
+            a: labels.a || 'Active',
+            d: labels.d || 'Done',
+            c: labels.c || 'Critical',
+            m: labels.m || 'Milestone'
+          };
+
+          var projectName = '';
+          try { var inp = document.getElementById('firstCardTitle'); if (inp) projectName = String(inp.value || '').trim(); } catch (e) {}
+
+          var payload = [rowsCompact, statusKeys, statusLabels, projectName];
           return btoa(unescape(encodeURIComponent(JSON.stringify(payload)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
         } catch (e) { return ''; }
       }
@@ -1777,6 +1702,16 @@
           var statusKeys = (decoded.length > 1 && Array.isArray(decoded[1])) ? decoded[1] : null;
           if (Array.isArray(statusKeys) && statusKeys.length === 5) window.wfPendingStatusPalette = statusKeys;
           else window.wfPendingStatusPalette = null;
+          var statusLabels = (decoded.length > 2 && decoded[2] && typeof decoded[2] === 'object') ? decoded[2] : null;
+          if (statusLabels) window.wfPendingStatusLabels = statusLabels;
+          else window.wfPendingStatusLabels = null;
+
+          var projectName = (decoded.length > 3 && typeof decoded[3] === 'string') ? decoded[3] : '';
+          try {
+            var inp = document.getElementById('firstCardTitle');
+            if (inp) inp.value = projectName;
+            document.title = projectName ? projectName + ' - WFSchedule' : 'WFSchedule';
+          } catch (e) {}
 
           return rowsCompact.map(function (arr) {
             // [id, section, name, start, end, dur, units, delay, link, target, color, progress, a, d, c, m]
@@ -2288,6 +2223,7 @@
           if (idDisp) idDisp.textContent = newId;
           tbody.appendChild(newRow);
           renumberRows();
+          if (window.wfRefreshStatusLabelButtons) window.wfRefreshStatusLabelButtons();
           var prevRow = tbody.rows[tbody.rows.length - 2];
           var targetId = prevRow ? prevRow.getAttribute('data-row-id') || '' : '';
           applyRowDefaults(newRow, { target: targetId });
@@ -2541,8 +2477,14 @@
     };
 
     const STATUS_PALETTE_DEFAULT = { base: 'gray', a: 'green', d: 'slate', c: 'red', m: 'teal' };
+    const STATUS_LABEL_DEFAULT = { a: 'Active', d: 'Done', c: 'Critical', m: 'Milestone' };
     var statusPalette = { base: STATUS_PALETTE_DEFAULT.base, a: STATUS_PALETTE_DEFAULT.a, d: STATUS_PALETTE_DEFAULT.d, c: STATUS_PALETTE_DEFAULT.c, m: STATUS_PALETTE_DEFAULT.m };
+    var statusLabels = { a: STATUS_LABEL_DEFAULT.a, d: STATUS_LABEL_DEFAULT.d, c: STATUS_LABEL_DEFAULT.c, m: STATUS_LABEL_DEFAULT.m };
     window.wfStatusPalette = statusPalette;
+    window.wfStatusLabels = statusLabels;
+    function getStatusLabel(role) { return (statusLabels[role] || STATUS_LABEL_DEFAULT[role] || role).trim(); }
+    function getStatusLabelLetter(role) { var l = getStatusLabel(role); return l ? l.charAt(0).toUpperCase() : ''; }
+    window.wfGetStatusLabelLetter = getStatusLabelLetter;
 
     const PALETTE_KEY_ALIAS = { coral: 'orange', magenta: 'rose' };
     function getStatusFill(role) {
@@ -2578,6 +2520,15 @@
     } else {
       applyStatusColorsToCssVars();
     }
+    if (window.wfPendingStatusLabels) {
+      var p = window.wfPendingStatusLabels;
+      if (p.a) statusLabels.a = String(p.a);
+      if (p.d) statusLabels.d = String(p.d);
+      if (p.c) statusLabels.c = String(p.c);
+      if (p.m) statusLabels.m = String(p.m);
+      window.wfPendingStatusLabels = null;
+    }
+    if (window.wfRefreshStatusLabelButtons) window.wfRefreshStatusLabelButtons();
 
     function getBarColorKey(task) {
       if (task.m) return statusPalette.m;
@@ -2606,6 +2557,41 @@
         if (!wrap) return;
         setStatusPickerDot(wrap, statusPalette[role] || STATUS_PALETTE_DEFAULT[role]);
       });
+      refreshConfigButtonDots();
+    }
+    function refreshConfigButtonDots() {
+      ['base', 'a', 'd', 'c', 'm'].forEach(function (role) {
+        var btn = document.querySelector('.config-popup-btn[data-role="' + role + '"]');
+        if (!btn) return;
+        var dot = btn.querySelector('.color-picker-dot');
+        if (!dot) return;
+        var key = statusPalette[role] || STATUS_PALETTE_DEFAULT[role] || 'blue';
+        var displayKey = (PALETTE_KEY_ALIAS && PALETTE_KEY_ALIAS[key]) || key;
+        dot.className = 'color-picker-dot color-dot-' + displayKey;
+      });
+    }
+
+    function positionColorPickerMenuInDialog(btn, menu) {
+      var wrap = menu.closest('.color-picker-wrap');
+      if (!wrap || !wrap.closest('.m3-config-dialog')) return;
+      var rect = btn.getBoundingClientRect();
+      var menuW = menu.offsetWidth || 160;
+      var menuH = menu.offsetHeight || 180;
+      var spaceBelow = window.innerHeight - rect.bottom;
+      var spaceAbove = rect.top;
+      var left = Math.max(8, Math.min(rect.left, window.innerWidth - menuW - 8));
+      menu.style.position = 'fixed';
+      menu.style.zIndex = '10001';
+      menu.style.left = left + 'px';
+      menu.style.top = '';
+      menu.style.bottom = '';
+      if (spaceBelow >= menuH + 12 || spaceBelow >= spaceAbove) {
+        menu.style.top = (rect.bottom + 6) + 'px';
+        menu.style.bottom = 'auto';
+      } else {
+        menu.style.bottom = (window.innerHeight - rect.top + 6) + 'px';
+        menu.style.top = 'auto';
+      }
     }
 
     function initStatusColorPicker(wrap) {
@@ -2627,6 +2613,9 @@
         });
         var isOpen = menu.classList.toggle('open');
         btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        if (isOpen && wrap.closest('.m3-config-dialog')) {
+          requestAnimationFrame(function () { positionColorPickerMenuInDialog(btn, menu); });
+        }
       });
 
       wrap.querySelectorAll('.color-picker-option').forEach(function (opt) {
@@ -2638,6 +2627,7 @@
           statusPalette[role] = newKey;
           applyStatusColorsToCssVars();
           setStatusPickerDot(wrap, newKey);
+          if (typeof refreshConfigButtonDots === 'function') refreshConfigButtonDots();
           draw();
 
           if (typeof window.wfScheduleSaveToUrl === 'function') window.wfScheduleSaveToUrl();
@@ -2661,6 +2651,81 @@
     }
 
     initStatusColorPickers();
+
+    var COLOR_OPTIONS_HTML = '<span class="color-picker-option color-dot-purple" role="option" data-color="purple" data-name="Purple" tabindex="0"></span><span class="color-picker-option color-dot-indigo" role="option" data-color="indigo" data-name="Indigo" tabindex="0"></span><span class="color-picker-option color-dot-blue" role="option" data-color="blue" data-name="Blue" tabindex="0"></span><span class="color-picker-option color-dot-cyan" role="option" data-color="cyan" data-name="Cyan" tabindex="0"></span><span class="color-picker-option color-dot-teal" role="option" data-color="teal" data-name="Teal" tabindex="0"></span><span class="color-picker-option color-dot-green" role="option" data-color="green" data-name="Green" tabindex="0"></span><span class="color-picker-option color-dot-lime" role="option" data-color="lime" data-name="Lime" tabindex="0"></span><span class="color-picker-option color-dot-amber" role="option" data-color="amber" data-name="Amber" tabindex="0"></span><span class="color-picker-option color-dot-orange" role="option" data-color="orange" data-name="Orange" tabindex="0"></span><span class="color-picker-option color-dot-red" role="option" data-color="red" data-name="Red" tabindex="0"></span><span class="color-picker-option color-dot-rose" role="option" data-color="rose" data-name="Rose" tabindex="0"></span><span class="color-picker-option color-dot-slate" role="option" data-color="slate" data-name="Slate" tabindex="0"></span><span class="color-picker-option color-dot-taupe" role="option" data-color="taupe" data-name="Taupe" tabindex="0"></span><span class="color-picker-option color-dot-gray" role="option" data-color="gray" data-name="Gray" tabindex="0"></span>';
+
+    function showConfigPopup(title, role) {
+      var dialog = document.createElement('dialog');
+      dialog.className = 'm3-config-dialog';
+      dialog.setAttribute('role', 'dialog');
+      dialog.setAttribute('aria-modal', 'true');
+      dialog.setAttribute('aria-labelledby', 'config-popup-title');
+      var surface = document.createElement('div');
+      surface.className = 'm3-dialog-surface';
+      var headline = document.createElement('h3');
+      headline.className = 'm3-dialog-headline';
+      headline.id = 'config-popup-title';
+      headline.textContent = title;
+      surface.appendChild(headline);
+      var body = document.createElement('div');
+      body.className = 'm3-dialog-body';
+      if (role) {
+        var currentKey = statusPalette[role] || STATUS_PALETTE_DEFAULT[role] || 'blue';
+        var displayKey = (PALETTE_KEY_ALIAS && PALETTE_KEY_ALIAS[currentKey]) || currentKey;
+        var labelValue = (statusLabels[role] || STATUS_LABEL_DEFAULT[role] || '').replace(/"/g, '&quot;');
+        var labelField = role !== 'base' ? '<div class="field"><div class="m3-slider-label"><label for="config-label-' + role + '">Label</label></div><input type="text" id="config-label-' + role + '" value="' + labelValue + '" placeholder="' + (STATUS_LABEL_DEFAULT[role] || '') + '" aria-label="Display name for ' + title + '"></div>' : '';
+        body.innerHTML = '<div class="field"><div class="m3-slider-label"><label>' + title + ' color</label></div><div class="color-picker-wrap status-color-picker" data-role="' + role + '" role="group" aria-label="' + title + ' color"><button type="button" class="color-picker-btn" aria-label="' + title + ' color" aria-haspopup="true" aria-expanded="false"><span class="color-picker-dot color-dot-' + displayKey + '"></span></button><div class="color-picker-menu" role="listbox" aria-label="' + title + ' color">' + COLOR_OPTIONS_HTML + '</div></div></div>' + labelField;
+        var wrap = body.querySelector('.status-color-picker');
+        if (wrap) initStatusColorPicker(wrap);
+        if (role !== 'base') {
+          var labelInput = body.querySelector('input[type="text"]');
+          if (labelInput) {
+            labelInput.addEventListener('change', function () {
+              var val = (labelInput.value || '').trim();
+              statusLabels[role] = val || STATUS_LABEL_DEFAULT[role];
+              if (window.wfRefreshStatusLabelButtons) window.wfRefreshStatusLabelButtons();
+              if (typeof window.wfScheduleSaveToUrl === 'function') window.wfScheduleSaveToUrl();
+              draw();
+            });
+          }
+        }
+      } else {
+        body.innerHTML = '<div class="field"><div class="m3-slider-label"><label>Sample setting</label><span class="m3-slider-value">50</span></div><input class="m3-slider" type="range" min="0" max="100" value="50"></div>';
+        var slider = body.querySelector('.m3-slider');
+        var valueSpan = body.querySelector('.m3-slider-value');
+        if (slider && valueSpan) slider.addEventListener('input', function () { valueSpan.textContent = slider.value; });
+      }
+      surface.appendChild(body);
+      var actions = document.createElement('div');
+      actions.className = 'm3-dialog-actions';
+      var doneBtn = document.createElement('button');
+      doneBtn.type = 'button';
+      doneBtn.className = 'm3-dialog-btn';
+      doneBtn.textContent = 'Done';
+      doneBtn.addEventListener('click', function () { dialog.close(); });
+      actions.appendChild(doneBtn);
+      surface.appendChild(actions);
+      dialog.appendChild(surface);
+      dialog.addEventListener('click', function (e) { if (e.target === dialog) dialog.close(); });
+      dialog.addEventListener('close', function () { dialog.remove(); });
+      document.body.appendChild(dialog);
+      dialog.showModal();
+      var firstFocusable = dialog.querySelector('button, input, select, [tabindex]:not([tabindex="-1"])');
+      if (firstFocusable) firstFocusable.focus();
+    }
+
+    function initConfigPopupButtons() {
+      document.querySelectorAll('.config-popup-btn').forEach(function (btn) {
+        if (btn._configPopupBound) return;
+        btn._configPopupBound = true;
+        btn.addEventListener('click', function () {
+          var title = btn.getAttribute('data-config-title') || btn.textContent || 'Config';
+          var role = btn.getAttribute('data-role') || '';
+          showConfigPopup(title, role);
+        });
+      });
+    }
+    initConfigPopupButtons();
 
     function getChartTasksFromTable() {
       const raw = typeof window.getScheduleDataFromTable === 'function' ? window.getScheduleDataFromTable() : [];
@@ -2708,7 +2773,7 @@
     let chartMetrics = { bars: [], rows: [], rangeStart: null, rangeEnd: null, canvasWidth: 0, canvasHeight: 0, units: [] };
     let dragState = null;
 
-    let unitWidth = 44;
+    let unitWidth = 20;
 
     function getChartThemeFromCss() {
       const el = document.body;
@@ -2747,7 +2812,6 @@
       barHeight: document.getElementById('barHeight'),
       barRadius: document.getElementById('barRadius'),
       headerHeight: document.getElementById('headerHeight'),
-      leftWidth: document.getElementById('leftWidth'),
       strokeWidth: document.getElementById('strokeWidth'),
       showWeekends: document.getElementById('showWeekends'),
       showDependencies: document.getElementById('showDependencies'),
@@ -2817,6 +2881,32 @@
 
     function getTaskById(id) { return tasks.find(t => t.id === id) || null; }
 
+    function computeLeftWidth(taskList) {
+      if (!taskList || !taskList.length) return 200;
+      var c = document.createElement('canvas').getContext('2d');
+      var leftPad = 18;
+      var rightPad = 18;
+      var pillPadH = 6;
+      var pillGap = 4;
+      var badgeH = 18;
+      var maxW = 0;
+      taskList.forEach(function (task) {
+        var taskLabel = (task.num != null ? task.num + '. ' : '') + (task.name || 'New Task');
+        var dateText = (task.start || '') + ' → ' + (task.end || '');
+        c.font = '500 13px Inter';
+        var w1 = c.measureText(taskLabel).width;
+        c.font = '700 11px Inter';
+        var dateW = c.measureText(dateText).width;
+        c.font = '600 11px Inter';
+        var pillW = 0;
+        ['a', 'd', 'c', 'm'].forEach(function (k) { if (task[k]) pillW += c.measureText(getStatusLabel(k)).width + pillPadH * 2 + pillGap; });
+        if (pillW > 0) pillW -= pillGap;
+        var rowW = Math.max(w1, dateW + 6 + pillW);
+        maxW = Math.max(maxW, rowW);
+      });
+      return clamp(Math.ceil(maxW) + leftPad + rightPad, 180, 600);
+    }
+
     function getSettings() {
       return {
         viewMode: els.viewMode.value,
@@ -2825,8 +2915,8 @@
         barRadius: clamp(Number(els.barRadius.value) || 4, 0, 16),
         strokeWidth: clamp(Number(els.strokeWidth.value) || 2, 1, 6),
         headerHeight: clamp(Number(els.headerHeight.value) || 72, 50, 120),
-        leftWidth: clamp(Number(els.leftWidth.value) || 386, 180, 420),
-        unitWidth: clamp(Number(unitWidth) || 44, 24, 160),
+        leftWidth: computeLeftWidth(tasks),
+        unitWidth: clamp(Number(unitWidth) || 37, 20, 136),
         showWeekends: els.showWeekends.checked,
         showDependencies: els.showDependencies.checked
       };
@@ -2987,23 +3077,27 @@
       ctx.fillStyle = theme.chartText;
       ctx.font = '500 12px Inter';
       ctx.textAlign = 'right';
-      ctx.fillText(cornerTop, settings.leftWidth - 12, 22);
+      ctx.fillText(cornerTop, settings.leftWidth - 39, 22);
       ctx.fillStyle = theme.chartTextMuted;
       ctx.font = '500 11px Inter';
-      ctx.fillText(cornerBottom, settings.leftWidth - 12, settings.headerHeight - 20);
+      ctx.fillText(cornerBottom, settings.leftWidth - 39, settings.headerHeight - 20);
       ctx.textAlign = 'left';
 
       units.forEach((unit, i) => {
         const x = settings.leftWidth + i * settings.unitWidth;
+        const cx = x + settings.unitWidth / 2;
         if (i === 0 || units[i - 1].labelTop !== unit.labelTop) {
           ctx.fillStyle = theme.chartText;
           ctx.font = '500 12px Inter';
-          ctx.fillText(unit.labelTop, x + 8, 22);
+          ctx.textAlign = 'center';
+          ctx.fillText(unit.labelTop, cx, 22);
         }
         ctx.fillStyle = theme.chartTextMuted;
         ctx.font = '500 11px Inter';
-        ctx.fillText(unit.labelBottom, x + 8, settings.headerHeight - 20);
+        ctx.textAlign = 'center';
+        ctx.fillText(unit.labelBottom, cx, settings.headerHeight - 20);
       });
+      ctx.textAlign = 'left';
     }
 
     function drawRows(ctx, width, height, settings, theme) {
@@ -3048,10 +3142,10 @@
         ctx.textBaseline = 'middle';
         ctx.textAlign = 'left';
         const pills = [
-          { show: task.a, text: 'Active', key: 'a' },
-          { show: task.d, text: 'Done', key: 'd' },
-          { show: task.c, text: 'Critical', key: 'c' },
-          { show: task.m, text: 'Milestone', key: 'm' }
+          { show: task.a, text: getStatusLabel('a'), key: 'a' },
+          { show: task.d, text: getStatusLabel('d'), key: 'd' },
+          { show: task.c, text: getStatusLabel('c'), key: 'c' },
+          { show: task.m, text: getStatusLabel('m'), key: 'm' }
         ];
         pills.forEach(function (p) {
           if (!p.show) return;
@@ -3330,7 +3424,7 @@
     }
 
     function zoom(delta) {
-      unitWidth = clamp((Number(unitWidth) || 44) + delta, 24, 160);
+      unitWidth = clamp((Number(unitWidth) || 37) + delta, 20, 136);
       draw();
     }
 
@@ -3456,7 +3550,19 @@
       els.canvas.style.cursor = 'default';
     }
 
-    els.firstCardTitle.addEventListener('input', syncSecondCardTitle);
+    if (els.firstCardTitle) {
+      els.firstCardTitle.addEventListener('input', syncSecondCardTitle);
+      els.firstCardTitle.addEventListener('input', function () {
+        var name = (els.firstCardTitle.value || '').trim();
+        document.title = name ? name + ' - WFSchedule' : 'WFSchedule';
+        if (typeof window.wfScheduleSaveToUrl === 'function') window.wfScheduleSaveToUrl();
+      });
+      els.firstCardTitle.addEventListener('change', function () {
+        var name = (els.firstCardTitle.value || '').trim();
+        document.title = name ? name + ' - WFSchedule' : 'WFSchedule';
+        if (typeof window.wfScheduleSaveToUrl === 'function') window.wfScheduleSaveToUrl();
+      });
+    }
     // Live chart settings
     els.viewMode.addEventListener('change', applySettingsLive);
     els.rowHeight.addEventListener('input', applySettingsLive);
@@ -3464,12 +3570,11 @@
     els.barRadius.addEventListener('input', applySettingsLive);
     els.strokeWidth.addEventListener('input', applySettingsLive);
     els.headerHeight.addEventListener('input', applySettingsLive);
-    els.leftWidth.addEventListener('input', applySettingsLive);
     els.showWeekends.addEventListener('change', applySettingsLive);
     els.showDependencies.addEventListener('change', applySettingsLive);
 
-    els.zoomInBtn.addEventListener('click', () => zoom(12));
-    els.zoomOutBtn.addEventListener('click', () => zoom(-12));
+    els.zoomInBtn.addEventListener('click', () => zoom(10));
+    els.zoomOutBtn.addEventListener('click', () => zoom(-10));
     els.todayBtn.addEventListener('click', goToToday);
     els.settingsBtn.addEventListener('click', toggleSettingsPanel);
     if (els.collapseCardBtn) els.collapseCardBtn.addEventListener('click', toggleCardExpand);
@@ -3487,7 +3592,6 @@
     bindSliderValue(els.barRadius, document.getElementById('barRadiusValue'));
     bindSliderValue(els.strokeWidth, document.getElementById('strokeWidthValue'));
     bindSliderValue(els.headerHeight, document.getElementById('headerHeightValue'));
-    bindSliderValue(els.leftWidth, document.getElementById('leftWidthValue'));
 
     refreshEditOptions();
     syncSecondCardTitle();

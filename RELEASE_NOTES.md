@@ -6,6 +6,28 @@ This file tracks changes **going forward**.
 
 ---
 
+## v1.4 — Released
+
+### Added
+
+- **Status config dialogs** — Default, Active, Done, Critical, and Milestone each open a modal with a color picker. Active, Done, Critical, and Milestone dialogs also have a "Label" text input for custom display names.
+- **Custom status labels** — Pills in the chart and property buttons in the table use custom names. Table buttons show the first letter of the custom label (e.g. "In Progress" → "I").
+- **Project name persistence** — Project name is saved in the URL hash and restored on load. Browser tab title shows project name (e.g. "My Project - WFSchedule") for bookmarks.
+
+### Changed
+
+- **Chart defaults** — Week mode and zoomed all the way out (20px per unit).
+- **Zoom** — All levels 15% smaller: min 20, max 136, step 10.
+- **Header labels** — Unit labels (month-year, week number, date) centered between gridlines. Corner labels (Month-Year, Date/Week Number) have 39px right padding.
+- **Name column** — Auto-sizes from widest content; manual setting removed.
+- **Color picker in dialogs** — Uses `position: fixed` (M3 pattern) so menus are not clipped; positioned above or below based on viewport space.
+
+### Removed
+
+- **Name column width** slider from settings panel.
+
+---
+
 ## v1.3 — Released
 
 ### Added
