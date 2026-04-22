@@ -284,8 +284,16 @@
       padding: 16px;
       box-shadow: var(--md-sys-elevation-1);
     }
+    .schedule-card-collapsed,
+    .gantt-card-collapsed {
+      padding-bottom: 2px;
+    }
     @media (min-width: 600px) {
       .card { padding: 24px; }
+      .schedule-card-collapsed,
+      .gantt-card-collapsed {
+        padding-bottom: 2px;
+      }
     }
 
     /* --------------------------------------------------------------------------
@@ -337,16 +345,6 @@
     }
     @media (min-width: 600px) {
       .controls-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
-    }
-    .field-group--colors {
-      grid-column: 1 / -1;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px 12px;
-      align-items: flex-end;
-    }
-    .field-group--colors .field {
-      flex: 0 0 auto;
     }
     .config-buttons {
       grid-column: 1 / -1;
@@ -457,12 +455,6 @@
     /* --------------------------------------------------------------------------
        8. Switches
        -------------------------------------------------------------------------- */
-    .gantt-card-switches {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
     .header-switch-item {
       display: inline-flex;
       align-items: center;
@@ -671,6 +663,7 @@
       display: flex;
       flex-direction: column;
     }
+    [data-card-name].wf-card-hidden { display: none !important; }
 
     .gantt-settings-panel {
       display: none;
@@ -681,33 +674,13 @@
       background: var(--md-sys-color-surface);
     }
     .gantt-settings-panel.is-open { display: block; }
+    .gantt-settings-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .gantt-settings-row #advancedBtn { margin-left: auto; }
+    .gantt-advanced-panel { display: none; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--md-sys-color-outline-variant); }
+    .gantt-advanced-panel.is-open { display: block; }
 
-    .gantt-card-header {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      margin-top: -8px;
-      gap: 12px;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
-    }
-    .gantt-card-header h1 { margin: 0; font: var(--md-sys-typescale-title-large); }
-    .gantt-card-switches { margin-left: auto; }
-    .gantt-card-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    @media (max-width: 599px) {
-      .gantt-card-header { flex-direction: column; align-items: stretch; gap: 12px; }
-      .gantt-card-switches { margin-left: 0; }
-      .gantt-card-actions { justify-content: flex-start; }
-    }
-    .gantt-card-collapsed .gantt-card-header,
     .gantt-card-collapsed .gantt-settings-panel,
     .gantt-card-collapsed .viewport { display: none !important; }
-    .gantt-card-collapsed .card-top-bar { margin-bottom: 0; }
     .header-select {
       appearance: none;
       -webkit-appearance: none;
@@ -857,9 +830,6 @@
     .color-dot-slate { background: #546e7a; }
     .color-dot-taupe { background: #6d4c41; }
     .color-dot-gray { background: #757575; }
-    .color-dot-coral { background: #ff6f00; }
-    .color-dot-magenta { background: #ec407a; }
-
     /* --------------------------------------------------------------------------
        13. Schedule card
        -------------------------------------------------------------------------- */
@@ -870,6 +840,17 @@
       justify-content: flex-end;
       margin: -16px -16px 0 -16px;
       padding: 0;
+    }
+    .schedule-card-collapsed .card-top-bar,
+    .gantt-card-collapsed .card-top-bar {
+      margin-top: -14px;
+      margin-bottom: 0;
+    }
+    @media (min-width: 600px) {
+      .schedule-card-collapsed .card-top-bar,
+      .gantt-card-collapsed .card-top-bar {
+        margin-top: -22px;
+      }
     }
     .card-collapse-btn {
       display: inline-flex;
@@ -894,6 +875,22 @@
     .card-collapse-btn .m3-expand-icon .material-symbols-outlined { font-size: 24px; }
     .card-collapse-btn:focus-visible { outline: 2px solid var(--md-sys-color-primary); outline-offset: 2px; border-radius: 4px; }
     .card-collapse-btn[aria-expanded="false"] .m3-expand-icon { transform: rotate(180deg); }
+    .card-settings-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+      margin-left: auto;
+      border: none;
+      background: transparent;
+      color: var(--md-sys-color-primary);
+      cursor: pointer;
+      transition: opacity 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .card-settings-btn:hover { opacity: 0.8; }
+    .card-settings-btn .material-symbols-outlined { font-size: 20px; }
+    .card-settings-btn:focus-visible { outline: 2px solid var(--md-sys-color-primary); outline-offset: 2px; border-radius: 4px; }
     @media (min-width: 600px) {
       .card-top-bar { margin: -24px -24px 0 -24px; }
     }
@@ -909,9 +906,10 @@
       .schedule-card .schedule-card-header { flex-direction: column; align-items: stretch; }
       .schedule-card .schedule-card-header .m3-outlined-field { min-width: 0; }
     }
+    .top-card .top-card-content { margin-top: -16px; }
+    .top-card .top-card-project-title { margin: 0; font: var(--md-sys-typescale-title-large); color: var(--text); }
     #scheduleCard.schedule-card-collapsed .schedule-card-header,
     #scheduleCard.schedule-card-collapsed .container { display: none !important; }
-    #scheduleCard.schedule-card-collapsed .card-top-bar { margin-bottom: 0; }
     .schedule-card .add-row-bar { display: flex; align-items: center; gap: 0.5rem; padding: clamp(2px, 0.5vw, 6px) clamp(12px, 2.5vw, 24px) clamp(2px, 0.5vw, 6px) 0; background: var(--bg); }
     .schedule-card .add-row-btn {
       appearance: none;
@@ -1026,12 +1024,12 @@
     body[data-theme="dark"] .app-theme-bar .theme-toggle:hover { background: var(--symbol-btn-hover); }
     .schedule-card .container { padding: clamp(2px, 0.4vw, 4px) 0 clamp(8px, 1.5vw, 16px) 0; overflow: visible; min-width: 0; }
     .schedule-card .table-wrap { width: 100%; min-width: 0; border: 1px solid var(--md-sys-color-outline); border-radius: var(--md-sys-shape-corner-small); overflow-x: auto; overflow-y: visible; background: var(--bg); }
-    .schedule-card .table-wrap table { width: 100%; min-width: 65rem; border-collapse: separate; border-spacing: 0; table-layout: fixed; box-sizing: border-box; }
+    .schedule-card .table-wrap table { width: 100%; min-width: 75rem; border-collapse: separate; border-spacing: 0; table-layout: fixed; box-sizing: border-box; }
     .schedule-card .table-wrap col:nth-child(1) { width: 3.5rem; min-width: 3.5rem; }
     .schedule-card .table-wrap col.col-num { width: 2.5ch; min-width: 2.5ch; max-width: 2.5ch; }
     .schedule-card .table-wrap col:nth-child(3) { width: 8rem; min-width: 8rem; }
     .schedule-card .table-wrap col:nth-child(4) { width: 4.5rem; min-width: 4.5rem; max-width: 4.5rem; }
-    .schedule-card .table-wrap col:nth-child(5) { width: 10rem; min-width: 10rem; }
+    .schedule-card .table-wrap col:nth-child(5) { width: 20rem; min-width: 20rem; }
     .schedule-card .table-wrap col:nth-child(6), .schedule-card .table-wrap col:nth-child(7) { min-width: 8rem; }
     .schedule-card .table-wrap col:nth-child(8) { min-width: 5rem; }
     .schedule-card .table-wrap col:nth-child(9) { min-width: 8rem; }
@@ -1044,7 +1042,7 @@
     .schedule-card .table-wrap thead th { padding: 0.3rem 0.3rem !important; text-align: left; font-weight: 600; font-size: 12px; color: var(--md-sys-color-primary); letter-spacing: 0.02em; border-bottom: 1px solid var(--table-row-border); white-space: nowrap; text-transform: none; }
     .schedule-card .table-wrap thead th:last-child { padding-right: 0; }
     .schedule-card .table-wrap thead th:nth-child(4) { min-width: 4.5rem; }
-    .schedule-card .table-wrap thead th:nth-child(5) { min-width: 10rem; }
+    .schedule-card .table-wrap thead th:nth-child(5) { min-width: 20rem; }
     .schedule-card .table-wrap thead th:nth-child(6), .schedule-card .table-wrap thead th:nth-child(7) { min-width: 8rem; }
     .schedule-card .table-wrap thead th:nth-child(8) { min-width: 5rem; }
     .schedule-card .table-wrap thead th:nth-child(9), .schedule-card .table-wrap thead th:nth-child(11) { min-width: 8rem; }
@@ -1061,7 +1059,7 @@
     .schedule-card .table-wrap tbody td { padding: 0.28rem 0.3rem !important; vertical-align: middle; border-bottom: 1px solid var(--table-row-border); font-size: 0.85rem; color: var(--text); }
     .schedule-card .table-wrap tbody td:last-child { padding-right: 0; }
     .schedule-card .table-wrap tbody td:nth-child(4) { min-width: 4.5rem; }
-    .schedule-card .table-wrap tbody td:nth-child(5) { min-width: 10rem; }
+    .schedule-card .table-wrap tbody td:nth-child(5) { min-width: 20rem; }
     .schedule-card .table-wrap tbody td:nth-child(6), .schedule-card .table-wrap tbody td:nth-child(7) { min-width: 8rem; }
     .schedule-card .table-wrap tbody td:nth-child(8) { min-width: 5rem; }
     .schedule-card .table-wrap tbody td:nth-child(9), .schedule-card .table-wrap tbody td:nth-child(11) { min-width: 8rem; }
@@ -1136,6 +1134,26 @@
     /* --------------------------------------------------------------------------
        14. Media queries
        -------------------------------------------------------------------------- */
+    .text-export-card { max-width: 100%; }
+    .text-export-card .text-export-hint { font: var(--md-sys-typescale-body-small); color: var(--text-muted); margin: 0 0 0.75rem; }
+    .text-export-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+    .text-export-bar .btn-secondary { min-height: 40px; }
+    .text-export-textarea {
+      width: 100%;
+      min-height: 30rem;
+      max-height: 72rem;
+      box-sizing: border-box;
+      padding: 0.5rem 0.6rem;
+      font: 0.8rem/1.35 ui-monospace, "Cascadia Code", "Noto Sans Mono", monospace;
+      color: var(--text);
+      background: var(--bg);
+      border: 1px solid var(--text-muted);
+      border-radius: 8px;
+      resize: vertical;
+      tab-size: 2;
+    }
+    .text-export-textarea:focus { outline: 2px solid var(--md-sys-color-primary); outline-offset: 1px; }
+
     @media (max-width: 599px) {
       .schedule-card { font-size: 11px; }
       .schedule-card .table-wrap .row-delete-btn,
@@ -1162,7 +1180,13 @@
     <div class="app-theme-bar">
       <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode"><span id="themeIcon">🌙</span></button>
     </div>
-    <section class="card schedule-card" id="scheduleCard">
+    <section class="card top-card" id="topCard" data-card-name="top">
+      <div class="top-card-content">
+        <h1 id="secondCardTitle" class="top-card-project-title"></h1>
+      </div>
+    </section>
+
+    <section class="card schedule-card" id="scheduleCard" data-card-name="schedule">
       <div class="card-top-bar">
         <button type="button" class="card-collapse-btn" id="collapseScheduleCardBtn" aria-label="Collapse schedule" title="Collapse schedule" aria-expanded="true" aria-controls="scheduleCard">
           <span class="m3-expand-icon"><span class="material-symbols-outlined" id="collapseScheduleCardIcon">expand_less</span></span>
@@ -1253,15 +1277,15 @@
         </div>
     </section>
 
-    <main class="card gantt-card" id="ganttCard">
+    <main class="card gantt-card" id="ganttCard" data-card-name="chart">
       <div class="card-top-bar">
+        <button type="button" class="card-settings-btn" id="settingsBtn" aria-label="Settings" title="Settings" aria-expanded="false" aria-controls="ganttSettingsPanel"><span class="material-symbols-outlined">settings</span></button>
         <button type="button" class="card-collapse-btn" id="collapseCardBtn" aria-label="Collapse chart" title="Collapse chart" aria-expanded="true" aria-controls="ganttCard">
           <span class="m3-expand-icon"><span class="material-symbols-outlined" id="collapseCardIcon">expand_less</span></span>
         </button>
       </div>
-      <div class="gantt-card-header">
-        <h1 id="secondCardTitle"></h1>
-        <div class="gantt-card-switches">
+      <div class="gantt-settings-panel" id="ganttSettingsPanel">
+        <div class="gantt-settings-row">
           <label class="header-switch-item">
             <input type="checkbox" id="showWeekends" checked>
             <span class="header-switch-label">Show weekends</span>
@@ -1272,8 +1296,6 @@
             <span class="header-switch-label">Show dependencies</span>
             <span class="switch" aria-hidden="true"></span>
           </label>
-        </div>
-        <div class="gantt-card-actions">
           <select class="header-select" id="viewMode" aria-label="View mode" title="View mode">
             <option value="day">Day</option>
             <option value="week" selected>Week</option>
@@ -1282,65 +1304,65 @@
           <button class="btn-secondary btn-icon" id="zoomOutBtn" aria-label="Zoom out" title="Zoom out"><span class="material-symbols-outlined">zoom_out</span></button>
           <button class="btn-secondary btn-icon" id="zoomInBtn" aria-label="Zoom in" title="Zoom in"><span class="material-symbols-outlined">zoom_in</span></button>
           <button class="btn-secondary" id="todayBtn">Go to today</button>
-          <button class="btn-secondary btn-icon" id="settingsBtn" aria-label="Settings" title="Settings" aria-expanded="false" aria-controls="ganttSettingsPanel"><span class="material-symbols-outlined">settings</span></button>
+          <button type="button" class="btn-secondary" id="advancedBtn" aria-label="Advanced" aria-expanded="false" aria-controls="ganttAdvancedPanel">Advanced</button>
         </div>
-      </div>
-      <div class="gantt-settings-panel" id="ganttSettingsPanel">
-        <div class="controls-grid">
-          <div class="field">
-            <div class="m3-slider-label">
-              <label for="accentSelect">Accent theme</label>
+        <div class="gantt-advanced-panel" id="ganttAdvancedPanel">
+          <div class="controls-grid">
+            <div class="field">
+              <div class="m3-slider-label">
+                <label for="accentSelect">Accent theme</label>
+              </div>
+              <select id="accentSelect" class="accent-select" aria-label="Accent theme">
+                <option value="blue">Blue</option>
+                <option value="green">Green</option>
+                <option value="purple">Purple</option>
+                <option value="teal">Teal</option>
+                <option value="orange">Orange</option>
+                <option value="rose">Rose</option>
+              </select>
             </div>
-            <select id="accentSelect" class="accent-select" aria-label="Accent theme">
-              <option value="blue">Blue</option>
-              <option value="green">Green</option>
-              <option value="purple">Purple</option>
-              <option value="teal">Teal</option>
-              <option value="orange">Orange</option>
-              <option value="rose">Rose</option>
-            </select>
-          </div>
-          <div class="field">
-            <div class="m3-slider-label">
-              <label for="rowHeight">Row height</label>
-              <span class="m3-slider-value" id="rowHeightValue">37</span>
+            <div class="field">
+              <div class="m3-slider-label">
+                <label for="rowHeight">Row height</label>
+                <span class="m3-slider-value" id="rowHeightValue">36</span>
+              </div>
+              <input class="m3-slider" id="rowHeight" type="range" min="36" max="96" value="36">
             </div>
-            <input class="m3-slider" id="rowHeight" type="range" min="36" max="96" value="37">
-          </div>
-          <div class="field">
-            <div class="m3-slider-label">
-              <label for="barHeight">Bar height</label>
-              <span class="m3-slider-value" id="barHeightValue">29</span>
+            <div class="field">
+              <div class="m3-slider-label">
+                <label for="barHeight">Bar height</label>
+                <span class="m3-slider-value" id="barHeightValue">26</span>
+              </div>
+              <input class="m3-slider" id="barHeight" type="range" min="12" max="40" value="26">
             </div>
-            <input class="m3-slider" id="barHeight" type="range" min="12" max="40" value="29">
-          </div>
-          <div class="field">
-            <div class="m3-slider-label">
-              <label for="barRadius">Bar corner radius</label>
-              <span class="m3-slider-value" id="barRadiusValue">4</span>
+            <div class="field">
+              <div class="m3-slider-label">
+                <label for="barRadius">Bar corner radius</label>
+                <span class="m3-slider-value" id="barRadiusValue">4</span>
+              </div>
+              <input class="m3-slider" id="barRadius" type="range" min="0" max="16" step="1" value="4">
             </div>
-            <input class="m3-slider" id="barRadius" type="range" min="0" max="16" step="1" value="4">
-          </div>
-          <div class="field">
-            <div class="m3-slider-label">
-              <label for="strokeWidth">Outline width</label>
-              <span class="m3-slider-value" id="strokeWidthValue">2</span>
+            <div class="field">
+              <div class="m3-slider-label">
+                <label for="strokeWidth">Outline width</label>
+                <span class="m3-slider-value" id="strokeWidthValue">2</span>
+              </div>
+              <input class="m3-slider" id="strokeWidth" type="range" min="1" max="6" step="0.5" value="2">
             </div>
-            <input class="m3-slider" id="strokeWidth" type="range" min="1" max="6" step="0.5" value="2">
-          </div>
-          <div class="field">
-            <div class="m3-slider-label">
-              <label for="headerHeight">Header height</label>
-              <span class="m3-slider-value" id="headerHeightValue">72</span>
+            <div class="field">
+              <div class="m3-slider-label">
+                <label for="headerHeight">Header height</label>
+                <span class="m3-slider-value" id="headerHeightValue">72</span>
+              </div>
+              <input class="m3-slider" id="headerHeight" type="range" min="50" max="120" value="72">
             </div>
-            <input class="m3-slider" id="headerHeight" type="range" min="50" max="120" value="72">
-          </div>
-          <div class="field-group config-buttons">
-            <button type="button" class="btn-secondary config-popup-btn config-popup-btn--color" data-role="base" data-config-title="Default" aria-label="Default color"><span class="color-picker-dot color-dot-gray"></span>Default</button>
-            <button type="button" class="btn-secondary config-popup-btn config-popup-btn--color" data-role="a" data-config-title="Active" aria-label="Active color"><span class="color-picker-dot color-dot-green"></span>Active</button>
-            <button type="button" class="btn-secondary config-popup-btn config-popup-btn--color" data-role="d" data-config-title="Done" aria-label="Done color"><span class="color-picker-dot color-dot-slate"></span>Done</button>
-            <button type="button" class="btn-secondary config-popup-btn config-popup-btn--color" data-role="c" data-config-title="Critical" aria-label="Critical color"><span class="color-picker-dot color-dot-red"></span>Critical</button>
-            <button type="button" class="btn-secondary config-popup-btn config-popup-btn--color" data-role="m" data-config-title="Milestone" aria-label="Milestone color"><span class="color-picker-dot color-dot-teal"></span>Milestone</button>
+            <div class="field-group config-buttons">
+              <button type="button" class="btn-secondary config-popup-btn config-popup-btn--color" data-role="base" data-config-title="Default" aria-label="Default color"><span class="color-picker-dot color-dot-gray"></span>Default</button>
+              <button type="button" class="btn-secondary config-popup-btn config-popup-btn--color" data-role="a" data-config-title="Active" aria-label="Active color"><span class="color-picker-dot color-dot-green"></span>Active</button>
+              <button type="button" class="btn-secondary config-popup-btn config-popup-btn--color" data-role="d" data-config-title="Done" aria-label="Done color"><span class="color-picker-dot color-dot-slate"></span>Done</button>
+              <button type="button" class="btn-secondary config-popup-btn config-popup-btn--color" data-role="c" data-config-title="Critical" aria-label="Critical color"><span class="color-picker-dot color-dot-red"></span>Critical</button>
+              <button type="button" class="btn-secondary config-popup-btn config-popup-btn--color" data-role="m" data-config-title="Milestone" aria-label="Milestone color"><span class="color-picker-dot color-dot-teal"></span>Milestone</button>
+            </div>
           </div>
         </div>
       </div>
@@ -1348,6 +1370,27 @@
         <canvas id="ganttCanvas"></canvas>
       </div>
     </main>
+
+    <section class="card text-export-card" id="textExportCard" data-card-name="textexport" aria-label="Text export and import">
+      <div class="card-top-bar">
+        <h2 class="text-export-heading" style="margin:0;font:var(--md-sys-typescale-title-medium);flex:1;">Text schedule</h2>
+      </div>
+      <p class="text-export-hint">Copy the lines below to save your schedule in a text file (fields separated by <code>^</code>, no quotes), or paste a full block to replace the entire table (only paste; typing is disabled). Pasting will ask for confirmation. The <code>^</code> character is reserved and cannot be used in project, task, or table fields. Legacy tab imports still work; extra spaces are ignored when parsing.</p>
+      <div class="text-export-bar">
+        <button type="button" class="btn-secondary" id="textExportCopyBtn">Copy all</button>
+        <span class="text-export-hint" style="margin:0">Tab-separated, one row per line. Second column = row <code>1</code>, <code>2</code>, …; <code>from</code> = parent row number (decimal) or empty. Comment lines start with <code>#</code>.</span>
+      </div>
+      <textarea
+        id="scheduleTextExportField"
+        class="text-export-textarea"
+        spellcheck="false"
+        autocapitalize="off"
+        autocomplete="off"
+        aria-label="Schedule as text, copy or paste to replace all rows. Typing is disabled; use Paste from the right-click or Edit menu, or press Ctrl+V."
+        placeholder="(Schedule will appear here when you have rows or will load from the table after changes.)"
+        data-wf-textexport="1"
+      ></textarea>
+    </section>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -1586,8 +1629,17 @@
       }
       function setScheduleData(data) {
         var tbody = document.querySelector('.table-wrap tbody');
-        if (!tbody || !data || !data.length) return;
+        if (!tbody) return;
         var templateSource = tbody.rows.length ? tbody.rows[0] : (document.getElementById('rowTemplate') && document.getElementById('rowTemplate').content.firstElementChild);
+        if (!templateSource && (!data || !data.length)) return;
+        if (!data || !data.length) {
+          tbody.innerHTML = '';
+          addRowTemplate = null;
+          renumberRows();
+          if (typeof rebindFlatpickrForTbody === 'function') rebindFlatpickrForTbody();
+          if (window.wfRefreshStatusLabelButtons) window.wfRefreshStatusLabelButtons();
+          return;
+        }
         if (!templateSource) return;
         var template = templateSource.cloneNode(true);
         tbody.innerHTML = '';
@@ -1630,6 +1682,7 @@
           attachRowListeners(row);
         });
         renumberRows();
+        if (typeof rebindFlatpickrForTbody === 'function') rebindFlatpickrForTbody();
         if (window.wfRefreshStatusLabelButtons) window.wfRefreshStatusLabelButtons();
       }
       function refreshStatusLabelButtons() {
@@ -1645,6 +1698,40 @@
         });
       }
       window.wfRefreshStatusLabelButtons = refreshStatusLabelButtons;
+
+      // Admin char: URL hash prefix (e/E) controls card visibility. Cards identified by data-card-name.
+      var CARD_ADMIN_RULES = {
+        top: { visibleFor: null },
+        schedule: { visibleFor: ['e', 'E'] },
+        textexport: { visibleFor: ['e', 'E'] },
+        chart: { visibleFor: null }
+      };
+      function applyCardVisibility(adminChar) {
+        Object.keys(CARD_ADMIN_RULES).forEach(function (cardName) {
+          var rule = CARD_ADMIN_RULES[cardName];
+          var card = document.querySelector('[data-card-name="' + cardName + '"]');
+          if (!card) return;
+          var show = rule.visibleFor === null || (rule.visibleFor && rule.visibleFor.indexOf(adminChar) !== -1);
+          if (show) card.classList.remove('wf-card-hidden'); else card.classList.add('wf-card-hidden');
+        });
+      }
+      function parseHashForAdminChar(hash) {
+        var h = (hash || window.location.hash || '').slice(1);
+        if (!h) return { adminChar: '', payload: '' };
+        if (h[0] === 'e' || h[0] === 'E') return { adminChar: h[0], payload: h.slice(1) };
+        return { adminChar: '', payload: h };
+      }
+
+      /** Tab / bookmark title: trimmed project name, or WFSchedule if empty (browsers use document.title as the default bookmark name). */
+      function wfUpdateDocumentTitle() {
+        try {
+          var inp = document.getElementById('firstCardTitle');
+          var name = inp ? String(inp.value || '').trim() : '';
+          document.title = name || 'WFSchedule';
+        } catch (e) {}
+      }
+      window.wfUpdateDocumentTitle = wfUpdateDocumentTitle;
+
       function serialize(data) {
         try {
           // v1.2: compact rows => base64 URL-safe payload
@@ -1710,7 +1797,7 @@
           try {
             var inp = document.getElementById('firstCardTitle');
             if (inp) inp.value = projectName;
-            document.title = projectName ? projectName + ' - WFSchedule' : 'WFSchedule';
+            wfUpdateDocumentTitle();
           } catch (e) {}
 
           return rowsCompact.map(function (arr) {
@@ -1744,10 +1831,15 @@
         if (saveToUrlTimer) clearTimeout(saveToUrlTimer);
         saveToUrlTimer = setTimeout(function () {
           saveToUrlTimer = null;
+          var parsed = parseHashForAdminChar();
+          var adminChar = parsed.adminChar;
           var data = getScheduleData();
           var encoded = data.length ? serialize(data) : '';
-          var url = window.location.pathname + (encoded ? '#' + encoded : '');
-          if (window.location.hash !== (encoded ? '#' + encoded : '')) history.replaceState(null, '', url);
+          var hashPart = (adminChar ? adminChar : '') + encoded;
+          var url = window.location.pathname + (encoded || adminChar ? '#' + hashPart : '');
+          var newHash = (encoded || adminChar ? '#' + hashPart : '');
+          wfUpdateDocumentTitle();
+          if (window.location.hash !== newHash) history.replaceState(null, document.title, url);
         }, 400);
       }
 
@@ -2192,7 +2284,8 @@
             }
             if (wouldCreateCycle(row, newVal)) {
               alert('This would create a circular dependency which is not allowed.');
-              targetSelect.value = oldVal || '';
+              if (oldVal) targetSelect.value = oldVal;
+              else targetSelect.selectedIndex = 0;
               row.setAttribute('data-parent-id', oldVal || '');
               return;
             }
@@ -2328,10 +2421,21 @@
         });
       });
       var restoredFromUrl = false;
+      function restoreFromHash() {
+        var parsed = parseHashForAdminChar();
+        applyCardVisibility(parsed.adminChar);
+        if (parsed.payload) {
+          var urlData = deserialize(parsed.payload);
+          if (urlData && urlData.length) { setScheduleData(urlData); return true; }
+        }
+        return false;
+      }
       try {
-        var h = window.location.hash.slice(1);
-        if (h) { var urlData = deserialize(h); if (urlData && urlData.length) { setScheduleData(urlData); restoredFromUrl = true; } }
+        restoredFromUrl = restoreFromHash();
       } catch (e) {}
+      window.addEventListener('hashchange', function () {
+        try { restoreFromHash(); } catch (e) {}
+      });
       if (!restoredFromUrl && tbody && tbody.rows.length) {
         applyRowDefaults(tbody.rows[0], { target: '' });
         ensureDefaultRowDates();
@@ -2433,10 +2537,353 @@
         if (overrides) { for (var k in overrides) { if (overrides.hasOwnProperty(k)) opts[k] = overrides[k]; } }
         return opts;
       }
-      document.querySelectorAll('.date-input').forEach(function (input) {
-        var existing = input.value && input.value.trim();
-        flatpickr(input, getFlatpickrOptions({ defaultDate: existing || new Date() }));
-      });
+      function rebindFlatpickrForTbody() {
+        document.querySelectorAll('.table-wrap tbody .date-input').forEach(function (input) {
+          var ex = input.value && input.value.trim();
+          if (input._flatpickr) {
+            try { input._flatpickr.setDate(ex ? new Date(ex) : new Date(), false); } catch (e) {}
+          } else {
+            flatpickr(input, getFlatpickrOptions({ defaultDate: ex ? new Date(ex) : new Date() }));
+          }
+        });
+      }
+      rebindFlatpickrForTbody();
+      var TEXT_EXPORT_MAGIC = 'wfschedule-text-v1';
+      var TEXT_LINK_OK = { 'start-to-end': 1, 'start-to-start': 1, 'end-to-start': 1, 'end-to-end': 1 };
+      var TEXT_UNITS_OK = { days: 1, weeks: 1, months: 1 };
+      /** Min widths (ch) for space-padding so the Text schedule TSV lines up in monospace. Longer values are not padded. */
+      var TEXT_EXPORT_CH = { kind: 2, rowNum: 4, name: 44, date: 12, progress: 3, duration: 6, units: 6, delay: 5, link: 14, from: 4, color: 7 };
+      function tsvStr(v) { return String(v == null ? '' : v).replace(/[\r\n\t\^]/g, ' '); }
+      function padRightCh(s, w) {
+        s = String(s);
+        if (s.length >= w) return s;
+        return s + new Array(w - s.length + 1).join(' ');
+      }
+      function padLeftCh(s, w) {
+        s = String(s);
+        if (s.length >= w) return s;
+        return new Array(w - s.length + 1).join(' ') + s;
+      }
+      function formatNameForTextExport(s) {
+        var t = tsvStr(s);
+        if (t.length >= TEXT_EXPORT_CH.name) return t;
+        return padRightCh(t, TEXT_EXPORT_CH.name);
+      }
+      /** New exports use ^ between fields; ^ is disallowed in values (see tsvStr / UI guards). Legacy tab (TSV) still imports. */
+      function splitDataLineToFields(line) {
+        if (line.indexOf('\t') >= 0) return line.split('\t');
+        return String(line).split('^');
+      }
+      /** Drop a final empty field from a trailing ^ or an extra whitespace-only column. */
+      function normalizeTrailingCommasInFields(fieldArr) {
+        var a = fieldArr.slice();
+        while (a.length > 16) {
+          if (String(a[a.length - 1] == null ? '' : a[a.length - 1]).replace(/[\s\u00a0\u200b\uFEFF]+/g, '') === '') a.pop();
+          else break;
+        }
+        return a;
+      }
+      function trimFieldWs(s) {
+        return String(s == null ? '' : s).replace(/^[\s\u00a0\u200b\uFEFF]+|[\s\u00a0\u200b\uFEFF]+$/g, '');
+      }
+      /** Remove stray ^ from pasted values (same as export tsvStr) so nothing reserved ends up in table fields. */
+      function stripTextScheduleCarets(s) {
+        return String(s == null ? '' : s).replace(/\^/g, ' ');
+      }
+      function buildScheduleTextExport() {
+        var ch = TEXT_EXPORT_CH;
+        var projectName = '';
+        try {
+          var pti = document.getElementById('firstCardTitle');
+          if (pti) projectName = String(pti.value || '').trim();
+        } catch (e) {}
+        var lines = [
+          '# ' + TEXT_EXPORT_MAGIC,
+          '# project: ' + tsvStr(projectName),
+          '# Data rows: 16 fields, caret (^) delimited, no quotes. ^ must not appear in any field. Spacing: TEXT_EXPORT_CH padding (same as before).',
+          '# kind row# name start end progress duration units delay link from color a d c m — import also accepts tab-separated (legacy) and is whitespace-tolerant.',
+          '# kind=T|task, S=section. row# = 1,2,3,… in order. from = parent row# (decimal) or empty. link: start-to-end|start-to-start|end-to-start|end-to-end.'
+        ];
+        var rows = getScheduleData();
+        var idToRowNum = {};
+        rows.forEach(function (r, i) { idToRowNum[r.id] = i + 1; });
+        rows.forEach(function (r) {
+          var k = r.section ? 'S' : 'T';
+          var a = r.a ? '1' : '0';
+          var d = r.d ? '1' : '0';
+          var c = r.c ? '1' : '0';
+          var m = r.m ? '1' : '0';
+          var rowNum = idToRowNum[r.id] != null ? String(idToRowNum[r.id]) : '';
+          var fromDec = (r.target && idToRowNum[r.target] != null) ? String(idToRowNum[r.target]) : '';
+          var prog = r.progress != null ? r.progress : 0;
+          var dur = r.duration != null ? r.duration : 0;
+          var del = r.delay != null ? r.delay : 0;
+          var rowCells = [
+            padRightCh(k, ch.kind),
+            padLeftCh(rowNum, ch.rowNum),
+            formatNameForTextExport(r.name),
+            padRightCh(tsvStr(r.startDate), ch.date),
+            padRightCh(tsvStr(r.endDate), ch.date),
+            padLeftCh(String(prog), ch.progress),
+            padLeftCh(String(dur), ch.duration),
+            padRightCh(tsvStr(r.units), ch.units),
+            padLeftCh(String(del), ch.delay),
+            padRightCh(tsvStr(r.link), ch.link),
+            padLeftCh(fromDec, ch.from),
+            padRightCh(tsvStr(r.color), ch.color),
+            a, d, c, m
+          ];
+          lines.push(rowCells.map(function (c) { return tsvStr(c); }).join('^'));
+        });
+        return lines.join('\n');
+      }
+      function resolveTextImportToScheduleRows(partial) {
+        var n = partial.length;
+        if (n === 0) return [];
+        var ids = [];
+        for (var u = 0; u < n; u++) ids.push(nextId());
+        return partial.map(function (it, j) {
+          var target = '';
+          if (it.fromRow != null) {
+            var p = it.fromRow;
+            if (p < 1 || p > n) return { __err: 'Row ' + (j + 1) + ': from must be between 1 and ' + n + ' (inclusive) or empty.' };
+            if (p === j + 1) return { __err: 'Row ' + (j + 1) + ': from cannot reference the same row.' };
+            target = ids[p - 1];
+          }
+          return {
+            id: ids[j],
+            section: it.section,
+            name: it.name,
+            startDate: it.startDate,
+            endDate: it.endDate,
+            progress: it.progress,
+            duration: it.duration,
+            units: it.units,
+            delay: it.delay,
+            link: it.link,
+            target: target,
+            color: it.color,
+            a: it.a,
+            d: it.d,
+            c: it.c,
+            m: it.m
+          };
+        });
+      }
+      function parseScheduleTextImport(text) {
+        var out = [];
+        var textImportProjectName = null;
+        var raw = String(text || '').replace(/^\uFEFF/, '');
+        var lines = raw.split(/\r?\n/);
+        var dataLineIndex = 0;
+        for (var li = 0; li < lines.length; li++) {
+          var line = lines[li].replace(/\s+$/, '');
+          if (!trimFieldWs(line)) continue;
+          if (line[0] === '#') {
+            var mproj = line.match(/^#\s*project:\s*(.*)$/i);
+            if (mproj) {
+              textImportProjectName = trimFieldWs(stripTextScheduleCarets(mproj[1] != null ? String(mproj[1]) : ''));
+            }
+            continue;
+          }
+          if (line.indexOf('\t') < 0 && line.indexOf('^') < 0) {
+            return { error: 'Line ' + (li + 1) + ' has no column delimiter (use ^ between fields, or tab for legacy). Use Copy all from this app, or start non-data lines with #.' };
+          }
+          var isTab = line.indexOf('\t') >= 0;
+          var fields = splitDataLineToFields(line);
+          fields = normalizeTrailingCommasInFields(fields);
+          if (fields.length < 16) {
+            return { error: 'Line ' + (li + 1) + ': need 16 fields (see export; use ^ or tab between columns). If values contained stray ^, try removing them or paste again; carets in cell text are normalized on import.' };
+          }
+          if (fields.length > 16) {
+            var fn = fields.length;
+            var jsep = isTab ? '\t' : '^';
+            fields = [fields[0], fields[1], fields.slice(2, fn - 13).join(jsep)].concat(fields.slice(fn - 13));
+          }
+          for (var fi = 0; fi < fields.length; fi++) {
+            fields[fi] = trimFieldWs(stripTextScheduleCarets(fields[fi]));
+            if (fi === 2) {
+              fields[fi] = fields[fi].replace(/\s{2,}/g, ' ').replace(/\s+$/, '');
+            }
+          }
+          dataLineIndex += 1;
+          var k0 = String(fields[0] != null && String(fields[0]).length ? fields[0] : 'T');
+          var kind = k0.length ? k0.charAt(0).toUpperCase() : 'T';
+          if (kind !== 'T' && kind !== 'S') return { error: 'Line ' + (li + 1) + ': kind must be T or S.' };
+          var rowStr = (fields[1] != null ? String(fields[1]) : '').replace(/\s/g, '');
+          if (rowStr !== '' && String(dataLineIndex) !== rowStr) {
+            return { error: 'Line ' + (li + 1) + ': second column (row#) should be ' + dataLineIndex + ' in order, or leave it blank. Got ' + (fields[1] != null ? String(fields[1]) : '') + '.' };
+          }
+          var pStr = (fields[5] != null ? String(fields[5]) : '').replace(/\s/g, '');
+          var pNum = pStr === '' ? 0 : parseInt(pStr, 10);
+          if (isNaN(pNum)) pNum = 0;
+          var progress = Math.max(0, Math.min(100, pNum));
+          var dStr = (fields[6] != null ? String(fields[6]) : '').replace(/\s/g, '');
+          var duration = dStr === '' ? NaN : parseFloat(dStr);
+          if (isNaN(duration)) duration = ROW_DEFAULTS.duration;
+          var units = (fields[7] != null ? String(fields[7]) : '').replace(/\s/g, '') || '';
+          if (!TEXT_UNITS_OK[units]) return { error: 'Line ' + (li + 1) + ': units must be days, weeks, or months.' };
+          var delayStr = (fields[8] != null ? String(fields[8]) : '').replace(/\s/g, '');
+          var delay = delayStr === '' ? NaN : parseInt(delayStr, 10);
+          if (isNaN(delay)) delay = ROW_DEFAULTS.delay;
+          var link = fields[9] != null ? String(fields[9]) : '';
+          if (!TEXT_LINK_OK[link]) return { error: 'Line ' + (li + 1) + ': invalid link type.' };
+          var fromStr = (fields[10] != null ? String(fields[10]) : '').replace(/\s/g, '') || '';
+          var fromRow = null;
+          if (fromStr !== '') {
+            if (!/^\d+$/.test(fromStr)) {
+              return { error: 'Line ' + (li + 1) + ': from must be a decimal row number 1, 2, 3, …, or empty (not a hex id).' };
+            }
+            fromRow = parseInt(fromStr, 10);
+            if (isNaN(fromRow) || fromRow < 1) {
+              return { error: 'Line ' + (li + 1) + ': from must be a positive row number or empty.' };
+            }
+          }
+          var colRaw = fields[11] != null ? trimFieldWs(String(fields[11])) : '';
+          out.push({
+            section: kind === 'S',
+            name: fields[2] != null ? String(fields[2]) : '',
+            startDate: fields[3] != null ? String(fields[3]) : '',
+            endDate: fields[4] != null ? String(fields[4]) : '',
+            progress: progress,
+            duration: duration,
+            units: units,
+            delay: delay,
+            link: link,
+            fromRow: fromRow,
+            color: colRaw || 'blue',
+            a: (fields[12] != null && String(fields[12]).replace(/\s/g, '')) === '1',
+            d: (fields[13] != null && String(fields[13]).replace(/\s/g, '')) === '1',
+            c: (fields[14] != null && String(fields[14]).replace(/\s/g, '')) === '1',
+            m: (fields[15] != null && String(fields[15]).replace(/\s/g, '')) === '1'
+          });
+        }
+        if (!out.length) return { data: [], projectName: textImportProjectName };
+        var resolved = resolveTextImportToScheduleRows(out);
+        for (var ri = 0; ri < resolved.length; ri++) {
+          if (resolved[ri] && resolved[ri].__err) return { error: resolved[ri].__err };
+        }
+        return { data: resolved, projectName: textImportProjectName };
+      }
+      var textExportDebounce = null;
+      function refreshScheduleTextExportField() {
+        var el = document.getElementById('scheduleTextExportField');
+        if (!el) return;
+        if (el._wfPasteInProgress) return;
+        el.value = buildScheduleTextExport();
+      }
+      function scheduleTextExportFieldRefreshSoon() {
+        if (textExportDebounce) clearTimeout(textExportDebounce);
+        textExportDebounce = setTimeout(function () {
+          textExportDebounce = null;
+          refreshScheduleTextExportField();
+        }, 150);
+      }
+      window.addEventListener('wf-schedule-change', scheduleTextExportFieldRefreshSoon);
+      function showReplaceScheduleFromPasteDialog(pasted, onConfirm) {
+        var overlay = document.createElement('div');
+        overlay.className = 'm3-dialog-overlay';
+        var surface = document.createElement('div');
+        surface.className = 'm3-dialog-surface';
+        var headline = document.createElement('h3');
+        headline.className = 'm3-dialog-headline';
+        headline.textContent = 'Replace entire schedule?';
+        surface.appendChild(headline);
+        var body = document.createElement('p');
+        body.className = 'm3-dialog-body';
+        body.textContent = 'Pasted text will replace all tasks in the table. The current schedule will be overwritten. This cannot be undone (except by reloading a saved URL).';
+        surface.appendChild(body);
+        var actions = document.createElement('div');
+        actions.className = 'm3-dialog-actions';
+        var ok = document.createElement('button');
+        ok.type = 'button';
+        ok.className = 'm3-dialog-btn m3-dialog-btn-destructive';
+        ok.textContent = 'Replace schedule';
+        var cancel = document.createElement('button');
+        cancel.type = 'button';
+        cancel.className = 'm3-dialog-btn';
+        cancel.textContent = 'Cancel';
+        ok.addEventListener('click', function () {
+          overlay.remove();
+          onConfirm();
+        });
+        cancel.addEventListener('click', function () { overlay.remove(); });
+        actions.appendChild(ok);
+        actions.appendChild(cancel);
+        surface.appendChild(actions);
+        overlay.appendChild(surface);
+        document.body.appendChild(overlay);
+        overlay.addEventListener('click', function (e) { if (e.target === overlay) overlay.remove(); });
+      }
+      (function initScheduleTextExportUI() {
+        var ta = document.getElementById('scheduleTextExportField');
+        var copyBtn = document.getElementById('textExportCopyBtn');
+        if (copyBtn) {
+          copyBtn.addEventListener('click', function () {
+            refreshScheduleTextExportField();
+            if (!ta) return;
+            ta.select();
+            try {
+              navigator.clipboard.writeText(ta.value).then(function () {
+                var t = copyBtn.textContent;
+                copyBtn.textContent = 'Copied!';
+                setTimeout(function () { copyBtn.textContent = t; }, 2000);
+              });
+            } catch (e) {
+              try { document.execCommand('copy'); } catch (e2) {}
+            }
+          });
+        }
+        if (!ta) return;
+        function blockTyping(e) {
+          if (e.key === 'Tab') return;
+          var nav = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', 'PageUp', 'PageDown'];
+          if (nav.indexOf(e.key) !== -1) return;
+          if (e.key === 'Backspace' || e.key === 'Delete') { e.preventDefault(); return false; }
+          if (e.ctrlKey || e.metaKey || e.altKey) {
+            if (e.key === 'a' || e.key === 'A' || e.key === 'c' || e.key === 'C' || e.key === 'v' || e.key === 'V') return;
+            if (e.key === 'r' && (e.metaKey || e.ctrlKey)) return;
+            if (e.key === 'x' || e.key === 'X') { e.preventDefault(); return false; }
+          }
+          if (e.key && e.key.length === 1) { e.preventDefault(); return false; }
+        }
+        ta.addEventListener('keydown', blockTyping);
+        ta.addEventListener('cut', function (e) { e.preventDefault(); });
+        ta.addEventListener('beforeinput', function (e) {
+          if (e.inputType === 'insertFromPaste' || e.inputType === 'insertFromYank') return;
+          if (e.inputType === 'deleteContentBackward' || e.inputType === 'deleteContentForward' || e.inputType === 'deleteByDrag' || e.inputType === 'deleteByCut') {
+            e.preventDefault();
+            return;
+          }
+          if (e.inputType === 'insertText' || e.inputType === 'insertCompositionText' || (e.inputType && e.inputType.indexOf('insert') === 0)) e.preventDefault();
+        });
+        ta.addEventListener('drop', function (e) { e.preventDefault(); });
+        ta.addEventListener('dragover', function (e) { e.preventDefault(); });
+        ta.addEventListener('paste', function (e) {
+          e.preventDefault();
+          var raw = (e.clipboardData && e.clipboardData.getData('text/plain')) || '';
+          var parsed = parseScheduleTextImport(raw);
+          if (parsed.error) { alert(parsed.error); return; }
+          showReplaceScheduleFromPasteDialog(raw, function () {
+            ta._wfPasteInProgress = true;
+            if (parsed.projectName != null) {
+              var fn = document.getElementById('firstCardTitle');
+              if (fn) {
+                fn.value = parsed.projectName;
+                var sc = document.getElementById('secondCardTitle');
+                if (sc) sc.textContent = fn.value || '';
+              }
+            }
+            setScheduleData(parsed.data);
+            addRowTemplate = null;
+            if (tbody && tbody.rows.length) addRowTemplate = tbody.rows[0].cloneNode(true);
+            saveToUrl();
+            delete ta._wfPasteInProgress;
+            refreshScheduleTextExportField();
+            if (window.wfUpdateDocumentTitle) window.wfUpdateDocumentTitle();
+          });
+        });
+      })();
       window.getScheduleDataFromTable = getScheduleData;
       window.updateTableRowFromChart = updateTableRowFromChart;
       var scheduleCard = document.getElementById('scheduleCard');
@@ -2452,6 +2899,32 @@
       var saved = localStorage.getItem(themeKey);
       var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       setTheme(saved || (prefersDark ? 'dark' : 'light'));
+      scheduleTextExportFieldRefreshSoon();
+      (function initTextScheduleCaretGuards() {
+        var msg = 'The ^ (caret) character is reserved for the text schedule and cannot be used in project, task, or table text fields (including numbers in the table).';
+        function isTextScheduleBlockTarget(t) {
+          if (!t || (t.nodeName !== 'INPUT' && t.nodeName !== 'TEXTAREA')) return false;
+          if (t.id === 'firstCardTitle') return true;
+          if (t.id && /^config-label-/.test(t.id)) return true;
+          if (t.closest && t.closest('.schedule-card') && t.closest('tbody') && t.classList) {
+            if (t.classList.contains('task-input') || t.classList.contains('date-input') || t.classList.contains('progress-input') || t.classList.contains('duration-input') || t.classList.contains('delay-input')) return true;
+          }
+          return false;
+        }
+        document.addEventListener('beforeinput', function (e) {
+          if (!isTextScheduleBlockTarget(e.target) || e.data == null) return;
+          if (e.data.indexOf('^') >= 0) { e.preventDefault(); window.alert(msg); }
+        }, true);
+        document.addEventListener('keydown', function (e) {
+          if (!isTextScheduleBlockTarget(e.target)) return;
+          if (e.key === '^') { e.preventDefault(); window.alert(msg); }
+        }, true);
+        document.addEventListener('paste', function (e) {
+          if (!isTextScheduleBlockTarget(e.target)) return;
+          var txt = (e.clipboardData && e.clipboardData.getData('text/plain')) || '';
+          if (txt.indexOf('^') >= 0) { e.preventDefault(); window.alert(msg); }
+        }, true);
+      })();
     })();
   </script>
   <script>
@@ -2820,6 +3293,8 @@
       zoomOutBtn: document.getElementById('zoomOutBtn'),
       todayBtn: document.getElementById('todayBtn'),
       settingsBtn: document.getElementById('settingsBtn'),
+      advancedBtn: document.getElementById('advancedBtn'),
+      ganttAdvancedPanel: document.getElementById('ganttAdvancedPanel'),
       ganttCard: document.getElementById('ganttCard'),
       collapseCardBtn: document.getElementById('collapseCardBtn')
     };
@@ -2841,6 +3316,12 @@
       if (!els.ganttSettingsPanel) return;
       const isOpen = els.ganttSettingsPanel.classList.toggle('is-open');
       if (els.settingsBtn) els.settingsBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    }
+
+    function toggleAdvancedPanel() {
+      if (!els.ganttAdvancedPanel) return;
+      const isOpen = els.ganttAdvancedPanel.classList.toggle('is-open');
+      if (els.advancedBtn) els.advancedBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
     }
 
     function toggleCardExpand() {
@@ -2888,7 +3369,6 @@
       var rightPad = 18;
       var pillPadH = 6;
       var pillGap = 4;
-      var badgeH = 18;
       var maxW = 0;
       taskList.forEach(function (task) {
         var taskLabel = (task.num != null ? task.num + '. ' : '') + (task.name || 'New Task');
@@ -2910,8 +3390,8 @@
     function getSettings() {
       return {
         viewMode: els.viewMode.value,
-        rowHeight: clamp(Number(els.rowHeight.value) || 37, 36, 96),
-        barHeight: clamp(Number(els.barHeight.value) || 29, 12, 40),
+        rowHeight: clamp(Number(els.rowHeight.value) || 36, 36, 96),
+        barHeight: clamp(Number(els.barHeight.value) || 26, 12, 40),
         barRadius: clamp(Number(els.barRadius.value) || 4, 0, 16),
         strokeWidth: clamp(Number(els.strokeWidth.value) || 2, 1, 6),
         headerHeight: clamp(Number(els.headerHeight.value) || 72, 50, 120),
@@ -2926,8 +3406,6 @@
       if (selectedTaskId && !getTaskById(selectedTaskId)) selectedTaskId = tasks[0]?.id || null;
       if (!selectedTaskId && tasks.length) selectedTaskId = tasks[0].id;
     }
-
-    function syncEditForm() { /* Chart-only: no edit form to sync */ }
 
     function selectTask(id) {
       if (!getTaskById(id)) return;
@@ -3409,14 +3887,6 @@
       ctx.closePath();
     }
 
-    function lighten(hex, amount) {
-      const { r, g, b } = hexToRgb(hex);
-      const rr = Math.round(r + (255 - r) * amount);
-      const gg = Math.round(g + (255 - g) * amount);
-      const bb = Math.round(b + (255 - b) * amount);
-      return `rgb(${rr}, ${gg}, ${bb})`;
-    }
-
     function hexToRgb(hex) {
       const clean = hex.replace('#', '');
       const bigint = parseInt(clean, 16);
@@ -3512,7 +3982,6 @@
       if (typeof window.updateTableRowFromChart === 'function') {
         window.updateTableRowFromChart(dragState.taskId, newStartStr, newEndStr, { skipPersist: true });
       }
-      syncEditForm();
       draw();
     }
     function onPointerMove(event) {
@@ -3551,15 +4020,9 @@
     }
 
     if (els.firstCardTitle) {
-      els.firstCardTitle.addEventListener('input', syncSecondCardTitle);
       els.firstCardTitle.addEventListener('input', function () {
-        var name = (els.firstCardTitle.value || '').trim();
-        document.title = name ? name + ' - WFSchedule' : 'WFSchedule';
-        if (typeof window.wfScheduleSaveToUrl === 'function') window.wfScheduleSaveToUrl();
-      });
-      els.firstCardTitle.addEventListener('change', function () {
-        var name = (els.firstCardTitle.value || '').trim();
-        document.title = name ? name + ' - WFSchedule' : 'WFSchedule';
+        syncSecondCardTitle();
+        if (typeof window.wfUpdateDocumentTitle === 'function') window.wfUpdateDocumentTitle();
         if (typeof window.wfScheduleSaveToUrl === 'function') window.wfScheduleSaveToUrl();
       });
     }
@@ -3577,6 +4040,7 @@
     els.zoomOutBtn.addEventListener('click', () => zoom(-10));
     els.todayBtn.addEventListener('click', goToToday);
     els.settingsBtn.addEventListener('click', toggleSettingsPanel);
+    if (els.advancedBtn) els.advancedBtn.addEventListener('click', toggleAdvancedPanel);
     if (els.collapseCardBtn) els.collapseCardBtn.addEventListener('click', toggleCardExpand);
 
     els.canvas.addEventListener('pointerdown', onPointerDown);
@@ -3595,6 +4059,7 @@
 
     refreshEditOptions();
     syncSecondCardTitle();
+    if (typeof window.wfUpdateDocumentTitle === 'function') window.wfUpdateDocumentTitle();
     draw();
   </script>
 </body>

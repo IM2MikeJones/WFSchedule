@@ -6,6 +6,71 @@ This file tracks changes **going forward**.
 
 ---
 
+## Unreleased
+
+_(start the next session here)_
+
+---
+
+## v1.5 — Released
+
+### Added
+
+- **Admin char (URL visibility control)** — A single-character prefix in the URL hash controls which cards are visible:
+  - **No admin char** (e.g. `#` or `#<base64-payload>`): Only the chart card is visible. The schedule (table) card is hidden. Existing bookmarks without a prefix continue to work.
+  - **Admin char `e` or `E`** (e.g. `#e` or `#e<base64-payload>`): Both the schedule and chart cards are visible.
+
+  **How to use:**
+  1. To show the schedule table, add `e` or `E` at the start of the hash in the address bar (e.g. `yourpage.html#e` for an empty schedule, or `yourpage.html#e<base64-payload>` if you have saved data).
+  2. To hide the schedule (chart-only view), remove the `e`/`E` prefix or use a URL with no prefix.
+
+  The admin char is preserved when saving; adding or removing it in the URL and refreshing updates visibility immediately.
+
+- **Top card** — New card above the schedule and chart cards. Displays the project name as a read-only title (synced from the schedule card's Project Name input). Always visible regardless of admin char. No collapse control.
+
+- **Settings / Advanced split** — The chart card's controls are now organized into two tiers:
+  - **Settings** (gear icon in card top bar): Show weekends, Show dependencies, Day/Week/Month view mode, Zoom in/out, Go to today, and an Advanced button (floated right).
+  - **Advanced** (toggled by the Advanced button): Accent theme, Row height, Bar height, Bar corner radius, Outline width, Header height, and the Default/Active/Done/Critical/Milestone status color buttons.
+
+- **Text schedule export / import** — New card below the chart that lets you copy or paste the entire schedule as a plain-text block:
+  - Fields are separated by the `^` character (no quoting, no escaping) and columns are space-padded for readable monospace alignment. Task names pad to 44 characters, numerical and enum columns pad to their own widths, and the optional `# project:` metadata line carries the project name.
+  - Paste a full block into the textarea to replace the entire table (a confirmation dialog guards the replacement). Typing is disabled; the textarea accepts paste only.
+  - The right-click **Paste** command works in the text block (read-only lock was dropped in favor of event-level write suppression so context-menu paste still fires).
+  - The `^` character is reserved. Attempting to type or paste it into any table / project field pops a warning and the character is stripped on import.
+  - Legacy tab-separated blocks still import cleanly; extra whitespace is ignored.
+
+### Changed
+
+- **Chart card header** — Project name title removed from the chart card (now shown in the top card). Settings gear icon moved to the card top bar, to the left of the collapse control, with a smaller icon size (20px).
+- **Collapsed card height** — Collapsed cards are now more compact with reduced bottom padding and the collapse icon vertically centered.
+- **Chart defaults** — Row height default lowered from 37 to **36**; bar height default lowered from 29 to **26**.
+- **Schedule table** — Name column widened (min-width 20rem) for longer task names before horizontal scroll kicks in.
+
+### Refactor
+
+_No user-visible behaviour changes. All removals were confirmed unused before deletion._
+
+**Dead CSS removed**
+
+- `.gantt-card-switches`, `.gantt-card-header`, `.gantt-card-header h1`, `.gantt-card-actions` — the corresponding DOM was removed in a prior pass; only the CSS was left behind.
+- `@media (max-width: 599px) .gantt-card-header` and `.gantt-card-collapsed .gantt-card-header` — responsive / collapsed overrides for the now-deleted header element.
+- `.color-dot-coral`, `.color-dot-magenta` — palette colours only referenced as `PALETTE_KEY_ALIAS` entries (aliases for `orange` / `rose`); no DOM element ever receives these class names.
+- `.field-group--colors`, `.field-group--colors .field` — layout helpers not referenced anywhere in the HTML.
+
+**Dead JavaScript removed**
+
+- `lighten(hex, amount)` — utility defined in the chart script but never called.
+- `syncEditForm()` — empty stub (`/* Chart-only: no edit form to sync */`); declaration and its sole call inside `processDragMove` removed.
+- `badgeH` variable in `computeLeftWidth` — declared but never read within that function (the live `badgeH` constant in `drawRows` is unaffected).
+- Exploratory fallbacks in `getParentId`, `getScheduleData`, and the `target-select` change handler that were added during a suspected linking bug were reverted. The bug turned out to be a user-side mis-link; the simpler 3-line `getParentId` is restored.
+- `applyStartEndToRow` reverted to firing flatpickr `onChange` on programmatic `setDate` (no behaviour change observed).
+
+**Consolidated**
+
+- `firstCardTitle` event listeners — three overlapping listeners (two `'input'`, one `'change'`) that each called `syncSecondCardTitle`, updated `document.title`, and persisted to the URL were collapsed into a single `'input'` handler.
+
+---
+
 ## v1.4 — Released
 
 ### Added
