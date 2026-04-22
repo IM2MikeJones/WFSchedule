@@ -8,9 +8,10 @@ This file tracks changes **going forward**.
 
 ## Unreleased
 
-_(start the next session here)_
+Development on `main` is targeting **v1.6**. Log changes here (under **Added** / **Changed** / **Fixed** / **Removed** as usual) as they land. When you ship, rename this block to `## v1.6 — Released` and add a new empty **Unreleased** section above it.
 
 ---
+
 
 ## v1.5 — Released
 

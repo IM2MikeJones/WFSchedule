@@ -107,7 +107,7 @@ A1 Change Start → recalc delay, keep duration, recalc end, move progeny. A2 Ch
 
 ## Version
 
-Current version: **v1.5**. Changes per release are documented in `RELEASE_NOTES.md`.
+Latest published release: **v1.5**. Work on `main` is accumulating for **v1.6**; see the **Unreleased** section in `RELEASE_NOTES.md`.
 
 > **Compatibility note (v1.2)**
 > URL encoding changed to a compact format. Links from v1.0/v1.1 will not load in v1.2+; v1.2+ URLs are not for older builds.
